@@ -1,0 +1,136 @@
+﻿@page
+@model IndexModel
+@{
+    Layout = null;
+    ViewData["Title"] = "Login";
+
+    var errors = ViewData.ModelState.Values
+        .SelectMany(v => v.Errors)
+        .Select(e => e.ErrorMessage)
+        .ToList();
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - MyStore</title>
+
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" />
+
+    <style>
+        body {
+            background-color: white;
+        }
+
+        .login-container {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .card {
+            width: 100%;
+            max-width: 400px;
+            border: 1px solid #007bff;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .card-header {
+            background-color: #007bff;
+            color: white;
+        }
+
+        .btn-primary {
+            background-color: #007bff;
+            border-color: #007bff;
+            box-shadow: none;
+        }
+
+        .btn-primary:hover {
+            background-color: #0056b3;
+        }
+
+        input.form-control {
+            background-color: #f8f9fa;
+        }
+
+        .toast-container {
+            position: fixed;
+            top: 1rem;
+            right: 1rem;
+            z-index: 1055;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Error Toasts -->
+    <div class="toast-container">
+        @foreach (var error in errors)
+        {
+            <div class="toast align-items-center text-white bg-danger border-0 mb-2 show" role="alert">
+                <div class="d-flex">
+                    <div class="toast-body">@error</div>
+                    <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+                </div>
+            </div>
+        }
+    </div>
+
+    <!-- Login Card -->
+    <div class="login-container">
+        <div class="card">
+            <div class="card-header text-center">
+                <h4>Login</h4>
+            </div>
+            <div class="card-body">
+                <form method="post">
+                    <div class="mb-3">
+                        <label for="email" class="form-label">Email</label>
+                        <input type="email" name="email" class="form-control" placeholder="Enter your email" required />
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="memberPassword" class="form-label">Password</label>
+                        <div class="input-group">
+                            <input type="password" id="passwordInput" name="memberPassword" class="form-control" placeholder="Enter your password" required />
+                            <button type="button" class="btn btn-outline-secondary" id="togglePassword">
+                                <i class="bi bi-eye-slash" id="eyeIcon"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary w-100">Login</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        // Auto-dismiss toast after 3s
+        const toastElList = [].slice.call(document.querySelectorAll('.toast'));
+        toastElList.forEach(toastEl => {
+            setTimeout(() => new bootstrap.Toast(toastEl).hide(), 3000);
+        });
+
+        // Show/hide password
+        const togglePassword = document.getElementById('togglePassword');
+        const passwordInput = document.getElementById('passwordInput');
+        const eyeIcon = document.getElementById('eyeIcon');
+
+        togglePassword.addEventListener('click', () => {
+            const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+            passwordInput.setAttribute('type', type);
+            eyeIcon.classList.toggle('bi-eye');
+            eyeIcon.classList.toggle('bi-eye-slash');
+        });
+    </script>
+</body>
+</html>

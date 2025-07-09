@@ -1,0 +1,37 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.14.36203.30 d17.14
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "InfertilityTreatmentSystem.DAL", "InfertilityTreatmentSystem.DAL\InfertilityTreatmentSystem.DAL.csproj", "{8F05383D-108C-46FE-8FC4-6BF21AFB5B4A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "InfertilityTreatmentSystem.BLL", "InfertilityTreatmentSystem.BLL\InfertilityTreatmentSystem.BLL.csproj", "{FB03FDF2-6CD2-4DA2-9C84-D296E0A32266}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "InfertilityTreatmentSystem", "InfertilityTreatmentSystem\InfertilityTreatmentSystem.csproj", "{0514068B-155A-4748-BBB4-D456A10712B0}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{8F05383D-108C-46FE-8FC4-6BF21AFB5B4A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8F05383D-108C-46FE-8FC4-6BF21AFB5B4A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8F05383D-108C-46FE-8FC4-6BF21AFB5B4A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8F05383D-108C-46FE-8FC4-6BF21AFB5B4A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FB03FDF2-6CD2-4DA2-9C84-D296E0A32266}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FB03FDF2-6CD2-4DA2-9C84-D296E0A32266}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FB03FDF2-6CD2-4DA2-9C84-D296E0A32266}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FB03FDF2-6CD2-4DA2-9C84-D296E0A32266}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0514068B-155A-4748-BBB4-D456A10712B0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0514068B-155A-4748-BBB4-D456A10712B0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0514068B-155A-4748-BBB4-D456A10712B0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0514068B-155A-4748-BBB4-D456A10712B0}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {4B95A041-CB70-46E7-BC29-EA11B6345EDF}
+	EndGlobalSection
+EndGlobal
