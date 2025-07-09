@@ -22,7 +22,7 @@ namespace InfertilityTreatmentSystem.BLL.Service
             return await _unitOfWork.UserRepository.GetAllAsync();
         }
 
-        public async Task<User> GetUserByIdAsync(int id)
+        public async Task<User> GetUserByIdAsync(Guid id)
         {
             return await _unitOfWork.UserRepository.GetByIdAsync(id);
         }

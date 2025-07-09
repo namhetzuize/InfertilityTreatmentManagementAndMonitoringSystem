@@ -17,7 +17,7 @@ namespace InfertilityTreatmentSystem.BLL.Service
             return await _unitOfWork.AppointmentRepository.GetAllAsync();
         }
 
-        public async Task<Appointment> GetAppointmentByIdAsync(int id)
+        public async Task<Appointment> GetAppointmentByIdAsync(Guid id)
         {
             return await _unitOfWork.AppointmentRepository.GetByIdAsync(id);
         }

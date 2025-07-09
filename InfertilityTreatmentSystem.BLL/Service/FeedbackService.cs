@@ -17,7 +17,7 @@ namespace InfertilityTreatmentSystem.BLL.Service
             return await _unitOfWork.FeedbackRepository.GetAllAsync();
         }
 
-        public async Task<Feedback> GetFeedbackByIdAsync(int id)
+        public async Task<Feedback> GetFeedbackByIdAsync(Guid id)
         {
             return await _unitOfWork.FeedbackRepository.GetByIdAsync(id);
         }

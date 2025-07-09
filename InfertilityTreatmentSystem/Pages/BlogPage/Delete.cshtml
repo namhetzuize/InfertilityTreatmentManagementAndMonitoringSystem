@@ -1,0 +1,33 @@
+﻿@page
+@model InfertilityTreatmentSystem.Pages.BlogPage.DeleteModel
+
+@{
+    Layout = null;
+    ViewData["Title"] = "Delete Blog";
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - Delete Blog</title>
+
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+</head>
+<body>
+    <div class="container">
+        <h1 class="my-4">@ViewData["Title"]</h1>
+
+        <p>Are you sure you want to delete the blog titled "<strong>@Model.Blog.Title</strong>"?</p>
+
+        <form method="post">
+            <button type="submit" class="btn btn-danger">Delete</button>
+            <a href="/BlogPage/Index" class="btn btn-secondary">Cancel</a>
+        </form>
+    </div>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

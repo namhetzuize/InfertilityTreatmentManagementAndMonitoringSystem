@@ -1,0 +1,41 @@
+﻿@page
+@model InfertilityTreatmentSystem.Pages.BlogPage.DetailsModel
+
+@{
+    Layout = null;
+    ViewData["Title"] = "Blog Details";
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"]</title>
+
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+</head>
+<body>
+    <div class="container">
+        <h1 class="my-4">@ViewData["Title"]</h1>
+
+        <div class="card">
+            <div class="card-header">
+                <h4>@Model.Blog.Title</h4>
+            </div>
+            <div class="card-body">
+                <p><strong>Content:</strong> @Model.Blog.Content</p>
+                <p><strong>Created Date:</strong> @Model.Blog.CreatedDate?.ToString("yyyy-MM-dd")</p>
+                <p><strong>Author:</strong> @Model.Blog.User?.FullName</p>
+            </div>
+            <div class="card-footer">
+                <a href="/BlogPage/Edit?blogId=@Model.Blog.BlogId" class="btn btn-warning">Edit</a>
+                <a href="/BlogPage/Index" class="btn btn-secondary">Back to List</a>
+            </div>
+        </div>
+    </div>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

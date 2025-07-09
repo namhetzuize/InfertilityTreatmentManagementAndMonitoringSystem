@@ -1,0 +1,61 @@
+﻿@page
+@model InfertilityTreatmentSystem.Pages.BlogPage.IndexModel
+
+@{
+    Layout = null;
+    ViewData["Title"] = "Blogs";
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - Blogs</title>
+
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+</head>
+<body>
+    <div class="container">
+        <h1 class="my-4">@ViewData["Title"]</h1>
+
+        @if (Model.Blogs != null && Model.Blogs.Count > 0)
+        {
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>Title</th>
+                        <th>Content</th>
+                        <th>Created Date</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var blog in Model.Blogs)
+                    {
+                        <tr>
+                            <td>@blog.Title</td>
+                            <td>@blog.Content</td>
+                            <td>@blog.CreatedDate?.ToString("yyyy-MM-dd")</td>
+                            <td>
+                                <a href="/BlogPage/Details?blogId=@blog.BlogId" class="btn btn-info">Details</a>
+                                <a href="/BlogPage/Edit?blogId=@blog.BlogId" class="btn btn-warning">Edit</a>
+                                <a href="/BlogPage/Delete?blogId=@blog.BlogId" class="btn btn-danger">Delete</a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        }
+        else
+        {
+            <p>No blogs found.</p>
+        }
+
+        <a href="/BlogPage/Create" class="btn btn-primary">Create New Blog</a>
+    </div>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

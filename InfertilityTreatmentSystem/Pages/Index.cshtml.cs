@@ -15,16 +15,18 @@ namespace InfertilityTreatmentSystem.Pages
         }
 
         [BindProperty]
-        public string Username { get; set; }
+        public string UserName { get; set; }  // Match with entity model
 
-        [BindProperty(Name = "memberPassword")]
+        [BindProperty(Name = "Password")]  // Match with entity's password property
         public string Password { get; set; }
 
         public IActionResult OnGet()
         {
-            if (HttpContext.Session.GetString("Username") != null)
+            // Redirect if the user is already logged in
+            if (HttpContext.Session.GetString("UserName") != null)
             {
-                return RedirectToPage("/Products/Index");
+                // Redirect to Blog Page if user is logged in
+                return RedirectToPage("/BlogPage/Index");
             }
 
             return Page();
@@ -32,7 +34,8 @@ namespace InfertilityTreatmentSystem.Pages
 
         public async Task<IActionResult> OnPostAsync()
         {
-            var user = await _userService.Login(Username, Password);
+            // Make sure we are matching the correct property names for login
+            var user = await _userService.Login(UserName, Password);
 
             if (user == null)
             {
@@ -40,15 +43,17 @@ namespace InfertilityTreatmentSystem.Pages
                 return Page();
             }
 
-            HttpContext.Session.SetString("Username", user.UserName ?? "");
+            // Store UserName and UserId in session
+            HttpContext.Session.SetString("UserName", user.UserName ?? "");
             HttpContext.Session.SetString("UserId", user.UserId.ToString());
 
-            return RedirectToPage("/Products/Index");
+            // Redirect to BlogPage/Index after successful login
+            return RedirectToPage("/BlogPage/Index");
         }
 
         public IActionResult OnGetLogout()
         {
-            HttpContext.Session.Clear();
+            HttpContext.Session.Clear(); // Clear session on logout
             return RedirectToPage("/Index");
         }
     }

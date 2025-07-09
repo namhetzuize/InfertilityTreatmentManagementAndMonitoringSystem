@@ -17,7 +17,7 @@ namespace InfertilityTreatmentSystem.BLL.Service
             return await _unitOfWork.BlogRepository.GetAllAsync();
         }
 
-        public async Task<Blog> GetBlogByIdAsync(int id)
+        public async Task<Blog> GetBlogByIdAsync(Guid id)
         {
             return await _unitOfWork.BlogRepository.GetByIdAsync(id);
         }
