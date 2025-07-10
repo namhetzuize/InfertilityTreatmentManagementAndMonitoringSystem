@@ -1,0 +1,20 @@
+﻿@page
+@model InfertilityTreatmentSystem.Pages.FeedbackPage.CreateModel
+
+@{
+    ViewData["Title"] = "Create Feedback";
+}
+
+<h1>Create Feedback</h1>
+
+<form method="post">
+    <div class="mb-3">
+        <label for="Rating" class="form-label">Rating</label>
+        <input type="number" class="form-control" id="Rating" name="Rating" required />
+    </div>
+    <div class="mb-3">
+        <label for="Comment" class="form-label">Comment</label>
+        <textarea class="form-control" id="Comment" name="Comment" rows="3" required></textarea>
+    </div>
+    <button type="submit" class="btn btn-primary">Create</button>
+</form>

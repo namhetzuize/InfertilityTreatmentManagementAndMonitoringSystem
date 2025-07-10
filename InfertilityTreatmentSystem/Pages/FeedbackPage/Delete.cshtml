@@ -1,0 +1,15 @@
+﻿@page "{feedbackId:guid}"
+@model InfertilityTreatmentSystem.Pages.FeedbackPage.DeleteModel
+
+@{
+    ViewData["Title"] = "Delete Feedback";
+}
+
+<h1>Delete Feedback</h1>
+
+<p>Are you sure you want to delete this feedback?</p>
+
+<form method="post">
+    <button type="submit" class="btn btn-danger">Delete</button>
+    <a href="@Url.Page("./Index")" class="btn btn-secondary">Cancel</a>
+</form>

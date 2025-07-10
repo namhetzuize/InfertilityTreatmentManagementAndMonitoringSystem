@@ -1,0 +1,20 @@
+﻿@page "{feedbackId:guid}"
+@model InfertilityTreatmentSystem.Pages.FeedbackPage.EditModel
+
+@{
+    ViewData["Title"] = "Edit Feedback";
+}
+
+<h1>Edit Feedback</h1>
+
+<form method="post">
+    <div class="mb-3">
+        <label for="Rating" class="form-label">Rating</label>
+        <input type="number" class="form-control" id="Rating" name="Rating" value="@Model.Feedback.Rating" required />
+    </div>
+    <div class="mb-3">
+        <label for="Comment" class="form-label">Comment</label>
+        <textarea class="form-control" id="Comment" name="Comment" rows="3" required>@Model.Feedback.Comment</textarea>
+    </div>
+    <button type="submit" class="btn btn-primary">Save Changes</button>
+</form>

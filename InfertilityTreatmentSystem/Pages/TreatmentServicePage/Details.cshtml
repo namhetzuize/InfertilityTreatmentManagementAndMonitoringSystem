@@ -1,0 +1,22 @@
+﻿@page "{serviceId:guid}"
+@model InfertilityTreatmentSystem.Pages.TreatmentServicePage.DetailsModel
+
+@{
+    ViewData["Title"] = "Treatment Service Details";
+}
+
+<h1>Treatment Service Details</h1>
+
+<div>
+    <h3>Treatment Service Information</h3>
+    <p><strong>Service Name:</strong> @Model.Service.ServiceName</p>
+    <p><strong>Description:</strong> @Model.Service.Description</p>
+    <p><strong>Price:</strong> @Model.Service.Price</p>
+    <p><strong>Created by:</strong> @Model.ServiceCreator?.UserName</p>
+</div>
+
+<div>
+    <a href="@Url.Page("./Edit", new { serviceId = Model.Service.ServiceId })" class="btn btn-warning">Edit</a>
+    <a href="@Url.Page("./Delete", new { serviceId = Model.Service.ServiceId })" class="btn btn-danger">Delete</a>
+    <a href="@Url.Page("./Index")" class="btn btn-secondary">Back to List</a>
+</div>

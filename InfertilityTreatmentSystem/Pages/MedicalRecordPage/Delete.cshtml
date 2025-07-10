@@ -1,0 +1,23 @@
+﻿@page "{recordId:guid}"
+@model InfertilityTreatmentSystem.Pages.MedicalRecordPage.DeleteModel
+
+@{
+    ViewData["Title"] = "Delete Medical Record";
+}
+
+<h1>Delete Medical Record</h1>
+
+<p>Are you sure you want to delete this medical record?</p>
+
+<div>
+    <p><strong>Prescription:</strong> @Model.Record.Prescription</p>
+    <p><strong>Test Results:</strong> @Model.Record.TestResults</p>
+    <p><strong>Note:</strong> @Model.Record.Note</p>
+</div>
+
+<div>
+    <form method="post">
+        <button type="submit" class="btn btn-danger">Delete</button>
+        <a href="@Url.Page("./Index")" class="btn btn-secondary">Cancel</a>
+    </form>
+</div>

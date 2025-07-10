@@ -39,5 +39,35 @@ namespace InfertilityTreatmentSystem.BLL.Service
             _unitOfWork.BlogRepository.PrepareRemove(blog);
             await _unitOfWork.BlogRepository.SaveAsync();
         }
+
+        // Update Blog by BlogId
+        public async Task UpdateBlogByIdAsync(Guid blogId, Blog updatedBlog)
+        {
+            var blog = await _unitOfWork.BlogRepository.GetByIdAsync(blogId);
+            if (blog == null)
+            {
+                throw new Exception("Blog not found.");
+            }
+
+            // Update blog properties
+            blog.Title = updatedBlog.Title;
+            blog.Content = updatedBlog.Content;
+
+            _unitOfWork.BlogRepository.PrepareUpdate(blog);
+            await _unitOfWork.BlogRepository.SaveAsync();
+        }
+
+        // Delete Blog by BlogId
+        public async Task DeleteBlogByIdAsync(Guid blogId)
+        {
+            var blog = await _unitOfWork.BlogRepository.GetByIdAsync(blogId);
+            if (blog == null)
+            {
+                throw new Exception("Blog not found.");
+            }
+
+            _unitOfWork.BlogRepository.PrepareRemove(blog);
+            await _unitOfWork.BlogRepository.SaveAsync();
+        }
     }
 }

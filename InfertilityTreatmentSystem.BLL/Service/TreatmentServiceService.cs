@@ -39,5 +39,40 @@ namespace InfertilityTreatmentSystem.BLL.Service
             _unitOfWork.TreatmentServiceRepository.PrepareRemove(service);
             await _unitOfWork.TreatmentServiceRepository.SaveAsync();
         }
+        public async Task<TreatmentService> GetServiceByServiceNameAsync(string serviceName)
+        {
+            return await _unitOfWork.TreatmentServiceRepository.GetServiceByServiceNameAsync(serviceName);
+        }
+
+        // Update TreatmentService by ServiceId
+        public async Task UpdateTreatmentServiceByIdAsync(Guid serviceId, TreatmentService updatedService)
+        {
+            var service = await _unitOfWork.TreatmentServiceRepository.GetByIdAsync(serviceId);
+            if (service == null)
+            {
+                throw new Exception("Service not found.");
+            }
+
+            // Update the service properties
+            service.ServiceName = updatedService.ServiceName;
+            service.Description = updatedService.Description;
+            service.Price = updatedService.Price;
+
+            _unitOfWork.TreatmentServiceRepository.PrepareUpdate(service);
+            await _unitOfWork.TreatmentServiceRepository.SaveAsync();
+        }
+
+        // Delete TreatmentService by ServiceId
+        public async Task DeleteTreatmentServiceByIdAsync(Guid serviceId)
+        {
+            var service = await _unitOfWork.TreatmentServiceRepository.GetByIdAsync(serviceId);
+            if (service == null)
+            {
+                throw new Exception("Service not found.");
+            }
+
+            _unitOfWork.TreatmentServiceRepository.PrepareRemove(service);
+            await _unitOfWork.TreatmentServiceRepository.SaveAsync();
+        }
     }
 }

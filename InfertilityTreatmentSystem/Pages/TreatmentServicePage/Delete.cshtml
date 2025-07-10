@@ -1,0 +1,21 @@
+﻿@page "{serviceId:guid}"
+@model InfertilityTreatmentSystem.Pages.TreatmentServicePage.DeleteModel
+
+@{
+    ViewData["Title"] = "Delete Treatment Service";
+}
+
+<h1>Delete Treatment Service</h1>
+
+<p>Are you sure you want to delete this treatment service?</p>
+
+<div>
+    <p><strong>Service Name:</strong> @Model.Service.ServiceName</p>
+    <p><strong>Description:</strong> @Model.Service.Description</p>
+    <p><strong>Price:</strong> @Model.Service.Price</p>
+</div>
+
+<form method="post">
+    <button type="submit" class="btn btn-danger">Delete</button>
+    <a href="@Url.Page("./Index")" class="btn btn-secondary">Cancel</a>
+</form>

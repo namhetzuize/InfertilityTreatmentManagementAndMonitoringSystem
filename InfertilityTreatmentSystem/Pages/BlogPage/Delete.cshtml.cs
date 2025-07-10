@@ -17,13 +17,14 @@ namespace InfertilityTreatmentSystem.Pages.BlogPage
             _blogService = blogService;
         }
 
-        public async Task<IActionResult> OnGetAsync(Guid blogId) 
+        public async Task<IActionResult> OnGetAsync(Guid blogId)
         {
+            // Fetch the blog to be deleted using its BlogId
             Blog = await _blogService.GetBlogByIdAsync(blogId);
 
             if (Blog == null)
             {
-                return NotFound();
+                return NotFound();  // Return NotFound if the blog doesn't exist
             }
 
             return Page();
@@ -33,11 +34,12 @@ namespace InfertilityTreatmentSystem.Pages.BlogPage
         {
             if (Blog != null)
             {
-                await _blogService.DeleteBlogAsync(Blog);
-                return RedirectToPage("/BlogPage/Index");
+                // Use the DeleteBlogByIdAsync method to explicitly delete the blog by BlogId
+                await _blogService.DeleteBlogByIdAsync(Blog.BlogId);  // Pass BlogId to the service layer
+                return RedirectToPage("/BlogPage/Index");  // Redirect to the index page after deletion
             }
 
-            return NotFound();
+            return NotFound();  // Return NotFound if no blog is found
         }
     }
 }

@@ -1,0 +1,25 @@
+﻿@page "{serviceId:guid}"
+@model InfertilityTreatmentSystem.Pages.TreatmentServicePage.EditModel
+
+@{
+    ViewData["Title"] = "Edit Treatment Service";
+}
+
+<h1>Edit Treatment Service</h1>
+
+<form method="post">
+    <div class="mb-3">
+        <label for="ServiceName" class="form-label">Service Name</label>
+        <input type="text" class="form-control" id="ServiceName" name="ServiceName" value="@Model.Service.ServiceName" required />
+    </div>
+    <div class="mb-3">
+        <label for="Description" class="form-label">Description</label>
+        <textarea class="form-control" id="Description" name="Description" rows="3" required>@Model.Service.Description</textarea>
+    </div>
+    <div class="mb-3">
+        <label for="Price" class="form-label">Price</label>
+        <input type="number" class="form-control" id="Price" name="Price" value="@Model.Service.Price" required />
+    </div>
+
+    <button type="submit" class="btn btn-primary">Save</button>
+</form>

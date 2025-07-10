@@ -44,5 +44,39 @@ namespace InfertilityTreatmentSystem.BLL.Service
             _unitOfWork.UserRepository.PrepareRemove(user);
             await _unitOfWork.UserRepository.SaveAsync();
         }
+
+        public async Task UpdateUserByIdAsync(Guid userId, User updatedUser)
+        {
+            var user = await _unitOfWork.UserRepository.GetByIdAsync(userId);
+            if (user == null)
+            {
+                throw new Exception("User not found.");
+            }
+
+            // Update the user properties
+            user.UserName = updatedUser.UserName;
+            user.Password = updatedUser.Password;
+            user.FullName = updatedUser.FullName;
+            user.Age = updatedUser.Age;
+            user.PhoneNumber = updatedUser.PhoneNumber;
+            user.Role = updatedUser.Role;
+            user.IsActive = updatedUser.IsActive;
+
+            _unitOfWork.UserRepository.PrepareUpdate(user);
+            await _unitOfWork.UserRepository.SaveAsync();
+        }
+
+        // Delete user by UserId
+        public async Task DeleteUserByIdAsync(Guid userId)
+        {
+            var user = await _unitOfWork.UserRepository.GetByIdAsync(userId);
+            if (user == null)
+            {
+                throw new Exception("User not found.");
+            }
+
+            _unitOfWork.UserRepository.PrepareRemove(user);
+            await _unitOfWork.UserRepository.SaveAsync();
+        }
     }
 }

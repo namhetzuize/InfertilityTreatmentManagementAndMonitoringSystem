@@ -39,5 +39,39 @@ namespace InfertilityTreatmentSystem.BLL.Service
             _unitOfWork.PatientRequestRepository.PrepareRemove(request);
             await _unitOfWork.PatientRequestRepository.SaveAsync();
         }
+
+        // Update PatientRequest by RequestId
+        public async Task UpdatePatientRequestByIdAsync(Guid requestId, PatientRequest updatedRequest)
+        {
+            var request = await _unitOfWork.PatientRequestRepository.GetByIdAsync(requestId);
+            if (request == null)
+            {
+                throw new Exception("Request not found.");
+            }
+
+            // Update the request properties
+            request.CustomerId = updatedRequest.CustomerId;
+            request.DoctorId = updatedRequest.DoctorId;
+            request.ServiceId = updatedRequest.ServiceId;
+            request.Note = updatedRequest.Note;
+            request.RequestedDate = updatedRequest.RequestedDate;
+            request.CreatedDate = updatedRequest.CreatedDate;
+
+            _unitOfWork.PatientRequestRepository.PrepareUpdate(request);
+            await _unitOfWork.PatientRequestRepository.SaveAsync();
+        }
+
+        // Delete PatientRequest by RequestId
+        public async Task DeletePatientRequestByIdAsync(Guid requestId)
+        {
+            var request = await _unitOfWork.PatientRequestRepository.GetByIdAsync(requestId);
+            if (request == null)
+            {
+                throw new Exception("Request not found.");
+            }
+
+            _unitOfWork.PatientRequestRepository.PrepareRemove(request);
+            await _unitOfWork.PatientRequestRepository.SaveAsync();
+        }
     }
 }

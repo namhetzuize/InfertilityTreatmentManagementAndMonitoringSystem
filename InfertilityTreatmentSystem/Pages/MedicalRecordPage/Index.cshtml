@@ -1,0 +1,44 @@
+﻿@page
+@model InfertilityTreatmentSystem.Pages.MedicalRecordPage.IndexModel
+
+@{
+    ViewData["Title"] = "Medical Records";
+}
+
+<h1>Medical Records</h1>
+
+<a class="btn btn-primary" href="@Url.Page("./Create")">Create New Medical Record</a>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Appointment Id</th>
+            <th>Customer</th>
+            <th>Doctor</th>
+            <th>Prescription</th>
+            <th>Test Results</th>
+            <th>Note</th>
+            <th>Created Date</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var record in Model.MedicalRecords)
+        {
+            <tr>
+                <td>@record.AppointmentId</td>
+                <td>@record.Customer?.UserName</td>
+                <td>@record.Doctor?.UserName</td>
+                <td>@record.Prescription</td>
+                <td>@record.TestResults</td>
+                <td>@record.Note</td>
+                <td>@record.CreatedDate.ToString("MM/dd/yyyy")</td>
+                <td>
+                    <a href="@Url.Page("./Details", new { recordId = record.RecordId })" class="btn btn-info">Details</a>
+                    <a href="@Url.Page("./Edit", new { recordId = record.RecordId })" class="btn btn-warning">Edit</a>
+                    <a href="@Url.Page("./Delete", new { recordId = record.RecordId })" class="btn btn-danger">Delete</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

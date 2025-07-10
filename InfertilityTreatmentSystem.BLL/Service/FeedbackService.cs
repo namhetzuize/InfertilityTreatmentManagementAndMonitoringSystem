@@ -39,5 +39,35 @@ namespace InfertilityTreatmentSystem.BLL.Service
             _unitOfWork.FeedbackRepository.PrepareRemove(feedback);
             await _unitOfWork.FeedbackRepository.SaveAsync();
         }
+
+        // Update Feedback by FeedbackId
+        public async Task UpdateFeedbackByIdAsync(Guid feedbackId, Feedback updatedFeedback)
+        {
+            var feedback = await _unitOfWork.FeedbackRepository.GetByIdAsync(feedbackId);
+            if (feedback == null)
+            {
+                throw new Exception("Feedback not found.");
+            }
+
+            // Update feedback properties
+            feedback.Rating = updatedFeedback.Rating;
+            feedback.Comment = updatedFeedback.Comment;
+
+            _unitOfWork.FeedbackRepository.PrepareUpdate(feedback);
+            await _unitOfWork.FeedbackRepository.SaveAsync();
+        }
+
+        // Delete Feedback by FeedbackId
+        public async Task DeleteFeedbackByIdAsync(Guid feedbackId)
+        {
+            var feedback = await _unitOfWork.FeedbackRepository.GetByIdAsync(feedbackId);
+            if (feedback == null)
+            {
+                throw new Exception("Feedback not found.");
+            }
+
+            _unitOfWork.FeedbackRepository.PrepareRemove(feedback);
+            await _unitOfWork.FeedbackRepository.SaveAsync();
+        }
     }
 }

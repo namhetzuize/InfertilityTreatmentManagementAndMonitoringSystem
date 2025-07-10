@@ -1,0 +1,23 @@
+﻿@page "{requestId:guid}"
+@model InfertilityTreatmentSystem.Pages.PatientRequestPage.DeleteModel
+
+@{
+    ViewData["Title"] = "Delete Patient Request";
+}
+
+<h1>Delete Patient Request</h1>
+
+<p>Are you sure you want to delete this request?</p>
+
+<div>
+    <p><strong>Customer:</strong> @Model.Request.Customer?.UserName</p>
+    <p><strong>Doctor:</strong> @Model.Request.Doctor?.UserName</p>
+    <p><strong>Service:</strong> @Model.Request.Service?.ServiceName</p>
+    <p><strong>Note:</strong> @Model.Request.Note</p>
+    <p><strong>Requested Date:</strong> @Model.Request.RequestedDate.ToString("MM/dd/yyyy")</p>
+</div>
+
+<form method="post">
+    <button type="submit" class="btn btn-danger">Delete</button>
+    <a href="@Url.Page("./Index")" class="btn btn-secondary">Cancel</a>
+</form>

@@ -1,0 +1,52 @@
+﻿@page
+@model InfertilityTreatmentSystem.Pages.SchedulePage.CreateModel
+
+@{
+    ViewData["Title"] = "Create Schedule";
+}
+
+<h1>Create Schedule</h1>
+
+<form method="post">
+    <div class="mb-3">
+        <label for="CustomerId" class="form-label">Customer</label>
+        <select class="form-control" id="CustomerId" name="CustomerId" required>
+            @foreach (var customer in Model.Customers)
+            {
+                <option value="@customer.UserId">@customer.UserName</option>
+            }
+        </select>
+    </div>
+
+    <div class="mb-3">
+        <label for="DoctorId" class="form-label">Doctor</label>
+        <select class="form-control" id="DoctorId" name="DoctorId" required>
+            @foreach (var doctor in Model.Doctors)
+            {
+                <option value="@doctor.UserId">@doctor.UserName</option>
+            }
+        </select>
+    </div>
+
+    <div class="mb-3">
+        <label for="ServiceId" class="form-label">Service</label>
+        <select class="form-control" id="ServiceId" name="ServiceId" required>
+            @foreach (var service in Model.Services)
+            {
+                <option value="@service.ServiceId">@service.ServiceName</option>
+            }
+        </select>
+    </div>
+
+    <div class="mb-3">
+        <label for="ScheduleDate" class="form-label">Schedule Date</label>
+        <input type="datetime-local" class="form-control" id="ScheduleDate" name="ScheduleDate" required />
+    </div>
+
+    <div class="mb-3">
+        <label for="Note" class="form-label">Note</label>
+        <textarea class="form-control" id="Note" name="Note" required></textarea>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Create</button>
+</form>

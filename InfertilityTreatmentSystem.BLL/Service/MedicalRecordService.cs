@@ -39,5 +39,36 @@ namespace InfertilityTreatmentSystem.BLL.Service
             _unitOfWork.MedicalRecordRepository.PrepareRemove(record);
             await _unitOfWork.MedicalRecordRepository.SaveAsync();
         }
+
+        // Update MedicalRecord by RecordId
+        public async Task UpdateMedicalRecordByIdAsync(Guid recordId, MedicalRecord updatedRecord)
+        {
+            var record = await _unitOfWork.MedicalRecordRepository.GetByIdAsync(recordId);
+            if (record == null)
+            {
+                throw new Exception("Medical Record not found.");
+            }
+
+            // Update record properties
+            record.Prescription = updatedRecord.Prescription;
+            record.TestResults = updatedRecord.TestResults;
+            record.Note = updatedRecord.Note;
+
+            _unitOfWork.MedicalRecordRepository.PrepareUpdate(record);
+            await _unitOfWork.MedicalRecordRepository.SaveAsync();
+        }
+
+        // Delete MedicalRecord by RecordId
+        public async Task DeleteMedicalRecordByIdAsync(Guid recordId)
+        {
+            var record = await _unitOfWork.MedicalRecordRepository.GetByIdAsync(recordId);
+            if (record == null)
+            {
+                throw new Exception("Medical Record not found.");
+            }
+
+            _unitOfWork.MedicalRecordRepository.PrepareRemove(record);
+            await _unitOfWork.MedicalRecordRepository.SaveAsync();
+        }
     }
 }

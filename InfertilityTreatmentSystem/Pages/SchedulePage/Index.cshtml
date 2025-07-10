@@ -1,0 +1,38 @@
+﻿@page
+@model InfertilityTreatmentSystem.Pages.SchedulePage.IndexModel
+
+@{
+    ViewData["Title"] = "Schedules";
+}
+
+<h1>Schedules</h1>
+
+<a class="btn btn-primary" asp-page="./Create">Create New Schedule</a>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Customer</th>
+            <th>Doctor</th>
+            <th>Service</th>
+            <th>Schedule Date</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var schedule in Model.Schedules)
+        {
+            <tr>
+                <td>@schedule.Customer?.UserName </td>
+                <td>@schedule.Doctor?.UserName </td>
+                <td>@schedule.SerivceName</td>
+                <td>@schedule.ScheduleDate?.ToString("MM/dd/yyyy")</td>
+                <td>
+                    <a href="@Url.Page("./Details", new { scheduleId = schedule.ScheduleId })" class="btn btn-info">Details</a>
+                    <a href="@Url.Page("./Edit", new { scheduleId = schedule.ScheduleId })" class="btn btn-warning">Edit</a>
+                    <a href="@Url.Page("./Delete", new { scheduleId = schedule.ScheduleId })" class="btn btn-danger">Delete</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

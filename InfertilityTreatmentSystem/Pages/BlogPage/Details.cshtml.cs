@@ -8,13 +8,16 @@ namespace InfertilityTreatmentSystem.Pages.BlogPage
     public class DetailsModel : PageModel
     {
         private readonly BlogService _blogService;
+        private readonly UserService _userService;
 
         [BindProperty]
         public Blog Blog { get; set; }
+        public User Author { get; set; } // To hold the Author details
 
-        public DetailsModel(BlogService blogService)
+        public DetailsModel(BlogService blogService, UserService userService)
         {
             _blogService = blogService;
+            _userService = userService;
         }
 
         public async Task<IActionResult> OnGetAsync(Guid blogId)
@@ -25,6 +28,9 @@ namespace InfertilityTreatmentSystem.Pages.BlogPage
             {
                 return NotFound();
             }
+
+            // Fetch the author of the blog
+            Author = await _userService.GetUserByIdAsync(Blog.UserId);
 
             return Page();
         }

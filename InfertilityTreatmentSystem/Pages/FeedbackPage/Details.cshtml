@@ -1,0 +1,22 @@
+﻿@page "{feedbackId:guid}"
+@model InfertilityTreatmentSystem.Pages.FeedbackPage.DetailsModel
+
+@{
+    ViewData["Title"] = "Feedback Details";
+}
+
+<h1>Feedback Details</h1>
+
+<div>
+    <h3>Feedback Information</h3>
+    <p><strong>Customer:</strong> @Model.Feedback.Customer?.UserName</p>
+    <p><strong>Rating:</strong> @Model.Feedback.Rating</p>
+    <p><strong>Comment:</strong> @Model.Feedback.Comment</p>
+    <p><strong>Created Date:</strong> @Model.Feedback.CreatedDate?.ToString("MM/dd/yyyy")</p>
+</div>
+
+<div>
+    <a href="@Url.Page("./Edit", new { feedbackId = Model.Feedback.FeedbackId })" class="btn btn-warning">Edit</a>
+    <a href="@Url.Page("./Delete", new { feedbackId = Model.Feedback.FeedbackId })" class="btn btn-danger">Delete</a>
+    <a href="@Url.Page("./Index")" class="btn btn-secondary">Back to List</a>
+</div>

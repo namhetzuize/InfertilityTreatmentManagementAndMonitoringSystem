@@ -1,0 +1,23 @@
+﻿@page "{scheduleId:guid}"
+@model InfertilityTreatmentSystem.Pages.SchedulePage.DetailsModel
+
+@{
+    ViewData["Title"] = "Schedule Details";
+}
+
+<h1>Schedule Details</h1>
+
+<div>
+    <h3>Schedule Information</h3>
+    <p><strong>Customer:</strong> @Model.Customer?.UserName </p>
+    <p><strong>Doctor:</strong> @Model.Doctor?.UserName</p>
+    <p><strong>Service:</strong> @Model.Schedule.SerivceName </p>
+    <p><strong>Schedule Date:</strong> @Model.Schedule.ScheduleDate?.ToString("MM/dd/yyyy")</p>
+    <p><strong>Note:</strong> @Model.Schedule.Note</p>
+</div>
+
+<div>
+    <a href="@Url.Page("./Edit", new { scheduleId = Model.Schedule.ScheduleId })" class="btn btn-warning">Edit</a>
+    <a href="@Url.Page("./Delete", new { scheduleId = Model.Schedule.ScheduleId })" class="btn btn-danger">Delete</a>
+    <a href="@Url.Page("./Index")" class="btn btn-secondary">Back to List</a>
+</div>

@@ -26,7 +26,7 @@
             <div class="card-body">
                 <p><strong>Content:</strong> @Model.Blog.Content</p>
                 <p><strong>Created Date:</strong> @Model.Blog.CreatedDate?.ToString("yyyy-MM-dd")</p>
-                <p><strong>Author:</strong> @Model.Blog.User?.FullName</p>
+                <p><strong>Author:</strong> @Model.Author?.FullName</p>
             </div>
             <div class="card-footer">
                 <a href="/BlogPage/Edit?blogId=@Model.Blog.BlogId" class="btn btn-warning">Edit</a>

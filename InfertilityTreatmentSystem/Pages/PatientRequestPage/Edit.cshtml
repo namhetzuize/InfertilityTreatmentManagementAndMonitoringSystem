@@ -1,0 +1,56 @@
+﻿@page "{requestId:guid}"
+@model InfertilityTreatmentSystem.Pages.PatientRequestPage.EditModel
+
+@{
+    ViewData["Title"] = "Edit Patient Request";
+}
+
+<h1>Edit Patient Request</h1>
+
+<form method="post">
+    <div class="mb-3">
+        <label for="CustomerId" class="form-label">Customer</label>
+        <select class="form-control" id="CustomerId" name="CustomerId" required>
+            @foreach (var customer in Model.Customers)
+            {
+                <option value="@customer.UserId"
+                        selected="@(customer.UserId == Model.Request.CustomerId)">
+                    @customer.UserName
+                </option>
+            }
+        </select>
+    </div>
+
+    <div class="mb-3">
+        <label for="DoctorId" class="form-label">Doctor</label>
+        <select class="form-control" id="DoctorId" name="DoctorId" required>
+            @foreach (var doctor in Model.Doctors)
+            {
+                <option value="@doctor.UserId"
+                        selected="@(doctor.UserId == Model.Request.DoctorId)">
+                    @doctor.UserName
+                </option>
+            }
+        </select>
+    </div>
+
+    <div class="mb-3">
+        <label for="ServiceId" class="form-label">Service</label>
+        <select class="form-control" id="ServiceId" name="ServiceId" required>
+            @foreach (var service in Model.Services)
+            {
+                <option value="@service.ServiceId"
+                        selected="@(service.ServiceId == Model.Request.ServiceId)">
+                    @service.ServiceName
+                </option>
+            }
+        </select>
+    </div>
+
+    <div class="mb-3">
+        <label for="Note" class="form-label">Note</label>
+        <textarea class="form-control" id="Note" name="Note" required>@Model.Request.Note</textarea>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Update</button>
+</form>

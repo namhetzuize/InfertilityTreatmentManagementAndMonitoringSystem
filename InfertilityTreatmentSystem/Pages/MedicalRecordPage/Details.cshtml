@@ -1,0 +1,25 @@
+﻿@page "{recordId:guid}"
+@model InfertilityTreatmentSystem.Pages.MedicalRecordPage.DetailsModel
+
+@{
+    ViewData["Title"] = "Medical Record Details";
+}
+
+<h1>Medical Record Details</h1>
+
+<div>
+    <h3>Medical Record Information</h3>
+    <p><strong>Appointment Id:</strong> @Model.MedicalRecord.AppointmentId</p>
+    <p><strong>Doctor:</strong> @Model.MedicalRecord.Doctor.UserName</p>
+    <p><strong>Customer:</strong> @Model.MedicalRecord.Customer.UserName</p>
+    <p><strong>Prescription:</strong> @Model.MedicalRecord.Prescription</p>
+    <p><strong>Test Results:</strong> @Model.MedicalRecord.TestResults</p>
+    <p><strong>Note:</strong> @Model.MedicalRecord.Note</p>
+    <p><strong>Created Date:</strong> @Model.MedicalRecord.CreatedDate.ToString("MM/dd/yyyy")</p>
+</div>
+
+<div>
+    <a href="@Url.Page("./Edit", new { recordId = Model.MedicalRecord.RecordId })" class="btn btn-warning">Edit</a>
+    <a href="@Url.Page("./Delete", new { recordId = Model.MedicalRecord.RecordId })" class="btn btn-danger">Delete</a>
+    <a href="@Url.Page("./Index")" class="btn btn-secondary">Back to List</a>
+</div>

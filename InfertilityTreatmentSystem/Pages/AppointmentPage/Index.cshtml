@@ -1,0 +1,39 @@
+﻿@page
+@model InfertilityTreatmentSystem.Pages.AppointmentPage.IndexModel
+
+@{
+    ViewData["Title"] = "Appointments";
+}
+
+<h1>Appointments</h1>
+
+<a class="btn btn-primary" asp-page="./Create">Create New Appointment</a>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Customer</th>
+            <th>Doctor</th>
+            <th>Appointment Date</th>
+            <th>Status</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var appointment in Model.Appointments)
+        {
+            <tr>
+                <td>@(appointment.Customer?.UserName ?? "No Customer")</td>
+                <td>@(appointment.Doctor?.UserName ?? "No Doctor")</td>
+                <td>@appointment.AppointmentDate.ToString("MM/dd/yyyy")</td>
+                <td>@appointment.Status</td>
+                <td>
+                    <!-- Details, Edit, Delete buttons -->
+                    <a href="@Url.Page("./Details", new { id = appointment.AppointmentId })" class="btn btn-info">Details</a>
+                    <a href="@Url.Page("./Edit", new { id = appointment.AppointmentId })" class="btn btn-warning">Edit</a>
+                    <a href="@Url.Page("./Delete", new { appointmentId = appointment.AppointmentId })" class="btn btn-danger">Delete</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

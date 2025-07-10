@@ -1,0 +1,55 @@
+﻿@page "{id:guid}"
+@model InfertilityTreatmentSystem.Pages.AppointmentPage.EditModel
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+
+<h1>Edit Appointment</h1>
+
+<form method="post">
+    <!-- Add hidden field for AppointmentId -->
+    <input type="hidden" asp-for="Appointment.AppointmentId" />
+
+    <div class="mb-3">
+        <label asp-for="Appointment.CustomerId" class="form-label">Customer</label>
+        <select asp-for="Appointment.CustomerId"
+                class="form-select"
+                asp-items="Model.Customers">
+            <option value="">-- select customer --</option>
+        </select>
+        <span asp-validation-for="Appointment.CustomerId" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="Appointment.DoctorId" class="form-label">Doctor</label>
+        <select asp-for="Appointment.DoctorId"
+                class="form-select"
+                asp-items="Model.Doctors">
+            <option value="">-- select doctor --</option>
+        </select>
+        <span asp-validation-for="Appointment.DoctorId" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="Appointment.ServiceId" class="form-label">Service</label>
+        <select asp-for="Appointment.ServiceId"
+                class="form-select"
+                asp-items="Model.Services">
+            <option value="">-- select service --</option>
+        </select>
+        <span asp-validation-for="Appointment.ServiceId" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="Appointment.AppointmentDate" class="form-label">Date &amp; Time</label>
+        <input asp-for="Appointment.AppointmentDate" type="datetime-local" class="form-control" />
+        <span asp-validation-for="Appointment.AppointmentDate" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="Appointment.Status" class="form-label">Status</label>
+        <input asp-for="Appointment.Status" class="form-control" />
+        <span asp-validation-for="Appointment.Status" class="text-danger"></span>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Save Changes</button>
+    <a asp-page="./Index" class="btn btn-secondary ms-2">Cancel</a>
+</form>

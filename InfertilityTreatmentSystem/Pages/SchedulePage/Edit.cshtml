@@ -1,0 +1,62 @@
+﻿@page "{scheduleId:guid}"
+@model InfertilityTreatmentSystem.Pages.SchedulePage.EditModel
+
+@{
+    ViewData["Title"] = "Edit Schedule";
+}
+
+<h1>Edit Schedule</h1>
+
+<form method="post">
+    <div class="mb-3">
+        <label for="CustomerId" class="form-label">Customer</label>
+        <select class="form-control" id="CustomerId" name="CustomerId" required>
+            @foreach (var customer in Model.Customers)
+            {
+                <option value="@customer.UserId"
+                        selected="@(customer.UserId == Model.Schedule.CustomerId)">
+                    @customer.UserName
+                </option>
+            }
+        </select>
+    </div>
+
+    <div class="mb-3">
+        <label for="DoctorId" class="form-label">Doctor</label>
+        <select class="form-control" id="DoctorId" name="DoctorId" required>
+            @foreach (var doctor in Model.Doctors)
+            {
+                <option value="@doctor.UserId"
+                        selected="@(doctor.UserId == Model.Schedule.DoctorId)">
+                    @doctor.UserName
+                </option>
+            }
+        </select>
+    </div>
+
+    <div class="mb-3">
+        <label for="ServiceName" class="form-label">Service</label>
+        <select class="form-control" id="ServiceName" name="ServiceName" required>
+            @foreach (var service in Model.Services)
+            {
+                <option value="@service.ServiceName"
+                        selected="@(service.ServiceName == Model.Schedule.SerivceName)">
+                    @service.ServiceName
+                </option>
+            }
+        </select>
+    </div>
+
+
+    <div class="mb-3">
+        <label for="ScheduleDate" class="form-label">Schedule Date</label>
+        <input type="datetime-local" class="form-control" id="ScheduleDate" name="ScheduleDate" value="@Model.Schedule.ScheduleDate?.ToString("yyyy-MM-ddTHH:mm")" required />
+    </div>
+
+    <div class="mb-3">
+        <label for="Note" class="form-label">Note</label>
+        <textarea class="form-control" id="Note" name="Note" required>@Model.Schedule.Note</textarea>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Update</button>
+</form>

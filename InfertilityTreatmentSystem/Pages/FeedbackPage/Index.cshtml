@@ -1,0 +1,38 @@
+﻿@page
+@model InfertilityTreatmentSystem.Pages.FeedbackPage.IndexModel
+
+@{
+    ViewData["Title"] = "Feedbacks";
+}
+
+<h1>Feedbacks</h1>
+
+<a class="btn btn-primary" asp-page="./Create">Create New Feedback</a>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Customer</th>
+            <th>Rating</th>
+            <th>Comment</th>
+            <th>Created Date</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var feedback in Model.Feedbacks)
+        {
+            <tr>
+                <td>@(feedback.Customer?.UserName ?? "No Customer")</td>
+                <td>@feedback.Rating</td>
+                <td>@feedback.Comment</td>
+                <td>@feedback.CreatedDate?.ToString("MM/dd/yyyy")</td>
+                <td>
+                    <a href="@Url.Page("./Details", new { feedbackId = feedback.FeedbackId })" class="btn btn-info">Details</a>
+                    <a href="@Url.Page("./Edit", new { feedbackId = feedback.FeedbackId })" class="btn btn-warning">Edit</a>
+                    <a href="@Url.Page("./Delete", new { feedbackId = feedback.FeedbackId })" class="btn btn-danger">Delete</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

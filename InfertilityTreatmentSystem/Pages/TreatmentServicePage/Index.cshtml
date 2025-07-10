@@ -1,0 +1,38 @@
+﻿@page
+@model InfertilityTreatmentSystem.Pages.TreatmentServicePage.IndexModel
+
+@{
+    ViewData["Title"] = "Treatment Services";
+}
+
+<h1>Treatment Services</h1>
+
+<a class="btn btn-primary" asp-page="./Create">Create New Treatment Service</a>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Service Name</th>
+            <th>Description</th>
+            <th>Price</th>
+            <th>Created By</th> <!-- User Name -->
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var service in Model.TreatmentServices)
+        {
+            <tr>
+                <td>@service.ServiceName</td>
+                <td>@service.Description</td>
+                <td>@service.Price</td>
+                <td>@service.User?.UserName</td> <!-- Display user name -->
+                <td>
+                    <a href="@Url.Page("./Details", new { serviceId = service.ServiceId })" class="btn btn-info">Details</a>
+                    <a href="@Url.Page("./Edit", new { serviceId = service.ServiceId })" class="btn btn-warning">Edit</a>
+                    <a href="@Url.Page("./Delete", new { serviceId = service.ServiceId })" class="btn btn-danger">Delete</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

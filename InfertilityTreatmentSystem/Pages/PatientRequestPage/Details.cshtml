@@ -1,0 +1,24 @@
+﻿@page "{requestId:guid}"
+@model InfertilityTreatmentSystem.Pages.PatientRequestPage.DetailsModel
+
+@{
+    ViewData["Title"] = "Patient Request Details";
+}
+
+<h1>Patient Request Details</h1>
+
+<div>
+    <h3>Request Information</h3>
+    <p><strong>Customer:</strong> @Model.Request.Customer?.UserName</p>
+    <p><strong>Doctor:</strong> @Model.Request.Doctor?.UserName</p>
+    <p><strong>Service:</strong> @Model.Request.Service?.ServiceName</p>
+    <p><strong>Note:</strong> @Model.Request.Note</p>
+    <p><strong>Requested Date:</strong> @Model.Request.RequestedDate.ToString("MM/dd/yyyy")</p>
+    <p><strong>Created Date:</strong> @Model.Request.CreatedDate.ToString("MM/dd/yyyy")</p>
+</div>
+
+<div>
+    <a href="@Url.Page("./Edit", new { requestId = Model.Request.RequestId })" class="btn btn-warning">Edit</a>
+    <a href="@Url.Page("./Delete", new { requestId = Model.Request.RequestId })" class="btn btn-danger">Delete</a>
+    <a href="@Url.Page("./Index")" class="btn btn-secondary">Back to List</a>
+</div>

@@ -33,7 +33,8 @@ namespace InfertilityTreatmentSystem.Pages.BlogPage
         {
             if (ModelState.IsValid)
             {
-                await _blogService.UpdateBlogAsync(Blog);
+                // Use the UpdateBlogByIdAsync method to explicitly update the blog by its BlogId
+                await _blogService.UpdateBlogByIdAsync(Blog.BlogId, Blog);
                 return RedirectToPage("/BlogPage/Index");
             }
 
