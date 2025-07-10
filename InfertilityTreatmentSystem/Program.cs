@@ -1,15 +1,15 @@
+using InfertilityTreatmentSystem.BLL.Service;
 using InfertilityTreatmentSystem.DAL;
 using InfertilityTreatmentSystem.DAL.Models;
-using InfertilityTreatmentSystem.BLL.Service;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddRazorPages();
-
 builder.Services.AddDbContext<InfertilityTreatmentDBContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
+// Register services
 builder.Services.AddScoped<UnitOfWork>();
 builder.Services.AddScoped<UserService>();
 builder.Services.AddScoped<AppointmentService>();
@@ -40,15 +40,12 @@ app.UseStaticFiles();
 
 app.UseRouting();
 
-app.UseSession();
+app.MapGet("/", () => Results.Redirect("/Home"));
+
+app.UseSession(); 
 
 app.UseAuthorization();
 
 app.MapRazorPages();
 
 app.Run();
-
-app.UseEndpoints(endpoints =>
-{
-    endpoints.MapRazorPages(); 
-});

@@ -12,6 +12,12 @@ namespace InfertilityTreatmentSystem.BLL.Service
             _unitOfWork = unitOfWork;
         }
 
+        // Adding GetUserByUserNameAsync method to check if user exists by UserName
+        public async Task<User> GetUserByUserNameAsync(string username)
+        {
+            return await _unitOfWork.UserRepository.GetUserByUserNameAsync(username);
+        }
+
         public async Task<User> Login (string username, string password)
         {
             return await _unitOfWork.UserRepository.LoginAsync(username, password);

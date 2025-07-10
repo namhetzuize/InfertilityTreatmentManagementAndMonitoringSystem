@@ -1,8 +1,9 @@
 ﻿@page
-@model IndexModel
+@model InfertilityTreatmentSystem.Pages.RegisterModel
+
 @{
     Layout = null;
-    ViewData["Title"] = "Login";
+    ViewData["Title"] = "Register";
 
     var errors = ViewData.ModelState.Values
         .SelectMany(v => v.Errors)
@@ -15,7 +16,7 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - MyStore</title>
+    <title>@ViewData["Title"] - InfertilityTreatmentSystem</title>
 
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" />
@@ -50,9 +51,9 @@
             box-shadow: none;
         }
 
-        .btn-primary:hover {
-            background-color: #0056b3;
-        }
+            .btn-primary:hover {
+                background-color: #0056b3;
+            }
 
         input.form-control {
             background-color: #f8f9fa;
@@ -81,30 +82,40 @@
         }
     </div>
 
-    <!-- Login Card -->
+    <!-- Register Card -->
     <div class="login-container">
         <div class="card">
             <div class="card-header text-center">
-                <h4>Login</h4>
+                <h4>Register</h4>
             </div>
             <div class="card-body">
                 <form method="post">
                     <div class="mb-3">
-                        <label for="Username" class="form-label">Username</label>
-                        <input type="text" name="Username" class="form-control" placeholder="Enter your username" required />
+                        <label for="UserName" class="form-label">Username</label>
+                        <input type="text" class="form-control" id="UserName" name="UserName" required />
                     </div>
 
                     <div class="mb-3">
                         <label for="Password" class="form-label">Password</label>
-                        <div class="input-group">
-                            <input type="password" id="passwordInput" name="Password" class="form-control" placeholder="Enter your password" required />
-                            <button type="button" class="btn btn-outline-secondary" id="togglePassword">
-                                <i class="bi bi-eye-slash" id="eyeIcon"></i>
-                            </button>
-                        </div>
+                        <input type="password" class="form-control" id="Password" name="Password" required />
                     </div>
 
-                    <button type="submit" class="btn btn-primary w-100">Login</button>
+                    <div class="mb-3">
+                        <label for="ConfirmPassword" class="form-label">Confirm Password</label>
+                        <input type="password" class="form-control" id="ConfirmPassword" name="ConfirmPassword" required />
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="FullName" class="form-label">Full Name</label>
+                        <input type="text" class="form-control" id="FullName" name="FullName" required />
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="PhoneNumber" class="form-label">Phone Number</label>
+                        <input type="text" class="form-control" id="PhoneNumber" name="PhoneNumber" />
+                    </div>
+
+                    <button type="submit" class="btn btn-primary w-100">Register</button>
                 </form>
             </div>
         </div>
@@ -118,18 +129,6 @@
         const toastElList = [].slice.call(document.querySelectorAll('.toast'));
         toastElList.forEach(toastEl => {
             setTimeout(() => new bootstrap.Toast(toastEl).hide(), 3000);
-        });
-
-        // Show/hide password
-        const togglePassword = document.getElementById('togglePassword');
-        const passwordInput = document.getElementById('passwordInput');
-        const eyeIcon = document.getElementById('eyeIcon');
-
-        togglePassword.addEventListener('click', () => {
-            const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
-            passwordInput.setAttribute('type', type);
-            eyeIcon.classList.toggle('bi-eye');
-            eyeIcon.classList.toggle('bi-eye-slash');
         });
     </script>
 </body>

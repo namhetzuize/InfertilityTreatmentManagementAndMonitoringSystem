@@ -1,15 +1,14 @@
 using InfertilityTreatmentSystem.BLL.Service;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using Microsoft.AspNetCore.Http;
 
 namespace InfertilityTreatmentSystem.Pages
 {
-    public class IndexModel : PageModel
+    public class LoginModel : PageModel
     {
         private readonly UserService _userService;
 
-        public IndexModel(UserService userService)
+        public LoginModel(UserService userService)
         {
             _userService = userService;
         }
