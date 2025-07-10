@@ -26,7 +26,7 @@ namespace InfertilityTreatmentSystem.Pages
             if (HttpContext.Session.GetString("UserName") != null)
             {
                 // Redirect to Blog Page if user is logged in
-                return RedirectToPage("/SchedulePage/Index");
+                return RedirectToPage("/Index");
             }
 
             return Page();
@@ -47,7 +47,7 @@ namespace InfertilityTreatmentSystem.Pages
             HttpContext.Session.SetString("UserName", user.UserName ?? "");
             HttpContext.Session.SetString("UserId", user.UserId.ToString());
 
-            return RedirectToPage("/SchedulePage/Index");
+            return RedirectToPage("/Home");
         }
 
         public IActionResult OnGetLogout()
