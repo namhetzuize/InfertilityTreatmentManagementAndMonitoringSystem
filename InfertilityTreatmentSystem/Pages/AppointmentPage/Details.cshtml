@@ -1,23 +1,56 @@
 ﻿@page "{id:guid}"
 @model InfertilityTreatmentSystem.Pages.AppointmentPage.DetailsModel
-@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
-
-<h1>Appointment Details</h1>
-
-<div><strong>Customer:</strong> @(Model.Appointment.Customer?.UserName ?? "—")</div>
-<div><strong>Doctor:</strong>   @(Model.Appointment.Doctor?.UserName ?? "—")</div>
-<div><strong>Service:</strong>  @(Model.Appointment.Service?.ServiceName ?? "—")</div>
-
-<div>
-    <strong>Date:</strong>
-    @Model.Appointment.AppointmentDate.ToString("MM/dd/yyyy HH:mm")
-</div>
-
-<div><strong>Status:</strong> @(Model.Appointment.Status)</div>
-
-@if (!string.IsNullOrWhiteSpace(Model.Appointment.RejectReason))
-{
-    <div><strong>Reject Reason:</strong> @Model.Appointment.RejectReason</div>
+@using System.Security.Claims
+@{
+    ViewData["Title"] = "Appointment Details";
+    var role = User.FindFirstValue(ClaimTypes.Role); 
 }
 
-<a asp-page="./Index" class="btn btn-secondary mt-3">Back to List</a>
+<h2>Appointment Details</h2>
+
+
+@* <div class="alert alert-info">
+    <strong>DEBUG:</strong> Role = <code>@role</code>
+</div> *@
+
+<table class="table">
+    <tr>
+        <th>Customer</th>
+        <td>@Model.Appointment.Customer?.FullName</td>
+    </tr>
+    <tr>
+        <th>Doctor</th>
+        <td>@Model.Appointment.Doctor?.FullName</td>
+    </tr>
+    <tr>
+        <th>Service</th>
+        <td>@Model.Appointment.Service?.ServiceName</td>
+    </tr>
+    <tr>
+        <th>Date</th>
+        <td>@Model.Appointment.AppointmentDate.ToString("dd/MM/yyyy HH:mm")</td>
+    </tr>
+    <tr>
+        <th>Status</th>
+        <td>@Model.Appointment.Status</td>
+    </tr>
+</table>
+
+<a asp-page="./Index" class="btn btn-secondary">Back</a>
+
+@if (role == "Doctor")
+{
+    <a class="btn btn-success ms-2"
+       asp-page="/SchedulePage/Create"
+       asp-route-AppointmentId="@Model.Appointment.AppointmentId">Create Schedule</a>
+    <a class="btn btn-info ms-2"
+       asp-page="/SchedulePage/Index"
+       asp-route-AppointmentId="@Model.Appointment.AppointmentId">View Schedules</a>
+}
+
+@if (role == "Customer")
+{
+    <a class="btn btn-info ms-2"
+       asp-page="/SchedulePage/Index"
+       asp-route-AppointmentId="@Model.Appointment.AppointmentId">View Schedules</a>
+}

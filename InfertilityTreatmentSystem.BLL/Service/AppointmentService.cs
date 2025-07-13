@@ -1,5 +1,6 @@
 ﻿using InfertilityTreatmentSystem.DAL;
 using InfertilityTreatmentSystem.DAL.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace InfertilityTreatmentSystem.BLL.Service
 {
@@ -110,6 +111,37 @@ namespace InfertilityTreatmentSystem.BLL.Service
 
             _unitOfWork.AppointmentRepository.PrepareRemove(appointment);
             await _unitOfWork.AppointmentRepository.SaveAsync();
+        }
+        public async Task<List<Appointment>> GetAppointmentsByDoctorIdAsync(Guid doctorId)
+        {
+            var appointments = await _unitOfWork.AppointmentRepository.GetAllAsync();
+
+            var doctorAppointments = appointments
+                .Where(a => a.DoctorId == doctorId)
+                .ToList();
+
+            foreach (var appointment in doctorAppointments)
+            {
+                appointment.Customer = await _userService.GetUserByIdAsync(appointment.CustomerId);
+                appointment.Doctor = await _userService.GetUserByIdAsync(appointment.DoctorId);
+                appointment.Service = await _treatmentServiceService.GetTreatmentServiceByIdAsync(appointment.ServiceId);
+            }
+
+            return doctorAppointments;
+        }
+        public async Task<List<Appointment>> GetAppointmentsByCustomerIdAsync(Guid customerId)
+        {
+            var appointments = await _unitOfWork.AppointmentRepository.GetAllAsync();
+            var customerAppointments = appointments
+                .Where(a => a.CustomerId == customerId)
+                .ToList();
+            foreach (var appointment in customerAppointments)
+            {
+                appointment.Customer = await _userService.GetUserByIdAsync(appointment.CustomerId);
+                appointment.Doctor = await _userService.GetUserByIdAsync(appointment.DoctorId);
+                appointment.Service = await _treatmentServiceService.GetTreatmentServiceByIdAsync(appointment.ServiceId);
+            }
+            return customerAppointments;
         }
     }
 }

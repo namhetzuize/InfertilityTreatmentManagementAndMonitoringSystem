@@ -72,5 +72,17 @@ namespace InfertilityTreatmentSystem.BLL.Service
             _unitOfWork.ScheduleRepository.PrepareRemove(schedule);
             await _unitOfWork.ScheduleRepository.SaveAsync();
         }
+        public async Task<List<Schedule>> GetSchedulesByAppointmentIdAsync(Guid appointmentId)
+        {
+            var schedules = await _unitOfWork.ScheduleRepository.GetAllAsync();
+
+           
+            var result = schedules
+                .Where(s => s.AppointmentId == appointmentId)
+                .ToList();
+
+
+            return result;
+        }
     }
 }

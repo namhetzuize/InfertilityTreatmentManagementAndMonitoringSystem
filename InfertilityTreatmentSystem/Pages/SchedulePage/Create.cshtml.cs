@@ -7,54 +7,59 @@ using System.Threading.Tasks;
 namespace InfertilityTreatmentSystem.Pages.SchedulePage
 {
     public class CreateModel : PageModel
+
     {
         private readonly ScheduleService _scheduleService;
-        private readonly UserService _userService;
-        private readonly TreatmentServiceService _treatmentServiceService;
+        private readonly AppointmentService _appointmentService;
 
-        [BindProperty]
-        public Schedule NewSchedule { get; set; }
-
-        public List<User> Customers { get; set; }
-        public List<User> Doctors { get; set; }
-        public List<TreatmentService> Services { get; set; }
-
-        public CreateModel(ScheduleService scheduleService, UserService userService, TreatmentServiceService treatmentServiceService)
+        public CreateModel(ScheduleService scheduleService, AppointmentService appointmentService)
         {
             _scheduleService = scheduleService;
-            _userService = userService;
-            _treatmentServiceService = treatmentServiceService;
+            _appointmentService = appointmentService;
         }
 
-        public async Task OnGetAsync()
+        [BindProperty]
+        public Schedule Schedule { get; set; }
+
+        [BindProperty(SupportsGet = true)]
+        public Guid AppointmentId { get; set; }
+
+        public string CustomerName { get; set; }
+        public string DoctorName { get; set; }
+
+        public async Task<IActionResult> OnGetAsync()
         {
-            // Fetch Customers, Doctors, and Services for the dropdowns
-            Customers = await _userService.GetAllUsersAsync();
-            Doctors = Customers.Where(u => u.Role == "Doctor").ToList();
-            Customers = Customers.Where(u => u.Role == "Customer").ToList();
-            Services = await _treatmentServiceService.GetAllTreatmentServicesAsync();
+            var appointment = await _appointmentService.GetAppointmentByIdAsync(AppointmentId);
+            if (appointment == null) return NotFound();
+
+            // Gán tự động
+            Schedule = new Schedule
+            {
+                AppointmentId = AppointmentId,
+                CustomerId = appointment.CustomerId,
+                DoctorId = appointment.DoctorId,
+                SerivceName = appointment.Service?.ServiceName ?? "N/A"
+            };
+
+            CustomerName = appointment.Customer?.FullName;
+            DoctorName = appointment.Doctor?.FullName;
+
+            return Page();
         }
 
         public async Task<IActionResult> OnPostAsync()
         {
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid)
+                return Page();
+
+            if (Schedule.ScheduleDate <= DateTime.Now)
             {
-                // Check if the service exists by its name
-                var service = await _treatmentServiceService.GetServiceByServiceNameAsync(NewSchedule.SerivceName);
-
-                if (service == null)
-                {
-                    ModelState.AddModelError("SerivceName", "The service does not exist.");
-                    return Page(); // Show an error if the service doesn't exist
-                }
-
-                // Create the schedule
-                service.ServiceName = NewSchedule.SerivceName;
-                await _scheduleService.CreateScheduleAsync(NewSchedule);
-                return RedirectToPage("./Index");
+                ModelState.AddModelError("Schedule.ScheduleDate", "Vui lòng chọn thời gian hợp lệ.");
+                return Page();
             }
 
-            return Page(); // Return the page if model state is invalid
+            await _scheduleService.CreateScheduleAsync(Schedule);
+            return RedirectToPage("/AppointmentPage/Details", new { id = Schedule.AppointmentId });
         }
     }
 }

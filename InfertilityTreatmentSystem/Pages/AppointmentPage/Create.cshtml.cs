@@ -49,9 +49,27 @@ namespace InfertilityTreatmentSystem.Pages.AppointmentPage
 
             if (Appointment.AppointmentId == Guid.Empty)
                 Appointment.AppointmentId = Guid.NewGuid();
+            var selectedDateTime = Appointment.AppointmentDate;
+           
+            if (selectedDateTime <= DateTime.Now)
+            {
+                ModelState.AddModelError("Appointment.AppointmentDate", "Vui lòng chọn giờ hợp lí.");
+            }
 
+            if (selectedDateTime.Hour < 8 || selectedDateTime.Hour >= 17)
+            {
+                ModelState.AddModelError("Appointment.AppointmentDate", "Vui lòng chọn giờ trong khoảng từ 8h đến 17h.");
+            }
+
+            if (!ModelState.IsValid)
+            {
+                await PopulateDropdownsAsync();
+                return Page();
+            }
+
+            
             await _appointmentService.CreateAppointmentAsync(Appointment);
-            return RedirectToPage("./Index");
+            return RedirectToPage("/Home");
         }
 
         private async Task PopulateDropdownsAsync()
@@ -59,10 +77,10 @@ namespace InfertilityTreatmentSystem.Pages.AppointmentPage
             // load customers & doctors
             var (custs, docs) = await _appointmentService.GetCustomersAndDoctorsAsync();
             Customers = custs
-                .Select(u => new SelectListItem(u.UserName, u.UserId.ToString()))
+                .Select(u => new SelectListItem(u.FullName, u.UserId.ToString()))
                 .ToList();
             Doctors = docs
-                .Select(u => new SelectListItem(u.UserName, u.UserId.ToString()))
+                .Select(u => new SelectListItem(u.FullName, u.UserId.ToString()))
                 .ToList();
 
             // load services via your TreatmentServiceService

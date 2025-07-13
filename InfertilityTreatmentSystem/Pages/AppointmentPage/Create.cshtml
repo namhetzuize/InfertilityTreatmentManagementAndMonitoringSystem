@@ -52,3 +52,17 @@
     <button type="submit" class="btn btn-primary">Create</button>
     <a asp-page="./Index" class="btn btn-secondary ms-2">Cancel</a>
 </form>
+@section Scripts {
+    <script>
+        document.querySelector('form').addEventListener('submit', function (e) {
+            const input = document.querySelector('[name="Appointment.AppointmentDate"]');
+            const selected = new Date(input.value);
+            const hour = selected.getHours();
+
+            if (hour < 8 || hour >= 17) {
+                alert("Vui lòng chọn giờ trong khoảng từ 8h đến 17h.");
+                e.preventDefault();
+            }
+        });
+    </script>
+}
