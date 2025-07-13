@@ -1,6 +1,9 @@
-using InfertilityTreatmentSystem.BLL.Service;
+﻿using InfertilityTreatmentSystem.BLL.Service;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using System.Security.Claims;
 
 namespace InfertilityTreatmentSystem.Pages
 {
@@ -22,10 +25,9 @@ namespace InfertilityTreatmentSystem.Pages
         public IActionResult OnGet()
         {
             // Redirect if the user is already logged in
-            if (HttpContext.Session.GetString("UserName") != null)
+            if (User.Identity.IsAuthenticated)
             {
-                // Redirect to Blog Page if user is logged in
-                return RedirectToPage("/Index");
+                return RedirectToPage("/Home");
             }
 
             return Page();
@@ -33,7 +35,6 @@ namespace InfertilityTreatmentSystem.Pages
 
         public async Task<IActionResult> OnPostAsync()
         {
-            // Make sure we are matching the correct property names for login
             var user = await _userService.Login(UserName, Password);
 
             if (user == null)
@@ -42,17 +43,27 @@ namespace InfertilityTreatmentSystem.Pages
                 return Page();
             }
 
-            // Store UserName and UserId in session
-            HttpContext.Session.SetString("UserName", user.UserName ?? "");
-            HttpContext.Session.SetString("UserId", user.UserId.ToString());
+
+            var claims = new List<Claim>
+    {
+        new Claim(ClaimTypes.Name, user.UserName),
+        new Claim("UserId", user.UserId.ToString()),
+        new Claim(ClaimTypes.Role, user.Role)
+    };
+
+            var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+            var principal = new ClaimsPrincipal(identity);
+
+            await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principal);
 
             return RedirectToPage("/Home");
         }
 
-        public IActionResult OnGetLogout()
+        public async Task<IActionResult> OnGetLogout()
         {
-            HttpContext.Session.Clear(); // Clear session on logout
-            return RedirectToPage("/Index");
+            await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+            HttpContext.Session.Clear(); // có thể giữ nếu bạn dùng session cho mục đích khác
+            return RedirectToPage("/Home");
         }
     }
 }

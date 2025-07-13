@@ -1,9 +1,11 @@
 ﻿@page
 @model InfertilityTreatmentSystem.Pages.BlogPage.DetailsModel
-
+@using System.Security.Claims
 @{
     Layout = null;
     ViewData["Title"] = "Blog Details";
+    var role = User.FindFirst(ClaimTypes.Role)?.Value;
+    var currentUserId = User.Claims.FirstOrDefault(c => c.Type == "UserId")?.Value;
 }
 
 <!DOCTYPE html>
@@ -18,7 +20,11 @@
 <body>
     <div class="container">
         <h1 class="my-4">@ViewData["Title"]</h1>
-
+        <div class="alert alert-info">
+            Role: "@role" <br />
+            CurrentUserId: "@currentUserId" <br />
+            Blog.UserId: @Model.Blog.UserId
+        </div>
         <div class="card">
             <div class="card-header">
                 <h4>@Model.Blog.Title</h4>
@@ -29,8 +35,19 @@
                 <p><strong>Author:</strong> @Model.Author?.FullName</p>
             </div>
             <div class="card-footer">
-                <a href="/BlogPage/Edit?blogId=@Model.Blog.BlogId" class="btn btn-warning">Edit</a>
-                <a href="/BlogPage/Index" class="btn btn-secondary">Back to List</a>
+                @* Customer chỉ thấy nút về Home *@
+                @if (role == "Customer")
+                {
+                    <a href="/Home" class="btn btn-secondary">Back to Home</a>
+                }
+                else
+                {
+                    if (role == "Admin" || (role == "Doctor" && Model.Blog.UserId.ToString() == currentUserId))
+                    {
+                        <a href="/BlogPage/Edit?blogId=@Model.Blog.BlogId" class="btn btn-warning">Edit</a>
+                    }
+                    <a href="/BlogPage/Index" class="btn btn-secondary">Back to List</a>
+                }
             </div>
         </div>
     </div>

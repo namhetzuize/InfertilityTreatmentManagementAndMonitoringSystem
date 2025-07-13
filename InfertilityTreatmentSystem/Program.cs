@@ -1,7 +1,8 @@
-using InfertilityTreatmentSystem.BLL.Service;
+﻿using InfertilityTreatmentSystem.BLL.Service;
 using InfertilityTreatmentSystem.DAL;
 using InfertilityTreatmentSystem.DAL.Models;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Authentication.Cookies;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -26,6 +27,13 @@ builder.Services.AddSession(options =>
     options.Cookie.HttpOnly = true;
     options.Cookie.IsEssential = true;
 });
+builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+    .AddCookie(options =>
+    {
+        options.LoginPath = "/Login";         // Trang đăng nhập
+        options.LogoutPath = "/Login?handler=Logout"; // Đăng xuất
+        options.ExpireTimeSpan = TimeSpan.FromMinutes(30);
+    });
 
 var app = builder.Build();
 
@@ -42,8 +50,9 @@ app.UseRouting();
 
 app.MapGet("/", () => Results.Redirect("/Home"));
 
-app.UseSession(); 
+app.UseSession();
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapRazorPages();

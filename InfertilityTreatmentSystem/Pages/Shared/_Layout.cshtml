@@ -41,7 +41,7 @@
                         @if (User.Identity.IsAuthenticated)
                         {
                             <li class="nav-item">
-                                <a class="nav-link text-dark" asp-area="" asp-page="/Logout">Logout</a>
+                                <a class="nav-link text-dark" href="/Login?handler=Logout">Logout</a> <!-- ✅ Đúng -->
                             </li>
                         }
                     </ul>

@@ -4,6 +4,8 @@
 @{
     Layout = null;
     ViewData["Title"] = "Blogs";
+    var role = User.Claims.FirstOrDefault(c => c.Type == "Role")?.Value;
+    var currentUserId = User.Claims.FirstOrDefault(c => c.Type == "UserId")?.Value;
 }
 
 <!DOCTYPE html>
@@ -39,8 +41,12 @@
                             <td>@blog.CreatedDate?.ToString("yyyy-MM-dd")</td>
                             <td>
                                 <a href="/BlogPage/Details?blogId=@blog.BlogId" class="btn btn-info">Details</a>
-                                <a href="/BlogPage/Edit?blogId=@blog.BlogId" class="btn btn-warning">Edit</a>
-                                <a href="/BlogPage/Delete?blogId=@blog.BlogId" class="btn btn-danger">Delete</a>
+
+                                @if (role == "Admin" || (role == "Doctor" && blog.UserId.ToString() == currentUserId))
+                                {
+                                    <a href="/BlogPage/Edit?blogId=@blog.BlogId" class="btn btn-warning">Edit</a>
+                                    <a href="/BlogPage/Delete?blogId=@blog.BlogId" class="btn btn-danger">Delete</a>
+                                }
                             </td>
                         </tr>
                     }
@@ -52,7 +58,14 @@
             <p>No blogs found.</p>
         }
 
-        <a href="/BlogPage/Create" class="btn btn-primary">Create New Blog</a>
+        @if (role == "Customer")
+        {
+            <a href="/Home" class="btn btn-secondary">Back to Home</a>
+        }
+        else
+        {
+            <a href="/BlogPage/Create" class="btn btn-primary">Create New Blog</a>
+        }
     </div>
 
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
