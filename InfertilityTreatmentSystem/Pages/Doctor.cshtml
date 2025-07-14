@@ -1,0 +1,93 @@
+﻿@page
+@model InfertilityTreatmentSystem.Pages.DoctorModel
+@using System.Security.Claims
+@{
+    ViewData["Title"] = "Doctor Home";
+    var fullName = User.Claims.FirstOrDefault(c => c.Type == "FullName")?.Value ?? "Unknown";
+}
+
+<div class="container py-5">
+    <!-- Welcome -->
+    <div class="text-center mb-5">
+        <h2 class="fw-bold text-primary display-5 animate__animated animate__fadeInDown">
+            👨‍⚕️ Welcome, Dr. @fullName
+        </h2>
+        <p class="text-muted fs-5">Manage your appointments below.</p>
+    </div>
+
+    <!-- Appointments Table -->
+    @if (Model.AllAppointments != null && Model.AllAppointments.Any())
+    {
+        <form method="post">
+            <div class="table-responsive shadow-sm rounded-4 overflow-hidden animate__animated animate__fadeInUp">
+                <table class="table table-hover align-middle mb-5">
+                    <thead class="table-primary">
+                        <tr>
+                            <th>Patient</th>
+                            <th>Service</th>
+                            <th>Date</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var appointment in Model.AllAppointments)
+                        {
+                            <tr>
+                                <td>@appointment.Customer?.FullName</td>
+                                <td>@appointment.Service?.ServiceName</td>
+                                <td>@appointment.AppointmentDate.ToString("yyyy-MM-dd HH:mm")</td>
+                                <td>
+                                    @if (appointment.Status != "Success")
+                                    {
+                                        <button type="submit" name="appointmentId" value="@appointment.AppointmentId" class="btn btn-sm btn-outline-success">
+                                            ✅ Mark as Success
+                                        </button>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-success">✔ Success</span>
+                                    }
+                                </td>
+                                <td>
+                                    <a asp-page="/AppointmentPage/Details" asp-route-id="@appointment.AppointmentId"
+                                       class="btn btn-outline-info btn-sm">
+                                        🔍 Details
+                                    </a>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </form>
+    }
+    else
+    {
+        <div class="alert alert-info text-center">No appointments found.</div>
+    }
+
+    <!-- Medical Profile Card -->
+    <div class="row mb-4 animate__animated animate__zoomIn">
+        <div class="col-12">
+            <div class="card bg-light border-0 shadow-lg rounded-4 text-center p-5 h-100">
+                <h3 class="fw-bold text-dark mb-3">🗂️ Hồ sơ bệnh án</h3>
+                <p class="text-muted mb-4">Xem và quản lý hồ sơ bệnh nhân, lịch khám, và yêu cầu.</p>
+                <a href="/MedicalProfile" class="btn btn-primary btn-lg px-5">
+                    Truy cập hồ sơ
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Create Blog Button -->
+    <div class="text-end">
+        <a href="/BlogPage/Create" class="btn btn-outline-primary btn-lg shadow-sm">
+            ✍️ Viết Blog Mới
+        </a>
+    </div>
+</div>
+
+@section Scripts {
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
+}

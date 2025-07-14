@@ -143,5 +143,18 @@ namespace InfertilityTreatmentSystem.BLL.Service
             }
             return customerAppointments;
         }
-    }
+        public async Task UpdateStatusAppointmentAsync(Guid appointmentId, Appointment updatedAppointment)
+        {
+            var existingAppointment = await _unitOfWork.AppointmentRepository.GetByIdAsync(updatedAppointment.AppointmentId);
+
+            if (existingAppointment != null)
+            {
+                existingAppointment.Status = updatedAppointment.Status;
+                existingAppointment.RejectReason = updatedAppointment.RejectReason;
+                existingAppointment.AppointmentDate = updatedAppointment.AppointmentDate;
+
+                await _unitOfWork.AppointmentRepository.SaveAsync();  // hoặc SaveChangesAsync nếu đó là phương thức bạn dùng
+            }
+        }
+        }
 }

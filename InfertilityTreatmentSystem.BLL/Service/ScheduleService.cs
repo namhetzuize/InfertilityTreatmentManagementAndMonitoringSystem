@@ -84,5 +84,13 @@ namespace InfertilityTreatmentSystem.BLL.Service
 
             return result;
         }
+        public async Task<List<Schedule>> GetSchedulesByCustomerAndDoctorAsync(Guid customerId, Guid doctorId)
+        {
+            var allSchedules = await _unitOfWork.ScheduleRepository.GetAllAsync();
+
+            return allSchedules
+                .Where(s => s.CustomerId == customerId && s.DoctorId == doctorId)
+                .ToList();
+        }
     }
 }

@@ -48,15 +48,21 @@ namespace InfertilityTreatmentSystem.Pages
     {
         new Claim(ClaimTypes.Name, user.UserName),
         new Claim("UserId", user.UserId.ToString()),
-        new Claim(ClaimTypes.Role, user.Role)
+        new Claim(ClaimTypes.Role, user.Role),
+        new Claim("FullName", user.FullName),
     };
 
             var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
             var principal = new ClaimsPrincipal(identity);
 
             await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principal);
+            if (user.Role == "Doctor")
+                return RedirectToPage("/Doctor");
+            else if (user.Role == "Admin")
+                return RedirectToPage("/AdminDashboard"); // ví dụ khác
+            else
+                return RedirectToPage("/Home");
 
-            return RedirectToPage("/Home");
         }
 
         public async Task<IActionResult> OnGetLogout()

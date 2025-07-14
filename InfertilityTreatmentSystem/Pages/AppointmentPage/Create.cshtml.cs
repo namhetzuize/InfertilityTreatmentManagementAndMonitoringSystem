@@ -66,8 +66,9 @@ namespace InfertilityTreatmentSystem.Pages.AppointmentPage
                 await PopulateDropdownsAsync();
                 return Page();
             }
+            Appointment.Status = "Pending";
 
-            
+
             await _appointmentService.CreateAppointmentAsync(Appointment);
             return RedirectToPage("/Home");
         }

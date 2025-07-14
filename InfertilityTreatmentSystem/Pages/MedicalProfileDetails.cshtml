@@ -1,0 +1,94 @@
+﻿@page "{customerId:guid}/{doctorId:guid}"
+@model InfertilityTreatmentSystem.Pages.MedicalProfileDetailsModel
+@{
+    ViewData["Title"] = "Chi tiết hồ sơ bệnh án";
+}
+
+<div class="container py-4">
+    <h2 class="fw-bold text-primary mb-4">🩺 Hồ sơ bệnh nhân: @Model.Customer?.FullName</h2>
+
+    <div class="mb-4">
+        <h4 class="text-success">📅 Lịch khám</h4>
+        @if (Model.Schedules != null && Model.Schedules.Any())
+        {
+            var sortedSchedules = Model.Schedules
+            .Where(s => s.ScheduleDate.HasValue)
+            .OrderBy(s => s.ScheduleDate)
+            .ToList();
+
+            <ul class="list-group">
+                @foreach (var schedule in sortedSchedules)
+                {
+                    var date = schedule.ScheduleDate.Value;
+                    var vietnamCulture = new System.Globalization.CultureInfo("vi-VN");
+                    string formattedDate = date.ToString("dddd, 'ngày' dd 'tháng' MM 'năm' yyyy 'lúc' HH:mm", vietnamCulture);
+
+                    <li class="list-group-item">
+                        <strong>Ngày:</strong> @formattedDate<br />
+                        <strong>Dịch vụ:</strong> @schedule.SerivceName<br />
+                        <strong>Ghi chú:</strong> @schedule.Note
+                    </li>
+                }
+
+                @* Hiển thị các lịch chưa có ngày (ScheduleDate = null) ở cuối *@
+                @foreach (var schedule in Model.Schedules.Where(s => !s.ScheduleDate.HasValue))
+                {
+                    <li class="list-group-item">
+                        <strong>Ngày:</strong> Chưa có<br />
+                        <strong>Dịch vụ:</strong> @schedule.SerivceName<br />
+                        <strong>Ghi chú:</strong> @schedule.Note
+                    </li>
+                }
+            </ul>
+        }
+        else
+        {
+            <div class="alert alert-info">Không có lịch khám nào.</div>
+        }
+    </div>
+
+    <div class="mb-4">
+        <h4 class="text-warning">📝 Yêu cầu từ bệnh nhân</h4>
+        @if (Model.PatientRequests.Any())
+        {
+            <ul class="list-group">
+                @foreach (var req in Model.PatientRequests)
+                {
+                    <li class="list-group-item">
+                        <strong>Ngày yêu cầu:</strong> @req.RequestedDate.ToString("dd/MM/yyyy")<br />
+                        <strong>Dịch vụ:</strong> @req.Service?.ServiceName<br />
+                        <strong>Ghi chú:</strong> @req.Note
+                    </li>
+                }
+            </ul>
+        }
+        else
+        {
+            <div class="alert alert-info">Không có yêu cầu từ bệnh nhân.</div>
+        }
+    </div>
+
+    <div class="mb-4">
+        <h4 class="text-danger">📋 Hồ sơ bệnh án</h4>
+        @if (Model.MedicalRecords.Any())
+        {
+            <ul class="list-group">
+                @foreach (var record in Model.MedicalRecords)
+                {
+                    <li class="list-group-item">
+                        <strong>Ngày tạo:</strong> @record.CreatedDate.ToString("dd/MM/yyyy")<br />
+                        <strong>Kết quả xét nghiệm:</strong> @record.TestResults<br />
+                        <strong>Đơn thuốc:</strong> @record.Prescription<br />
+                        <strong>Ghi chú:</strong> @record.Note
+                    </li>
+                }
+            </ul>
+        }
+        else
+        {
+            <div class="alert alert-info">Chưa có hồ sơ bệnh án nào.</div>
+        }
+    </div>
+
+    <a class="btn btn-secondary" href="/MedicalProfile">← Quay lại</a>
+</div>

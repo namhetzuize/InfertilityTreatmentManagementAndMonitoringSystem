@@ -73,5 +73,13 @@ namespace InfertilityTreatmentSystem.BLL.Service
             _unitOfWork.PatientRequestRepository.PrepareRemove(request);
             await _unitOfWork.PatientRequestRepository.SaveAsync();
         }
+        public async Task<List<PatientRequest>> GetPatientRequestsByCustomerAndDoctorAsync(Guid customerId, Guid doctorId)
+        {
+            var allPatientRequests = await _unitOfWork.PatientRequestRepository.GetAllAsync();
+
+            return allPatientRequests
+                .Where(r => r.CustomerId == customerId && r.DoctorId == doctorId)
+                .ToList();
+        }
     }
 }

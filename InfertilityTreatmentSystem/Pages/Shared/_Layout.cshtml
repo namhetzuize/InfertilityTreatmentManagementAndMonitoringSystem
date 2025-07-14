@@ -1,4 +1,14 @@
-﻿<!DOCTYPE html>
+﻿@using System.Security.Claims
+@{
+    var role = User.FindFirst(ClaimTypes.Role)?.Value;
+    var homeUrl = role switch
+    {
+        "Doctor" => "/Doctor",
+        "Admin" => "/AdminHome",
+        _ => "/"
+    };
+}
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
@@ -16,8 +26,8 @@
 
                 <!-- Bên trái: Trang chủ -->
                 <div class="d-flex align-items-center">
-                    <a class="text-white fw-bold text-decoration-none me-3" href="/">Infertility Treatment</a>
-                    <a class="text-white text-decoration-none" href="/">Trang chủ</a>
+                    <a class="text-white fw-bold text-decoration-none me-3" href="@homeUrl">Infertility Treatment</a>
+                    <a class="text-white text-decoration-none" href="@homeUrl">Trang chủ</a>
                 </div>
 
                 <!-- Bên phải: Kiểm tra lịch hẹn, Đăng nhập/Đăng ký/Đăng xuất -->
