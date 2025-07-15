@@ -23,6 +23,8 @@ public partial class User
 
     public bool IsActive { get; set; }
 
+    public string Avatar { get; set; }
+
     public virtual ICollection<Appointment> AppointmentCustomers { get; set; } = new List<Appointment>();
 
     public virtual ICollection<Appointment> AppointmentDoctors { get; set; } = new List<Appointment>();

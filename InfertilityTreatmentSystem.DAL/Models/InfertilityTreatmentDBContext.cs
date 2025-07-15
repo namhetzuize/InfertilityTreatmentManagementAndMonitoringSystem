@@ -12,12 +12,6 @@ public partial class InfertilityTreatmentDBContext : DbContext
         : base(options)
     {
     }
-    public InfertilityTreatmentDBContext()
-           : base(new DbContextOptionsBuilder<InfertilityTreatmentDBContext>()
-               .UseSqlServer("DefaultConnectionString")
-               .Options)
-    {
-    }
 
     public virtual DbSet<Appointment> Appointments { get; set; }
 
@@ -70,6 +64,7 @@ public partial class InfertilityTreatmentDBContext : DbContext
             entity.ToTable("Blog");
 
             entity.Property(e => e.BlogId).HasDefaultValueSql("(newid())");
+            entity.Property(e => e.BlogImage).HasMaxLength(255);
             entity.Property(e => e.CreatedDate).HasColumnType("datetime");
             entity.Property(e => e.Title).HasMaxLength(255);
 
@@ -174,6 +169,7 @@ public partial class InfertilityTreatmentDBContext : DbContext
 
             entity.Property(e => e.ServiceId).HasDefaultValueSql("(newid())");
             entity.Property(e => e.Price).HasColumnType("decimal(18, 2)");
+            entity.Property(e => e.ServiceImage).HasMaxLength(255);
             entity.Property(e => e.ServiceName).HasMaxLength(255);
 
             entity.HasOne(d => d.User).WithMany(p => p.TreatmentServices)
@@ -189,6 +185,7 @@ public partial class InfertilityTreatmentDBContext : DbContext
             entity.ToTable("User");
 
             entity.Property(e => e.UserId).HasDefaultValueSql("(newid())");
+            entity.Property(e => e.Avatar).HasMaxLength(255);
             entity.Property(e => e.FullName).HasMaxLength(100);
             entity.Property(e => e.IsActive).HasDefaultValue(true);
             entity.Property(e => e.Password)

@@ -28,5 +28,4 @@ public partial class Appointment
     public virtual ICollection<MedicalRecord> MedicalRecords { get; set; } = new List<MedicalRecord>();
 
     public virtual TreatmentService Service { get; set; }
-    public virtual ICollection<Schedule> Schedules { get; set; } = new List<Schedule>();
 }

@@ -17,5 +17,7 @@ public partial class Blog
 
     public Guid UserId { get; set; }
 
+    public string BlogImage { get; set; }
+
     public virtual User User { get; set; }
 }

@@ -20,34 +20,40 @@
     <link rel="stylesheet" href="~/InfertilityTreatmentSystem.styles.css" asp-append-version="true" />
 </head>
 <body>
-    
-        <header class="bg-primary text-white py-2">
-            <div class="container d-flex justify-content-between align-items-center">
 
-                <!-- Bên trái: Trang chủ -->
-                <div class="d-flex align-items-center">
-                    <a class="text-white fw-bold text-decoration-none me-3" href="@homeUrl">Infertility Treatment</a>
-                    <a class="text-white text-decoration-none" href="@homeUrl">Trang chủ</a>
-                </div>
-
-                <!-- Bên phải: Kiểm tra lịch hẹn, Đăng nhập/Đăng ký/Đăng xuất -->
-                <div class="d-flex align-items-center gap-2">
-                    <a class="text-white text-decoration-none" href="/AppointmentPage">📅 Kiểm tra lịch hẹn</a>
-
-                    @if (!User.Identity.IsAuthenticated)
-                    {
-                    <a class="btn btn-warning btn-sm" href="/Login">Đăng nhập</a>
-                        <a class="btn btn-light btn-sm text-primary" href="/Register">Đăng ký</a>
-                    }
-                    else
-                    {
-                        <a class="btn btn-danger btn-sm" href="/Login?handler=Logout">Đăng xuất</a>
-                    }
-                </div>
-
+    <header class="bg-primary text-white py-2">
+        <div class="container d-flex justify-content-between align-items-center">
+            <!-- Left: Logo and Home -->
+            <div class="d-flex align-items-center gap-4">
+                <a class="text-white fw-bold text-decoration-none me-3" href="@homeUrl">Infertility Treatment</a>
+                <a class="text-white text-decoration-none" href="/BlogPage">Blog</a>
+                <a class="text-white text-decoration-none" href="/FeedbackPage">Feedback</a>
+                <a class="text-white text-decoration-none" href="/MedicalRecordPage">Medical Records</a>
+                <a class="text-white text-decoration-none" href="/PatientRequestPage">Patient Requests</a>
+                <a class="text-white text-decoration-none" href="/TreatmentServicePage">Treatment Services</a>
             </div>
+
+            <!-- Right: Navbar Links -->
+            <div class="d-flex align-items-center gap-4">
+                <a class="text-white text-decoration-none" href="/AppointmentPage">📅 Kiểm tra lịch hẹn</a>
+
+                @if (!User.Identity.IsAuthenticated)
+                {
+                    <a class="btn btn-warning btn-sm" href="/Login">Đăng nhập</a>
+                    <a class="btn btn-light btn-sm text-primary" href="/Register">Đăng ký</a>
+                }
+                else
+                {
+                    <!-- Add Username and link to UserDetails -->
+                    <a class="text-white text-decoration-none" href="@Url.Page("/UserPage/Details", new { userId = User.FindFirst("UserId")?.Value })">
+                        @User.Identity.Name
+                    </a>
+                    <a class="btn btn-danger btn-sm" href="/Login?handler=Logout">Đăng xuất</a>
+                }
+            </div>
+        </div>
     </header>
-    
+
     <div class="container">
         <main role="main" class="pb-3">
             @RenderBody()

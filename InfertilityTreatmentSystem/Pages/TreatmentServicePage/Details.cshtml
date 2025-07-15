@@ -5,18 +5,43 @@
     ViewData["Title"] = "Treatment Service Details";
 }
 
-<h1>Treatment Service Details</h1>
+<div class="container" style="max-width: 900px; padding: 20px; margin-top: 50px;">
+    <h1 class="text-center" style="margin-bottom: 20px; font-size: 2rem;">Treatment Service Details</h1>
 
-<div>
-    <h3>Treatment Service Information</h3>
-    <p><strong>Service Name:</strong> @Model.Service.ServiceName</p>
-    <p><strong>Description:</strong> @Model.Service.Description</p>
-    <p><strong>Price:</strong> @Model.Service.Price</p>
-    <p><strong>Created by:</strong> @Model.ServiceCreator?.UserName</p>
+    <div class="card" style="border-radius: 10px; border: 1px solid #ddd; box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);">
+        <div class="card-header" style="background-color: #007bff; color: white; font-size: 1.25rem; padding: 15px;">
+            <h3>Treatment Service Information</h3>
+        </div>
+        <div class="card-body" style="font-size: 1.1rem; line-height: 1.6; padding: 20px;">
+            <!-- Add ServiceImage here -->
+            <div class="text-center" style="margin-bottom: 20px;">
+                @if (!string.IsNullOrEmpty(Model.Service.ServiceImage))
+                {
+                    <img src="@Model.Service.ServiceImage" alt="Service Image" style="max-height: 400px; max-width: 100%; object-fit: cover; box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2); border-radius: 10px;" />
+                }
+                else
+                {
+                    <p class="text-muted">No image available for this service.</p>
+                }
+            </div>
+
+            <p><strong>Service Name:</strong> @Model.Service.ServiceName</p>
+            <p><strong>Description:</strong> @Model.Service.Description</p>
+            <p><strong>Price:</strong> @Model.Service.Price</p>
+            <p><strong>Created by:</strong> @Model.ServiceCreator?.UserName</p>
+        </div>
+    </div>
+
+    <div class="text-center" style="margin-top: 30px;">
+        <a href="@Url.Page("./Edit", new { serviceId = Model.Service.ServiceId })" class="btn btn-warning" style="font-size: 1rem; padding: 10px 20px; border-radius: 25px; margin: 10px 20px; background-color: #ffc107; color: white; transition: opacity 0.3s;">Edit</a>
+        <a href="@Url.Page("./Delete", new { serviceId = Model.Service.ServiceId })" class="btn btn-danger" style="font-size: 1rem; padding: 10px 20px; border-radius: 25px; margin: 10px 20px; background-color: #dc3545; color: white; transition: opacity 0.3s;">Delete</a>
+        <a href="@Url.Page("./Index")" class="btn btn-secondary" style="font-size: 1rem; padding: 10px 20px; border-radius: 25px; margin: 10px 20px; background-color: #6c757d; color: white; transition: opacity 0.3s;">Back to List</a>
+    </div>
 </div>
 
-<div>
-    <a href="@Url.Page("./Edit", new { serviceId = Model.Service.ServiceId })" class="btn btn-warning">Edit</a>
-    <a href="@Url.Page("./Delete", new { serviceId = Model.Service.ServiceId })" class="btn btn-danger">Delete</a>
-    <a href="@Url.Page("./Index")" class="btn btn-secondary">Back to List</a>
-</div>
+<!-- Inline styles for hover effects -->
+<style>
+    .btn:hover {
+        opacity: 0.9;
+    }
+</style>

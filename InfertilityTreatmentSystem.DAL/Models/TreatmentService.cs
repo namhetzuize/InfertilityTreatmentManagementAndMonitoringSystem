@@ -17,6 +17,8 @@ public partial class TreatmentService
 
     public Guid UserId { get; set; }
 
+    public string ServiceImage { get; set; }
+
     public virtual ICollection<Appointment> Appointments { get; set; } = new List<Appointment>();
 
     public virtual ICollection<PatientRequest> PatientRequests { get; set; } = new List<PatientRequest>();

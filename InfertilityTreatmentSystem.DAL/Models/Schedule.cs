@@ -19,10 +19,9 @@ public partial class Schedule
 
     public string Note { get; set; }
 
+    public Guid? AppointmentId { get; set; }
+
     public virtual User Customer { get; set; }
 
     public virtual User Doctor { get; set; }
-    public Guid AppointmentId { get; set; }
-
-    public Appointment? Appointment { get; set; }
 }
