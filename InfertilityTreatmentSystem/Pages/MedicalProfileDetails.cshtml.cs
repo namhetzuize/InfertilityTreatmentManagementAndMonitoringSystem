@@ -11,31 +11,89 @@ namespace InfertilityTreatmentSystem.Pages
         private readonly PatientRequestService _patientRequestService;
         private readonly MedicalRecordService _medicalRecordService;
         private readonly UserService _userService;
+        private readonly AppointmentService _appointmentService;
 
         public MedicalProfileDetailsModel(ScheduleService scheduleService,
                             PatientRequestService patientRequestService,
                             MedicalRecordService medicalRecordService,
-                            UserService userService)
+                            UserService userService, AppointmentService appointmentService
+            )
         {
             _scheduleService = scheduleService;
             _patientRequestService = patientRequestService;
             _medicalRecordService = medicalRecordService;
             _userService = userService;
+            _appointmentService = appointmentService;
         }
-
+        [BindProperty]
+        public MedicalRecord NewMedicalRecord { get; set; } = new();
+        [BindProperty]
+        public Schedule NewSchedule { get; set; } = new();
+        public Guid DoctorId { get; set; }
         public User Customer { get; set; }
         public List<Schedule> Schedules { get; set; } = new();
         public List<PatientRequest> PatientRequests { get; set; } = new();
         public List<MedicalRecord> MedicalRecords { get; set; } = new();
 
+        public Appointment Appointment { get; set; } = new();
+
         public async Task<IActionResult> OnGetAsync(Guid customerId, Guid doctorId)
         {
+            DoctorId = doctorId;
             Customer = await _userService.GetUserByIdAsync(customerId);
             Schedules = await _scheduleService.GetSchedulesByCustomerAndDoctorAsync(customerId, doctorId);
             PatientRequests = await _patientRequestService.GetPatientRequestsByCustomerAndDoctorAsync(customerId, doctorId);
             MedicalRecords = await _medicalRecordService.GetMedicalRecordsByCustomerAndDoctorAsync(customerId, doctorId);
 
             return Page();
+        }
+        public async Task<IActionResult> OnPostCreateScheduleAsync(Guid customerId, Guid doctorId)
+        {
+            var appointment = await _appointmentService
+                
+        .GetAppointmentByCustomerAndDoctorAsync(customerId, doctorId);
+            if (!ModelState.IsValid)
+            {
+                Customer = await _userService.GetUserByIdAsync(customerId);
+                DoctorId = doctorId;
+
+                Schedules = await _scheduleService.GetSchedulesByCustomerAndDoctorAsync(customerId, doctorId);
+                PatientRequests = await _patientRequestService.GetPatientRequestsByCustomerAndDoctorAsync(customerId, doctorId);
+                MedicalRecords = await _medicalRecordService.GetMedicalRecordsByCustomerAndDoctorAsync(customerId, doctorId);
+                return Page();
+            }
+
+            NewSchedule.CustomerId = customerId;
+            NewSchedule.DoctorId = doctorId;
+            NewSchedule.AppointmentId = appointment.AppointmentId;
+
+            await _scheduleService.CreateScheduleAsync(NewSchedule);
+
+            return RedirectToPage(new { customerId, doctorId });
+        }
+        public async Task<IActionResult> OnPostCreateMedicalRecordAsync(Guid customerId, Guid doctorId)
+        {
+            var appointment = await _appointmentService.GetAppointmentByCustomerAndDoctorAsync(customerId, doctorId);
+            if (!ModelState.IsValid)
+            {
+                Customer = await _userService.GetUserByIdAsync(customerId);
+                DoctorId = doctorId;
+
+                Schedules = await _scheduleService.GetSchedulesByCustomerAndDoctorAsync(customerId, doctorId);
+                PatientRequests = await _patientRequestService.GetPatientRequestsByCustomerAndDoctorAsync(customerId, doctorId);
+                MedicalRecords = await _medicalRecordService.GetMedicalRecordsByCustomerAndDoctorAsync(customerId, doctorId);
+
+                return Page();
+            }
+
+            NewMedicalRecord.CustomerId = customerId;
+            NewMedicalRecord.DoctorId = doctorId;
+            NewMedicalRecord.CreatedDate = DateTime.Now;
+            NewMedicalRecord.AppointmentId = appointment.AppointmentId;
+
+            await _medicalRecordService.CreateMedicalRecordAsync(NewMedicalRecord);
+
+            return RedirectToPage(new { customerId, doctorId });
         }
     }
 }

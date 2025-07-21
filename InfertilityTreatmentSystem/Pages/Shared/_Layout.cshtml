@@ -45,9 +45,13 @@
                 else
                 {
                     <!-- Add Username and link to UserDetails -->
-                    <a class="text-white text-decoration-none" href="@Url.Page("/UserPage/Details", new { userId = User.FindFirst("UserId")?.Value })">
-                        @User.Identity.Name
-                    </a>
+                    @if (User.Identity.IsAuthenticated)
+                    {
+                        <a class="text-white text-decoration-none"
+                           href="@Url.Page("/UserPage/Details", new { userId = User.FindFirst("UserId")?.Value })">
+                            @User.FindFirst("FullName")?.Value
+                        </a>
+                    }
                     <a class="btn btn-danger btn-sm" href="/Login?handler=Logout">Đăng xuất</a>
                 }
             </div>
@@ -73,3 +77,34 @@
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        var collapseElement = document.getElementById("scheduleListCollapse");
+        var icon = document.getElementById("collapseIcon");
+
+        collapseElement.addEventListener('show.bs.collapse', function () {
+            icon.textContent = "▲";
+        });
+
+        collapseElement.addEventListener('hide.bs.collapse', function () {
+            icon.textContent = "▼";
+        });
+    });
+    document.addEventListener("DOMContentLoaded", function () {
+        // Toggle icon cho Yêu cầu bệnh nhân
+        const prCollapse = document.getElementById("patientRequestsCollapse");
+        const prIcon = document.getElementById("iconPatientRequest");
+
+        prCollapse.addEventListener('show.bs.collapse', () => prIcon.textContent = "▲");
+        prCollapse.addEventListener('hide.bs.collapse', () => prIcon.textContent = "▼");
+
+        // Toggle icon cho Hồ sơ bệnh án
+        const mrCollapse = document.getElementById("medicalRecordsCollapse");
+        const mrIcon = document.getElementById("iconMedicalRecord");
+
+        mrCollapse.addEventListener('show.bs.collapse', () => mrIcon.textContent = "▲");
+        mrCollapse.addEventListener('hide.bs.collapse', () => mrIcon.textContent = "▼");
+    });
+</script>
+

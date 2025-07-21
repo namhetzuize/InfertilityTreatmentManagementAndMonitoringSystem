@@ -156,5 +156,11 @@ namespace InfertilityTreatmentSystem.BLL.Service
                 await _unitOfWork.AppointmentRepository.SaveAsync();  // hoặc SaveChangesAsync nếu đó là phương thức bạn dùng
             }
         }
+        public async Task<Appointment> GetAppointmentByCustomerAndDoctorAsync(Guid customerId, Guid doctorId)
+        {
+            var appointments = await _unitOfWork.AppointmentRepository.GetAllAsync();
+            return appointments.FirstOrDefault(a => a.CustomerId == customerId && a.DoctorId == doctorId);
         }
+
+    }
 }

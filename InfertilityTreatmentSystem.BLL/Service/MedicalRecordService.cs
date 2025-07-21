@@ -78,5 +78,15 @@ namespace InfertilityTreatmentSystem.BLL.Service
                 .Where(r => r.CustomerId == customerId && r.DoctorId == doctorId)
                 .ToList();
         }
+        public async Task<List<MedicalRecord>> GetMedicalRecordByAppointmentIdAsync(Guid appointmentId)
+        {
+            var medicalRecords = await _unitOfWork.MedicalRecordRepository.GetAllAsync();
+
+
+            var records = medicalRecords
+                .Where(r => r.AppointmentId == appointmentId)
+                .ToList();
+            return records;
+        }
     }
 }

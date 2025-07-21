@@ -30,12 +30,15 @@ namespace InfertilityTreatmentSystem.Pages.SchedulePage
             return Page();
         }
 
-        public async Task<IActionResult> OnPostAsync()
+        public async Task<IActionResult> OnPostAsync(Guid scheduleId)
         {
+            var schedule = await _scheduleService.GetScheduleByIdAsync(scheduleId);
             if (Schedule != null)
             {
+                Guid customerId = schedule.CustomerId;
+                Guid doctorId = schedule.DoctorId;
                 await _scheduleService.DeleteScheduleByIdAsync(Schedule.ScheduleId);
-                return RedirectToPage("./Index");
+                return RedirectToPage("/MedicalProfileDetails", new { customerId = customerId, doctorId = doctorId });
             }
 
             return NotFound();
