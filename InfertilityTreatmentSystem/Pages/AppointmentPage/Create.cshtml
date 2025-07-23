@@ -5,7 +5,9 @@
 <h1>Create Appointment</h1>
 
 <form method="post">
-    <div class="mb-3">
+    
+    <input asp-for="Appointment.CustomerId" type="hidden" />
+   @*  <div class="mb-3">
         <label asp-for="Appointment.CustomerId" class="form-label">Customer</label>
         <select asp-for="Appointment.CustomerId"
                 class="form-select"
@@ -13,7 +15,7 @@
             <option value="">-- select customer --</option>
         </select>
         <span asp-validation-for="Appointment.CustomerId" class="text-danger"></span>
-    </div>
+    </div> *@
 
     <div class="mb-3">
         <label asp-for="Appointment.DoctorId" class="form-label">Doctor</label>
@@ -42,12 +44,12 @@
                class="form-control" />
         <span asp-validation-for="Appointment.AppointmentDate" class="text-danger"></span>
     </div>
-
-    <div class="mb-3">
+    <input asp-for="Appointment.Status" type="hidden" />
+   @*  <div class="mb-3">
         <label asp-for="Appointment.Status" class="form-label">Status</label>
         <input asp-for="Appointment.Status" class="form-control" />
         <span asp-validation-for="Appointment.Status" class="text-danger"></span>
-    </div>
+    </div> *@
 
     <button type="submit" class="btn btn-primary">Create</button>
     <a asp-page="./Index" class="btn btn-secondary ms-2">Cancel</a>

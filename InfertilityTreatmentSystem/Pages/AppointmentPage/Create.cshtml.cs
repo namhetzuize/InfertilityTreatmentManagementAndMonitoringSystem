@@ -35,12 +35,18 @@ namespace InfertilityTreatmentSystem.Pages.AppointmentPage
 
         public async Task<IActionResult> OnGetAsync()
         {
+
+            Appointment = new Appointment
+            {
+                CustomerId = GetCurrentUserId()  // Tự gán từ claim
+            };
             await PopulateDropdownsAsync();
             return Page();
         }
 
         public async Task<IActionResult> OnPostAsync()
         {
+            Appointment.CustomerId = GetCurrentUserId();
             if (!ModelState.IsValid)
             {
                 await PopulateDropdownsAsync();
@@ -89,6 +95,12 @@ namespace InfertilityTreatmentSystem.Pages.AppointmentPage
             Services = svcs
                 .Select(s => new SelectListItem(s.ServiceName, s.ServiceId.ToString()))
                 .ToList();
+        }
+
+        private Guid GetCurrentUserId()
+        {
+            var claim = User.FindFirst("UserId");
+            return claim != null ? Guid.Parse(claim.Value) : Guid.Empty;
         }
     }
 }
