@@ -76,18 +76,17 @@ namespace InfertilityTreatmentSystem.BLL.Service
             await _unitOfWork.TreatmentServiceRepository.SaveAsync();
         }
 
-<<<<<<< Updated upstream
         public async Task<TreatmentService?> GetServiceByServiceIdAsync(Guid serviceId)
         {
             return await _unitOfWork.TreatmentServiceRepository.GetByIdAsync(serviceId);
-=======
+        }
+
         public async Task<PagingResponse<TreatmentService>> GetPagedTreatmentServicesAsync(
             string searchTerm,
             int pageIndex = 1,
             int pageSize = 10)
         {
             return await _unitOfWork.TreatmentServiceRepository.GetPagedTreatmentServicesAsync(searchTerm, pageIndex, pageSize);
->>>>>>> Stashed changes
         }
     }
 }
