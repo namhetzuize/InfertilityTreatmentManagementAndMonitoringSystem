@@ -11,30 +11,54 @@ namespace InfertilityTreatmentSystem.Pages.MedicalRecordPage
     {
         private readonly MedicalRecordService _medicalRecordService;
         private readonly UserService _userService;
-
-        public MedicalRecord MedicalRecord { get; set; }
-
-        public DetailsModel(MedicalRecordService medicalRecordService, UserService userService)
+        private readonly AppointmentService _appointmentService;
+        public DetailsModel(
+            MedicalRecordService medicalRecordService,
+            UserService userService,
+            AppointmentService appointmentService)
         {
             _medicalRecordService = medicalRecordService;
             _userService = userService;
+            _appointmentService = appointmentService;
         }
 
-        public async Task<IActionResult> OnGetAsync(Guid recordId)
-        {
-            // Fetch the medical record by ID
-            MedicalRecord = await _medicalRecordService.GetMedicalRecordByIdAsync(recordId);
+        public MedicalRecord MedicalRecord { get; set; }
+        public User Customer { get; set; }
+        public User Doctor { get; set; }
 
+        [BindProperty(SupportsGet = true)]
+        public Guid RecordId { get; set; }
+
+        [BindProperty(SupportsGet = true)]
+        public Guid AppointmentId { get; set; }
+
+        public Guid CustomerId { get; set; }
+        public Guid DoctorId { get; set; }
+
+        public async Task<IActionResult> OnGetAsync()
+        {
+            // Lấy lịch khám
+            MedicalRecord = await _medicalRecordService.GetMedicalRecordByIdAsync(RecordId);
             if (MedicalRecord == null)
             {
-                return NotFound(); // If the record is not found, return NotFound()
+                return NotFound();
             }
 
-            // Fetch the related Customer and Doctor information
-            MedicalRecord.Customer = await _userService.GetUserByIdAsync(MedicalRecord.CustomerId);
-            MedicalRecord.Doctor = await _userService.GetUserByIdAsync(MedicalRecord.DoctorId);
+            // Lấy appointment → để truy customerId và doctorId
+            var appointment = await _appointmentService.GetAppointmentByIdAsync(AppointmentId);
+            if (appointment == null)
+            {
+                return NotFound();
+            }
 
-            return Page(); // Return the page if all data is fetched successfully
+            CustomerId = appointment.CustomerId;
+            DoctorId = appointment.DoctorId;
+
+            // Lấy thông tin người dùng
+            Customer = await _userService.GetUserByIdAsync(CustomerId);
+            Doctor = await _userService.GetUserByIdAsync(DoctorId);
+
+            return Page();
         }
     }
 }

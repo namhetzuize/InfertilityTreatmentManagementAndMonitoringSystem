@@ -35,12 +35,18 @@ namespace InfertilityTreatmentSystem.Pages
         public List<PatientRequest> PatientRequests { get; set; } = new();
         public List<MedicalRecord> MedicalRecords { get; set; } = new();
 
+        [BindProperty(SupportsGet = true)]
+        public Guid AppointmentId { get; set; }
+
         public Appointment Appointment { get; set; } = new();
 
         public async Task<IActionResult> OnGetAsync(Guid customerId, Guid doctorId)
         {
             DoctorId = doctorId;
             Customer = await _userService.GetUserByIdAsync(customerId);
+
+            Appointment = await _appointmentService.GetAppointmentByCustomerAndDoctorAsync(customerId, doctorId);
+            AppointmentId = Appointment.AppointmentId;
             Schedules = await _scheduleService.GetSchedulesByCustomerAndDoctorAsync(customerId, doctorId);
             PatientRequests = await _patientRequestService.GetPatientRequestsByCustomerAndDoctorAsync(customerId, doctorId);
             MedicalRecords = await _medicalRecordService.GetMedicalRecordsByCustomerAndDoctorAsync(customerId, doctorId);

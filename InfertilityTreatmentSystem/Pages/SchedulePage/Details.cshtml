@@ -1,23 +1,93 @@
-﻿@page "{scheduleId:guid}"
+﻿@page "{scheduleId:guid}/{appointmentId:guid}"
 @model InfertilityTreatmentSystem.Pages.SchedulePage.DetailsModel
 
 @{
-    ViewData["Title"] = "Schedule Details";
+    ViewData["Title"] = "Chi tiết lịch khám";
+   var vietnamCulture = new System.Globalization.CultureInfo("vi-VN");
+    var scheduleDate = Model.Schedule?.ScheduleDate ?? DateTime.UtcNow;
+
+    // Đảm bảo chuyển sang giờ Việt Nam
+    var vnTimeZone = TimeZoneInfo.FindSystemTimeZoneById("SE Asia Standard Time");
+    var vietnamDateTime = TimeZoneInfo.ConvertTimeFromUtc(scheduleDate.ToUniversalTime(), vnTimeZone);
+
+    string formattedDate = vietnamDateTime.ToString("dddd, 'ngày' dd 'tháng' MM 'năm' yyyy 'lúc' HH:mm", vietnamCulture);
+
 }
 
-<h1>Schedule Details</h1>
+<div class="container py-5">
+    <div class="text-center mb-4">
+        <h2 class="fw-bold text-primary">📋 Chi tiết lịch khám</h2>
+        <p class="text-muted">Thông tin chi tiết về lịch hẹn khám bệnh của bệnh nhân.</p>
+    </div>
 
-<div>
-    <h3>Schedule Information</h3>
-    <p><strong>Customer:</strong> @Model.Customer?.UserName </p>
-    <p><strong>Doctor:</strong> @Model.Doctor?.UserName</p>
-    <p><strong>Service:</strong> @Model.Schedule.SerivceName </p>
-    <p><strong>Schedule Date:</strong> @Model.Schedule.ScheduleDate?.ToString("MM/dd/yyyy")</p>
-    <p><strong>Note:</strong> @Model.Schedule.Note</p>
+
+    <div class="card shadow-sm border-0 rounded-4 mb-4">
+        <div class="card-body px-5 py-4">
+            <h4 class="mb-4 text-success fw-semibold">🩺 Thông tin lịch hẹn</h4>
+
+            <div class="mb-3">
+                <strong>👤 Bệnh nhân:</strong>
+                <span class="badge bg-danger text-light fs-6">@Model.Customer?.FullName</span>
+            </div>
+            <div class="mb-3">
+                <strong>👨‍⚕️ Bác sĩ:</strong>
+                <span class="badge bg-primary text-light fs-6">@Model.Doctor?.FullName</span>
+            </div>
+            <div class="mb-3">
+                <strong>💼 Dịch vụ:</strong>
+                <span class="text-dark">@Model.Schedule?.SerivceName</span>
+            </div>
+            <div class="mb-3">
+                <strong>📅 Ngày khám:</strong>
+                <span>@formattedDate</span>
+            </div>
+            <div class="mb-3">
+                <strong>📝 Ghi chú:</strong>
+                <span>@Model.Schedule?.Note</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="d-flex justify-content-between gap-2 flex-wrap">
+        <a href="@Url.Page("./Edit", new { scheduleId = Model.Schedule.ScheduleId, appointmentId = Model.Schedule.AppointmentId })"
+           class="btn btn-outline-warning btn-lg rounded-pill px-4 fw-semibold">
+            ✏️ Chỉnh sửa
+        </a>
+
+        <a href="@Url.Page("./Delete", new { scheduleId = Model.Schedule.ScheduleId })"
+           class="btn btn-outline-danger btn-lg rounded-pill px-4 fw-semibold">
+            🗑️ Xoá lịch
+        </a>
+
+        <a asp-page="/MedicalProfileDetails"
+           asp-route-customerId="@Model.CustomerId"
+           asp-route-doctorId="@Model.DoctorId"
+           class="btn btn-outline-secondary btn-lg rounded-pill px-4 fw-semibold">
+            ⬅️ Quay lại hồ sơ bệnh án
+        </a>
+    </div>
 </div>
 
-<div>
-    <a href="@Url.Page("./Edit", new { scheduleId = Model.Schedule.ScheduleId })" class="btn btn-warning">Edit</a>
-    <a href="@Url.Page("./Delete", new { scheduleId = Model.Schedule.ScheduleId })" class="btn btn-danger">Delete</a>
-    <a href="@Url.Page("./Index")" class="btn btn-secondary">Back to List</a>
-</div>
+<style>
+    .card {
+        transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+    }
+
+        .card:hover {
+            transform: scale(1.01);
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+        }
+
+    .btn:hover {
+        transform: translateY(-2px);
+    }
+
+    .btn {
+        transition: all 0.2s ease-in-out;
+    }
+
+    .badge {
+        padding: 0.5em 1em;
+        font-size: 1rem;
+    }
+</style>

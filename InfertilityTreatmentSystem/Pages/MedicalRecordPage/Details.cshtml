@@ -1,25 +1,102 @@
-﻿@page "{recordId:guid}"
+﻿@page "{recordId:guid}/{appointmentId:guid}"
 @model InfertilityTreatmentSystem.Pages.MedicalRecordPage.DetailsModel
 
 @{
-    ViewData["Title"] = "Medical Record Details";
+    ViewData["Title"] = "Chi tiết hồ sơ bệnh án";
+
+    var vietnamCulture = new System.Globalization.CultureInfo("vi-VN");
+    var createdDate = Model.MedicalRecord?.CreatedDate ?? DateTime.UtcNow;
+
+    var vnTimeZone = TimeZoneInfo.FindSystemTimeZoneById("SE Asia Standard Time");
+    var vietnamDateTime = TimeZoneInfo.ConvertTimeFromUtc(createdDate.ToUniversalTime(), vnTimeZone);
+
+    string formattedDate = vietnamDateTime.ToString("dddd, 'ngày' dd 'tháng' MM 'năm' yyyy", vietnamCulture);
 }
 
-<h1>Medical Record Details</h1>
+<div class="container py-5">
+    <div class="text-center mb-4">
+        <h2 class="fw-bold text-primary">📄 Chi tiết hồ sơ bệnh án</h2>
+        <p class="text-muted">Thông tin chi tiết về hồ sơ bệnh án của bệnh nhân.</p>
+    </div>
 
-<div>
-    <h3>Medical Record Information</h3>
-    <p><strong>Appointment Id:</strong> @Model.MedicalRecord.AppointmentId</p>
-    <p><strong>Doctor:</strong> @Model.MedicalRecord.Doctor.UserName</p>
-    <p><strong>Customer:</strong> @Model.MedicalRecord.Customer.UserName</p>
-    <p><strong>Prescription:</strong> @Model.MedicalRecord.Prescription</p>
-    <p><strong>Test Results:</strong> @Model.MedicalRecord.TestResults</p>
-    <p><strong>Note:</strong> @Model.MedicalRecord.Note</p>
-    <p><strong>Created Date:</strong> @Model.MedicalRecord.CreatedDate.ToString("MM/dd/yyyy")</p>
+    <div class="card shadow-sm border-0 rounded-4 mb-4">
+        <div class="card-body px-5 py-4">
+            <h4 class="mb-4 text-success fw-semibold">🧾 Thông tin bệnh án</h4>
+
+            
+
+            <div class="mb-3">
+                <strong>👨‍⚕️ Bác sĩ:</strong>
+                <span class="badge bg-primary text-light fs-6">@Model.Doctor?.FullName</span>
+            </div>
+
+            <div class="mb-3">
+                <strong>👤 Bệnh nhân:</strong>
+                <span class="badge bg-danger text-light fs-6">@Model.Customer?.FullName</span>
+            </div>
+
+            <div class="mb-3">
+                <strong>💊 Toa thuốc:</strong>
+                <div class="text-dark">@Model.MedicalRecord.Prescription</div>
+            </div>
+
+            <div class="mb-3">
+                <strong>🧪 Kết quả xét nghiệm:</strong>
+                <div class="text-dark">@Model.MedicalRecord.TestResults</div>
+            </div>
+
+            <div class="mb-3">
+                <strong>📝 Ghi chú:</strong>
+                <div class="text-dark">@Model.MedicalRecord.Note</div>
+            </div>
+
+            <div class="mb-3">
+                <strong>📅 Ngày tạo:</strong>
+                <span>@formattedDate</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="d-flex justify-content-between gap-2 flex-wrap">
+        <a href="@Url.Page("./Edit", new { recordId = Model.MedicalRecord.RecordId, appointmentId = Model.MedicalRecord.AppointmentId })"
+           class="btn btn-outline-warning btn-lg rounded-pill px-4 fw-semibold">
+            ✏️ Chỉnh sửa
+        </a>
+
+        <a href="@Url.Page("./Delete", new { recordId = Model.MedicalRecord.RecordId })"
+           class="btn btn-outline-danger btn-lg rounded-pill px-4 fw-semibold">
+            🗑️ Xoá lịch
+        </a>
+
+        <a asp-page="/MedicalProfileDetails"
+           asp-route-customerId="@Model.CustomerId"
+           asp-route-doctorId="@Model.DoctorId"
+           class="btn btn-outline-secondary btn-lg rounded-pill px-4 fw-semibold">
+            ⬅️ Quay lại hồ sơ bệnh án
+        </a>
+    </div>
 </div>
 
-<div>
-    <a href="@Url.Page("./Edit", new { recordId = Model.MedicalRecord.RecordId })" class="btn btn-warning">Edit</a>
-    <a href="@Url.Page("./Delete", new { recordId = Model.MedicalRecord.RecordId })" class="btn btn-danger">Delete</a>
-    <a href="@Url.Page("./Index")" class="btn btn-secondary">Back to List</a>
-</div>
+<style>
+    .card {
+        transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+    }
+
+        .card:hover {
+            transform: scale(1.01);
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+        }
+
+    .btn:hover {
+        transform: translateY(-2px);
+    }
+
+    .btn {
+        transition: all 0.2s ease-in-out;
+    }
+
+    .badge {
+        padding: 0.5em 1em;
+        font-size: 1rem;
+    }
+</style>

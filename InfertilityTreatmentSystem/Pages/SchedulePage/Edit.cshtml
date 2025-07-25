@@ -1,62 +1,75 @@
-﻿@page "{scheduleId:guid}"
+﻿@page "{scheduleId:guid}/{appointmentId:guid}"
 @model InfertilityTreatmentSystem.Pages.SchedulePage.EditModel
 
 @{
-    ViewData["Title"] = "Edit Schedule";
+    ViewData["Title"] = "Chỉnh sửa lịch khám";
+    var customerName = Model.Customers.FirstOrDefault(c => c.UserId == Model.Schedule.CustomerId)?.FullName;
+    var doctorName = Model.Doctors.FirstOrDefault(d => d.UserId == Model.Schedule.DoctorId)?.FullName;
 }
 
-<h1>Edit Schedule</h1>
-
-<form method="post">
-    <div class="mb-3">
-        <label for="CustomerId" class="form-label">Customer</label>
-        <select class="form-control" id="CustomerId" name="CustomerId" required>
-            @foreach (var customer in Model.Customers)
-            {
-                <option value="@customer.UserId"
-                        selected="@(customer.UserId == Model.Schedule.CustomerId)">
-                    @customer.UserName
-                </option>
-            }
-        </select>
+<div class="container py-5">
+    <div class="text-center mb-4">
+        <h2 class="fw-bold text-primary">✏️ Chỉnh sửa lịch khám</h2>
+        <p class="text-muted">Cập nhật lại thông tin lịch hẹn khám bệnh nhân.</p>
     </div>
 
-    <div class="mb-3">
-        <label for="DoctorId" class="form-label">Doctor</label>
-        <select class="form-control" id="DoctorId" name="DoctorId" required>
-            @foreach (var doctor in Model.Doctors)
-            {
-                <option value="@doctor.UserId"
-                        selected="@(doctor.UserId == Model.Schedule.DoctorId)">
-                    @doctor.UserName
-                </option>
-            }
-        </select>
-    </div>
+    <form method="post" class="mx-auto" style="max-width: 700px;">
+        <input type="hidden" asp-for="Schedule.ScheduleId" />
+        <input type="hidden" asp-for="Schedule.CustomerId" />
+        <input type="hidden" asp-for="Schedule.DoctorId" />
 
-    <div class="mb-3">
-        <label for="ServiceName" class="form-label">Service</label>
-        <select class="form-control" id="ServiceName" name="ServiceName" required>
-            @foreach (var service in Model.Services)
-            {
-                <option value="@service.ServiceName"
-                        selected="@(service.ServiceName == Model.Schedule.SerivceName)">
-                    @service.ServiceName
-                </option>
-            }
-        </select>
-    </div>
+        <div class="mb-3">`
+            <label class="form-label">👤 Bệnh nhân</label>
+            <input class="form-control" value="@customerName" disabled />
+        </div>
+        <input type="hidden" asp-for="Schedule.AppointmentId" />
+        <div class="mb-3">
+            <label class="form-label">👨‍⚕️ Bác sĩ</label>
+            <input class="form-control" value="@doctorName" disabled />
+        </div>
 
+        <div class="mb-3">
+            <label class="form-label"> 💼 Dịch vụ</label>
+            <textarea class="form-control" asp-for="Schedule.SerivceName" rows="4" required"></textarea>
+            
+        </div>
 
-    <div class="mb-3">
-        <label for="ScheduleDate" class="form-label">Schedule Date</label>
-        <input type="datetime-local" class="form-control" id="ScheduleDate" name="ScheduleDate" value="@Model.Schedule.ScheduleDate?.ToString("yyyy-MM-ddTHH:mm")" required />
-    </div>
+        <div class="mb-3">
+            <label for="ScheduleDate" class="form-label">📅 Ngày khám</label>
+            <input asp-for="Schedule.ScheduleDate" type="datetime-local" class="form-control" required />
+        </div>
 
-    <div class="mb-3">
-        <label for="Note" class="form-label">Note</label>
-        <textarea class="form-control" id="Note" name="Note" required>@Model.Schedule.Note</textarea>
-    </div>
+        <div class="mb-4">
+            <label asp-for="Schedule.Note" class="form-label">📝 Ghi chú</label>
+            <textarea class="form-control" asp-for="Schedule.Note" rows="4" required></textarea>
+        </div>
 
-    <button type="submit" class="btn btn-primary">Update</button>
-</form>
+        <div class="d-flex justify-content-between gap-2 flex-wrap">
+            <button type="submit" class="btn btn-primary btn-lg rounded-pill px-4 fw-semibold">
+                💾 Lưu thay đổi
+            </button>
+
+            <a asp-page="/SchedulePage/Details"
+               asp-route-scheduleId="@Model.Schedule.ScheduleId"
+               asp-route-appointmentId="@Model.Schedule.AppointmentId"
+               class="btn btn-outline-secondary btn-lg rounded-pill px-4 fw-semibold">
+                ⬅️ Quay lại chi tiết
+            </a>
+        </div>
+    </form>
+</div>
+
+<style>
+    .form-control,
+    .form-select {
+        border-radius: 12px;
+    }
+
+    .btn {
+        transition: all 0.2s ease-in-out;
+    }
+
+        .btn:hover {
+            transform: translateY(-2px);
+        }
+</style>

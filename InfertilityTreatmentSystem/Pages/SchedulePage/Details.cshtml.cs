@@ -12,31 +12,55 @@ namespace InfertilityTreatmentSystem.Pages.SchedulePage
         private readonly ScheduleService _scheduleService;
         private readonly UserService _userService;
         private readonly TreatmentServiceService _treatmentServiceService;
+        private readonly AppointmentService _appointmentService;
 
-        public Schedule Schedule { get; set; }
-        public User Customer { get; set; }
-        public User Doctor { get; set; }
-        public TreatmentService Service { get; set; }
-
-        public DetailsModel(ScheduleService scheduleService, UserService userService, TreatmentServiceService treatmentServiceService)
+        public DetailsModel(ScheduleService scheduleService,
+                            UserService userService,
+                            TreatmentServiceService treatmentServiceService,
+                            AppointmentService appointmentService)
         {
             _scheduleService = scheduleService;
             _userService = userService;
             _treatmentServiceService = treatmentServiceService;
+            _appointmentService = appointmentService;
         }
 
-        public async Task<IActionResult> OnGetAsync(Guid scheduleId)
+        public Schedule Schedule { get; set; }
+        public User Customer { get; set; }
+        public User Doctor { get; set; }
+
+        [BindProperty(SupportsGet = true)]
+        public Guid ScheduleId { get; set; }
+
+        [BindProperty(SupportsGet = true)]
+        public Guid AppointmentId { get; set; }
+
+        public Guid CustomerId { get; set; }
+        public Guid DoctorId { get; set; }
+
+        public async Task<IActionResult> OnGetAsync()
         {
-            // Fetch the schedule by ID
-            Schedule = await _scheduleService.GetScheduleByIdAsync(scheduleId);
+            // Lấy lịch khám
+            Schedule = await _scheduleService.GetScheduleByIdAsync(ScheduleId);
             if (Schedule == null)
             {
                 return NotFound();
             }
 
-            // Fetch the customer, doctor, and service based on the schedule information
-            Customer = await _userService.GetUserByIdAsync(Schedule.CustomerId);
-            Doctor = await _userService.GetUserByIdAsync(Schedule.DoctorId);
+            // Lấy appointment → để truy customerId và doctorId
+            var appointment = await _appointmentService.GetAppointmentByIdAsync(AppointmentId);
+            if (appointment == null)
+            {
+                return NotFound();
+            }
+
+            CustomerId = appointment.CustomerId;
+            DoctorId = appointment.DoctorId;
+
+            // Lấy thông tin người dùng
+            Customer = await _userService.GetUserByIdAsync(CustomerId);
+            Doctor = await _userService.GetUserByIdAsync(DoctorId);
+
             return Page();
         }
     }

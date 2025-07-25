@@ -57,6 +57,7 @@
                         <li class="list-group-item p-0 border-0">
                             <a asp-page="/SchedulePage/Details"
                                asp-route-scheduleId="@schedule.ScheduleId"
+                               asp-route-appointmentId="@Model.AppointmentId"
                                class="d-block px-4 py-3 text-decoration-none text-dark schedule-item">
                                 <div class="fw-semibold text-primary mb-1">
                                     📅 @formattedDate
@@ -133,6 +134,7 @@
                     <li class="list-group-item">
                         <a asp-page="/MedicalRecordPage/Details"
                                asp-route-recordId="@record.RecordId"
+                               asp-route-appointmentId="@Model.AppointmentId"
                                class="d-block px-4 py-3 text-decoration-none text-dark schedule-item">
                                
                                 <div>

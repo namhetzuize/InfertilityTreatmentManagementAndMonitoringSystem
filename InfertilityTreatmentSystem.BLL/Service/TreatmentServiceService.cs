@@ -74,5 +74,10 @@ namespace InfertilityTreatmentSystem.BLL.Service
             _unitOfWork.TreatmentServiceRepository.PrepareRemove(service);
             await _unitOfWork.TreatmentServiceRepository.SaveAsync();
         }
+
+        public async Task<TreatmentService?> GetServiceByServiceIdAsync(Guid serviceId)
+        {
+            return await _unitOfWork.TreatmentServiceRepository.GetByIdAsync(serviceId);
+        }
     }
 }
