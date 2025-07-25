@@ -1,4 +1,4 @@
-using InfertilityTreatmentSystem.BLL.Service;
+﻿using InfertilityTreatmentSystem.BLL.Service;
 using InfertilityTreatmentSystem.DAL.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
@@ -58,15 +58,30 @@ namespace InfertilityTreatmentSystem.Pages
             var appointment = await _appointmentService
                 
         .GetAppointmentByCustomerAndDoctorAsync(customerId, doctorId);
-            if (!ModelState.IsValid)
-            {
-                Customer = await _userService.GetUserByIdAsync(customerId);
-                DoctorId = doctorId;
+            var now = DateTime.Now;
 
-                Schedules = await _scheduleService.GetSchedulesByCustomerAndDoctorAsync(customerId, doctorId);
-                PatientRequests = await _patientRequestService.GetPatientRequestsByCustomerAndDoctorAsync(customerId, doctorId);
-                MedicalRecords = await _medicalRecordService.GetMedicalRecordsByCustomerAndDoctorAsync(customerId, doctorId);
-                return Page();
+            if (!NewSchedule.ScheduleDate.HasValue)
+            {
+                ModelState.AddModelError("NewSchedule.ScheduleDate", "Vui lòng chọn ngày khám.");
+            }
+            else
+            {
+                var scheduleDate = NewSchedule.ScheduleDate.Value;
+
+                if (scheduleDate <= now)
+                {
+                    ModelState.AddModelError("NewSchedule.ScheduleDate", "Ngày khám phải lớn hơn thời gian hiện tại.");
+                }
+
+                if (scheduleDate.Hour < 8 || scheduleDate.Hour >= 17)
+                {
+                    ModelState.AddModelError("NewSchedule.ScheduleDate", "Giờ khám phải trong khoảng từ 08:00 đến 17:00.");
+                }
+            }
+
+            if (string.IsNullOrWhiteSpace(NewSchedule.SerivceName))
+            {
+                ModelState.AddModelError("NewSchedule.SerivceName", "Dịch vụ không được để trống.");
             }
 
             NewSchedule.CustomerId = customerId;

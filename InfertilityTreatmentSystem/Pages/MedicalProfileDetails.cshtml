@@ -223,3 +223,37 @@
         font-weight: 600;
     }
 </style>
+    @section Scripts {
+        <script>
+            document.querySelector("form[method='post']").addEventListener("submit", function (e) {
+                const dateInput = document.querySelector("input[name='NewSchedule.ScheduleDate']");
+                const serviceInput = document.querySelector("input[name='NewSchedule.SerivceName']");
+                const date = new Date(dateInput.value);
+                const now = new Date();
+
+                let errors = [];
+
+                if (!dateInput.value) {
+                    errors.push("Vui lòng chọn ngày khám.");
+                } else {
+                    if (date <= now) {
+                        errors.push("Ngày khám phải lớn hơn hiện tại.");
+                    }
+
+                    const hour = date.getHours();
+                    if (hour < 8 || hour >= 17) {
+                        errors.push("Giờ khám phải từ 08:00 đến 17:00.");
+                    }
+                }
+
+                if (!serviceInput.value.trim()) {
+                    errors.push("Dịch vụ không được để trống.");
+                }
+
+                if (errors.length > 0) {
+                    e.preventDefault();
+                    alert(errors.join("\n"));
+                }
+            });
+        </script>
+    }

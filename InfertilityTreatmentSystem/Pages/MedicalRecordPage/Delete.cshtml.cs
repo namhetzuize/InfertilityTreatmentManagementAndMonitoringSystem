@@ -30,16 +30,18 @@ namespace InfertilityTreatmentSystem.Pages.MedicalRecordPage
             return Page(); // Return the page if the record is found
         }
 
-        public async Task<IActionResult> OnPostAsync()
+        public async Task<IActionResult> OnPostAsync(Guid recordId)
         {
+            var record = await _medicalRecordService.GetMedicalRecordByIdAsync(recordId);
             if (Record != null)
             {
-                // Delete the medical record using DeleteMedicalRecordByIdAsync
+                Guid customerId = record.CustomerId;
+                Guid doctorId = record.DoctorId;
                 await _medicalRecordService.DeleteMedicalRecordByIdAsync(Record.RecordId);
-                return RedirectToPage("./Index"); // Redirect to the index page after deletion
+                return RedirectToPage("/MedicalProfileDetails", new { customerId = customerId, doctorId = doctorId });
             }
 
-            return NotFound(); // If the record is not found, return NotFound
+            return NotFound();
         }
     }
 }
