@@ -1,5 +1,6 @@
 ﻿using InfertilityTreatmentSystem.DAL;
 using InfertilityTreatmentSystem.DAL.Models;
+using InfertilityTreatmentSystem.DAL.Paging;
 
 namespace InfertilityTreatmentSystem.BLL.Service
 {
@@ -91,6 +92,14 @@ namespace InfertilityTreatmentSystem.BLL.Service
             return allSchedules
                 .Where(s => s.CustomerId == customerId && s.DoctorId == doctorId)
                 .ToList();
+        }
+
+        public async Task<PagingResponse<Schedule>> GetPagedSchedulesAsync(
+          string searchTerm,
+          int pageIndex = 1,
+          int pageSize = 10)
+        {
+            return await _unitOfWork.ScheduleRepository.GetPagedSchedulesAsync(searchTerm, pageIndex, pageSize);
         }
     }
 }

@@ -1,74 +1,68 @@
-﻿@page
+﻿@page "{pageIndex?}"
 @model InfertilityTreatmentSystem.Pages.BlogPage.IndexModel
 
 @{
-    Layout = null;
     ViewData["Title"] = "Blogs";
-    var role = User.Claims.FirstOrDefault(c => c.Type == "Role")?.Value;
-    var currentUserId = User.Claims.FirstOrDefault(c => c.Type == "UserId")?.Value;
 }
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - Blogs</title>
+<h1>Blogs</h1>
 
-    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
-</head>
-<body>
-    <div class="container">
-        <h1 class="my-4">@ViewData["Title"]</h1>
+<form method="get" class="mb-3">
+    <input type="text"
+           name="searchTerm"
+           value="@Model.searchTerm"
+           placeholder="Search..." />
+    <button type="submit" class="btn btn-secondary">Search</button>
+</form>
 
-        @if (Model.Blogs != null && Model.Blogs.Count > 0)
-        {
-            <table class="table table-striped">
-                <thead>
-                    <tr>
-                        <th>Title</th>
-                        <th>Content</th>
-                        <th>Created Date</th>
-                        <th>Actions</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach (var blog in Model.Blogs)
-                    {
-                        <tr>
-                            <td>@blog.Title</td>
-                            <td>@blog.Content</td>
-                            <td>@blog.CreatedDate?.ToString("yyyy-MM-dd")</td>
-                            <td>
-                                <a href="/BlogPage/Details?blogId=@blog.BlogId" class="btn btn-info">Details</a>
+@if (Model.Blogs.Any())
+{
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Title</th>
+                <th>Content</th>
+                <th>Date</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var b in Model.Blogs)
+            {
+                <tr>
+                    <td>@b.Title</td>
+                    <td>@b.Content</td>
+                    <td>@b.CreatedDate?.ToString("yyyy-MM-dd")</td>
+                    <td>
+                        <a asp-page="./Details"
+                           asp-route-blogId="@b.BlogId"
+                           class="btn btn-sm btn-info">
+                            Details
+                        </a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
 
-                                @if (role == "Admin" || (role == "Doctor" && blog.UserId.ToString() == currentUserId))
-                                {
-                                    <a href="/BlogPage/Edit?blogId=@blog.BlogId" class="btn btn-warning">Edit</a>
-                                    <a href="/BlogPage/Delete?blogId=@blog.BlogId" class="btn btn-danger">Delete</a>
-                                }
-                            </td>
-                        </tr>
-                    }
-                </tbody>
-            </table>
-        }
-        else
-        {
-            <p>No blogs found.</p>
-        }
+    <nav>
+        <ul class="pagination">
+            @for (int i = 1; i <= Model.TotalPages; i++)
+            {
+                <li class="page-item @(i == Model.PageIndex ? "active" : "")">
+                    <a class="page-link"
+                       asp-route-pageIndex="@i"
+                       asp-route-searchTerm="@Model.searchTerm">
+                        @i
+                    </a>
+                </li>
+            }
+        </ul>
+    </nav>
+}
+else
+{
+    <p>No blogs found.</p>
+}
 
-        @if (role == "Customer")
-        {
-            <a href="/Home" class="btn btn-secondary">Back to Home</a>
-        }
-        else
-        {
-            <a href="/BlogPage/Create" class="btn btn-primary">Create New Blog</a>
-        }
-    </div>
-
-    <script src="~/lib/jquery/dist/jquery.min.js"></script>
-    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-</body>
-</html>
+<a asp-page="./Create" class="btn btn-primary">Create New Blog</a>

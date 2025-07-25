@@ -1,7 +1,10 @@
 ﻿using InfertilityTreatmentSystem.BLL.Service;
-using Microsoft.AspNetCore.Mvc.RazorPages;
 using InfertilityTreatmentSystem.DAL.Models;
+using InfertilityTreatmentSystem.DAL.Paging;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.RazorPages;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace InfertilityTreatmentSystem.Pages.BlogPage
 {
@@ -9,41 +12,29 @@ namespace InfertilityTreatmentSystem.Pages.BlogPage
     {
         private readonly BlogService _blogService;
 
-        public List<Blog> Blogs { get; set; }
-
         public IndexModel(BlogService blogService)
         {
             _blogService = blogService;
         }
 
-       
-        public async Task<IActionResult> OnGetAsync()
+        public List<Blog> Blogs { get; set; } = new();
+        public int PageIndex { get; set; } = 1;
+        public int TotalPages { get; set; }
+        public int PageSize { get; set; } = 10;
+
+        // Binds the ?searchTerm= querystring
+        [BindProperty(SupportsGet = true)]
+        public string searchTerm { get; set; }
+
+        public async Task OnGetAsync(int pageIndex = 1)
         {
-            var userId = User.FindFirst("UserId")?.Value;
-            var role = User.FindFirst("Role")?.Value;
+            // Always pull the paged list (no role checks needed)
+            var page = await _blogService.GetPagedBlogsAsync(
+                searchTerm, pageIndex, PageSize);
 
-            if (role == "Customer")
-            {
-                var allBlogs = await _blogService.GetAllBlogsAsync();
-                var firstBlog = allBlogs.FirstOrDefault();
-                if (firstBlog != null)
-                {
-                    return RedirectToPage("/BlogPage/Details", new { blogId = firstBlog.BlogId });
-                }
-                return RedirectToPage("/Home"); // Không có blog
-            }
-
-            if (role == "Doctor")
-            {
-                var allBlogs = await _blogService.GetAllBlogsAsync();
-                Blogs = allBlogs.Where(b => b.UserId.ToString() == userId).ToList();
-            }
-            else if (role == "Admin")
-            {
-                Blogs = await _blogService.GetAllBlogsAsync();
-            }
-
-            return Page();
+            Blogs = page.List;
+            PageIndex = page.PageIndex;
+            TotalPages = page.TotalPages;
         }
     }
 }

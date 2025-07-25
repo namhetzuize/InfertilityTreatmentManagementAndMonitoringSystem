@@ -1,5 +1,6 @@
 ﻿using InfertilityTreatmentSystem.DAL;
 using InfertilityTreatmentSystem.DAL.Models;
+using InfertilityTreatmentSystem.DAL.Paging;
 using Microsoft.EntityFrameworkCore;
 
 namespace InfertilityTreatmentSystem.BLL.Service
@@ -162,5 +163,12 @@ namespace InfertilityTreatmentSystem.BLL.Service
             return appointments.FirstOrDefault(a => a.CustomerId == customerId && a.DoctorId == doctorId);
         }
 
+        public async Task<PagingResponse<Appointment>> GetPagedAppointmentsAsync(
+            string searchTerm,
+            int pageIndex = 1,
+            int pageSize = 10)
+        {
+            return await _unitOfWork.AppointmentRepository.GetPagedAppointmentsAsync(searchTerm, pageIndex, pageSize);
+        }
     }
 }

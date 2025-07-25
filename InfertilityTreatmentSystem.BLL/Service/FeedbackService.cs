@@ -1,5 +1,6 @@
 ﻿using InfertilityTreatmentSystem.DAL;
 using InfertilityTreatmentSystem.DAL.Models;
+using InfertilityTreatmentSystem.DAL.Paging;
 
 namespace InfertilityTreatmentSystem.BLL.Service
 {
@@ -68,6 +69,14 @@ namespace InfertilityTreatmentSystem.BLL.Service
 
             _unitOfWork.FeedbackRepository.PrepareRemove(feedback);
             await _unitOfWork.FeedbackRepository.SaveAsync();
+        }
+
+        public async Task<PagingResponse<Feedback>> GetPagedFeedbacksAsync(
+           string searchTerm,
+           int pageIndex = 1,
+           int pageSize = 10)
+        {
+            return await _unitOfWork.FeedbackRepository.GetPagedFeedbacksAsync(searchTerm, pageIndex, pageSize);
         }
     }
 }

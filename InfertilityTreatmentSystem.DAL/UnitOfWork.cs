@@ -1,5 +1,6 @@
 ﻿using InfertilityTreatmentSystem.DAL.Models;
 using InfertilityTreatmentSystem.DAL.Repository;
+using InfertilityTreatmentSystem.DAL.Paging;  // Add the using directive for PagingResponse
 using System.Threading.Tasks;
 
 namespace InfertilityTreatmentSystem.DAL

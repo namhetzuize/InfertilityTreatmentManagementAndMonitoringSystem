@@ -1,5 +1,6 @@
 ﻿using InfertilityTreatmentSystem.DAL;
 using InfertilityTreatmentSystem.DAL.Models;
+using InfertilityTreatmentSystem.DAL.Paging;
 
 namespace InfertilityTreatmentSystem.BLL.Service
 {
@@ -87,6 +88,14 @@ namespace InfertilityTreatmentSystem.BLL.Service
                 .Where(r => r.AppointmentId == appointmentId)
                 .ToList();
             return records;
+        }
+
+        public async Task<PagingResponse<MedicalRecord>> GetPagedMedicalRecordsAsync(
+            string searchTerm,
+            int pageIndex = 1,
+            int pageSize = 10)
+        {
+            return await _unitOfWork.MedicalRecordRepository.GetPagedMedicalRecordsAsync(searchTerm, pageIndex, pageSize);
         }
     }
 }
