@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 
 namespace InfertilityTreatmentSystem.Pages.AppointmentPage
@@ -13,32 +14,32 @@ namespace InfertilityTreatmentSystem.Pages.AppointmentPage
     public class CreateModel : PageModel
     {
         private readonly AppointmentService _appointmentService;
-        private readonly UserService _userService;
         private readonly TreatmentServiceService _treatmentServiceService;
 
         public CreateModel(
             AppointmentService appointmentService,
-            UserService userService,
             TreatmentServiceService treatmentServiceService)
         {
             _appointmentService = appointmentService;
-            _userService = userService;
             _treatmentServiceService = treatmentServiceService;
         }
 
         [BindProperty]
         public Appointment Appointment { get; set; }
 
-        public List<SelectListItem> Customers { get; set; }
         public List<SelectListItem> Doctors { get; set; }
         public List<SelectListItem> Services { get; set; }
 
         public async Task<IActionResult> OnGetAsync()
         {
+            var userId = GetCurrentUserId();
+            if (userId == Guid.Empty)
+                return RedirectToPage("/Account/Login"); // or show error
 
             Appointment = new Appointment
             {
-                CustomerId = GetCurrentUserId()  // Tự gán từ claim
+                CustomerId = userId,
+                Status = "Pending"
             };
             await PopulateDropdownsAsync();
             return Page();
@@ -46,61 +47,74 @@ namespace InfertilityTreatmentSystem.Pages.AppointmentPage
 
         public async Task<IActionResult> OnPostAsync()
         {
-            Appointment.CustomerId = GetCurrentUserId();
-            if (!ModelState.IsValid)
+            var userId = GetCurrentUserId();
+            if (userId == Guid.Empty)
             {
+                ModelState.AddModelError("", "Không xác định được tài khoản của bạn. Vui lòng đăng nhập lại.");
                 await PopulateDropdownsAsync();
                 return Page();
             }
 
-            if (Appointment.AppointmentId == Guid.Empty)
-                Appointment.AppointmentId = Guid.NewGuid();
-            var selectedDateTime = Appointment.AppointmentDate;
-           
-            if (selectedDateTime <= DateTime.Now)
-            {
-                ModelState.AddModelError("Appointment.AppointmentDate", "Vui lòng chọn giờ hợp lí.");
-            }
-
-            if (selectedDateTime.Hour < 8 || selectedDateTime.Hour >= 17)
-            {
-                ModelState.AddModelError("Appointment.AppointmentDate", "Vui lòng chọn giờ trong khoảng từ 8h đến 17h.");
-            }
-
-            if (!ModelState.IsValid)
-            {
-                await PopulateDropdownsAsync();
-                return Page();
-            }
+            Appointment.CustomerId = userId;
             Appointment.Status = "Pending";
 
+            // 1) duplicate-pending check
+            var existing = await _appointmentService
+                .GetAppointmentByCustomerAndDoctorAsync(
+                    Appointment.CustomerId,
+                    Appointment.DoctorId);
+            if (existing != null && existing.Status == "Pending")
+            {
+                ModelState.AddModelError(
+                    "Appointment.DoctorId",
+                    "Bạn đã có một lịch chờ xử lý với bác sĩ này. " +
+                    "Vui lòng xoá lịch cũ trước khi tạo mới.");
+            }
 
+            // 2) future-date check
+            if (Appointment.AppointmentDate <= DateTime.Now)
+                ModelState.AddModelError(
+                    "Appointment.AppointmentDate",
+                    "Vui lòng chọn một thời điểm trong tương lai.");
+
+            // 3) office hours
+            var hr = Appointment.AppointmentDate.Hour;
+            if (hr < 8 || hr >= 17)
+                ModelState.AddModelError(
+                    "Appointment.AppointmentDate",
+                    "Vui lòng chọn giờ trong khoảng từ 8h đến 17h.");
+
+            if (!ModelState.IsValid)
+            {
+                await PopulateDropdownsAsync();
+                return Page();
+            }
+
+            Appointment.AppointmentId = Guid.NewGuid();
             await _appointmentService.CreateAppointmentAsync(Appointment);
             return RedirectToPage("/Home");
         }
 
         private async Task PopulateDropdownsAsync()
         {
-            // load customers & doctors
-            var (custs, docs) = await _appointmentService.GetCustomersAndDoctorsAsync();
-            Customers = custs
-                .Select(u => new SelectListItem(u.FullName, u.UserId.ToString()))
-                .ToList();
-            Doctors = docs
-                .Select(u => new SelectListItem(u.FullName, u.UserId.ToString()))
+            // only doctors
+            var (_, docs) = await _appointmentService.GetCustomersAndDoctorsAsync();
+            Doctors = docs.Select(d =>
+                new SelectListItem(d.FullName, d.UserId.ToString()))
                 .ToList();
 
-            // load services via your TreatmentServiceService
+            // services
             var svcs = await _treatmentServiceService.GetAllTreatmentServicesAsync();
-            Services = svcs
-                .Select(s => new SelectListItem(s.ServiceName, s.ServiceId.ToString()))
+            Services = svcs.Select(s =>
+                new SelectListItem(s.ServiceName, s.ServiceId.ToString()))
                 .ToList();
         }
 
         private Guid GetCurrentUserId()
         {
-            var claim = User.FindFirst("UserId");
-            return claim != null ? Guid.Parse(claim.Value) : Guid.Empty;
+            // *** use the exact claim name you issued at login ***
+            var claim = User.FindFirst("UserId")?.Value;
+            return Guid.TryParse(claim, out var id) ? id : Guid.Empty;
         }
     }
 }

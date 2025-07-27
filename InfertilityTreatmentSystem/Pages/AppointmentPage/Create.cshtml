@@ -5,17 +5,10 @@
 <h1>Create Appointment</h1>
 
 <form method="post">
-    
+    <!-- this will show our duplicate-appointment error (and any others) -->
+    <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
     <input asp-for="Appointment.CustomerId" type="hidden" />
-   @*  <div class="mb-3">
-        <label asp-for="Appointment.CustomerId" class="form-label">Customer</label>
-        <select asp-for="Appointment.CustomerId"
-                class="form-select"
-                asp-items="Model.Customers">
-            <option value="">-- select customer --</option>
-        </select>
-        <span asp-validation-for="Appointment.CustomerId" class="text-danger"></span>
-    </div> *@
 
     <div class="mb-3">
         <label asp-for="Appointment.DoctorId" class="form-label">Doctor</label>
@@ -44,27 +37,30 @@
                class="form-control" />
         <span asp-validation-for="Appointment.AppointmentDate" class="text-danger"></span>
     </div>
-    <input asp-for="Appointment.Status" type="hidden" />
-   @*  <div class="mb-3">
-        <label asp-for="Appointment.Status" class="form-label">Status</label>
-        <input asp-for="Appointment.Status" class="form-control" />
-        <span asp-validation-for="Appointment.Status" class="text-danger"></span>
-    </div> *@
+
+    <div class="mb-3">
+        <label asp-for="Appointment.Note" class="form-label">Note</label>
+        <textarea asp-for="Appointment.Note" class="form-control" rows="3"></textarea>
+        <span asp-validation-for="Appointment.Note" class="text-danger"></span>
+    </div>
+
+    <input asp-for="Appointment.Status" type="hidden" value="Pending" />
 
     <button type="submit" class="btn btn-primary">Create</button>
     <a asp-page="./Index" class="btn btn-secondary ms-2">Cancel</a>
 </form>
-@section Scripts {
-    <script>
-        document.querySelector('form').addEventListener('submit', function (e) {
-            const input = document.querySelector('[name="Appointment.AppointmentDate"]');
-            const selected = new Date(input.value);
-            const hour = selected.getHours();
 
-            if (hour < 8 || hour >= 17) {
-                alert("Vui lòng chọn giờ trong khoảng từ 8h đến 17h.");
-                e.preventDefault();
-            }
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        document.querySelector('form').addEventListener('submit', function(e) {
+          const input = document.querySelector('[name="Appointment.AppointmentDate"]');
+          if (!input.value) return;
+          const hour = new Date(input.value).getHours();
+          if (hour < 8 || hour >= 17) {
+            alert("Vui lòng chọn giờ trong khoảng từ 8h đến 17h.");
+            e.preventDefault();
+          }
         });
     </script>
 }

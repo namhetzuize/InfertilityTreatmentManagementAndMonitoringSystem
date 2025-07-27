@@ -25,6 +25,7 @@
             <th>Service</th>
             <th>Appointment Date</th>
             <th>Status</th>
+            <th>Note</th>
             <th>Actions</th> <!-- Luôn hiện cột actions nếu có ít nhất 1 role có quyền -->
         </tr>
     </thead>
@@ -37,9 +38,10 @@
                 <td>@(appointment.Service?.ServiceName ?? "N/A")</td>
                 <td>@appointment.AppointmentDate.ToString("dd/MM/yyyy HH:mm")</td>
                 <td>@appointment.Status</td>
+                <td>@appointment.Note</td>
                 <td>
                     @* Details: Mọi role đều có *@
-                    <a class="btn btn-info btn-sm" asp-page="./Details" asp-route-id="@appointment.AppointmentId">Details</a>
+                    <a class="btn btn-info btn-sm" asp-page="./MedicalProfileDetails" asp-route-id="@appointment.CustomerId" asp-route-id="@appointment.DoctorId">Details</a>
 
                     @* Edit: Chỉ Admin *@
                     @if (role == "Admin")

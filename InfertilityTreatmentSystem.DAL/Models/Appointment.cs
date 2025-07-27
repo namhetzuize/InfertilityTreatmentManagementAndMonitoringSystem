@@ -21,6 +21,8 @@ public partial class Appointment
 
     public string RejectReason { get; set; }
 
+    public string Note { get; set; }
+
     public virtual User Customer { get; set; }
 
     public virtual User Doctor { get; set; }

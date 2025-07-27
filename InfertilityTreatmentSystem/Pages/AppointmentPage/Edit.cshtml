@@ -50,6 +50,12 @@
         <span asp-validation-for="Appointment.Status" class="text-danger"></span>
     </div>
 
+    <div class="mb-3">
+        <label asp-for="Appointment.Note" class="form-label">Note</label>
+        <input asp-for="Appointment.Note" class="form-control" />
+        <span asp-validation-for="Appointment.Note" class="text-danger"></span>
+    </div>
+
     <button type="submit" class="btn btn-primary">Save Changes</button>
     <a asp-page="./Index" class="btn btn-secondary ms-2">Cancel</a>
 </form>

@@ -18,6 +18,7 @@ namespace InfertilityTreatmentSystem.BLL.Service
             _treatmentServiceService = treatmentServiceService;
         }
 
+
         public async Task<List<Appointment>> GetAllAppointmentsAsync()
         {
             var appointments = await _unitOfWork.AppointmentRepository.GetAllAsync();
