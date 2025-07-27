@@ -2,6 +2,7 @@
 using InfertilityTreatmentSystem.DAL.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace InfertilityTreatmentSystem.Pages
 {
@@ -12,11 +13,12 @@ namespace InfertilityTreatmentSystem.Pages
         private readonly MedicalRecordService _medicalRecordService;
         private readonly UserService _userService;
         private readonly AppointmentService _appointmentService;
+        private readonly TreatmentServiceService _treatmentServiceService;
 
         public MedicalProfileDetailsModel(ScheduleService scheduleService,
                             PatientRequestService patientRequestService,
                             MedicalRecordService medicalRecordService,
-                            UserService userService, AppointmentService appointmentService
+                            UserService userService, AppointmentService appointmentService, TreatmentServiceService treatmentServiceService
             )
         {
             _scheduleService = scheduleService;
@@ -24,16 +26,29 @@ namespace InfertilityTreatmentSystem.Pages
             _medicalRecordService = medicalRecordService;
             _userService = userService;
             _appointmentService = appointmentService;
+            _treatmentServiceService = treatmentServiceService;
         }
         [BindProperty]
         public MedicalRecord NewMedicalRecord { get; set; } = new();
         [BindProperty]
         public Schedule NewSchedule { get; set; } = new();
-        public Guid DoctorId { get; set; }
         public User Customer { get; set; }
         public List<Schedule> Schedules { get; set; } = new();
         public List<PatientRequest> PatientRequests { get; set; } = new();
         public List<MedicalRecord> MedicalRecords { get; set; } = new();
+
+        [BindProperty(SupportsGet = true)]
+        public Guid CustomerId { get; set; }
+        [BindProperty(SupportsGet = true)]
+        public Guid DoctorId { get; set; }
+
+        [BindProperty]
+        public PatientRequest NewRequest { get; set; }
+        public List<User> Customers { get; set; }
+        public List<User> Doctors { get; set; }
+        public List<TreatmentService> Services { get; set; }
+        public List<SelectListItem> ServiceItems { get; set; }
+
 
         [BindProperty(SupportsGet = true)]
         public Guid AppointmentId { get; set; }
@@ -50,6 +65,18 @@ namespace InfertilityTreatmentSystem.Pages
             Schedules = await _scheduleService.GetSchedulesByCustomerAndDoctorAsync(customerId, doctorId);
             PatientRequests = await _patientRequestService.GetPatientRequestsByCustomerAndDoctorAsync(customerId, doctorId);
             MedicalRecords = await _medicalRecordService.GetMedicalRecordsByCustomerAndDoctorAsync(customerId, doctorId);
+            Customers = await _userService.GetAllUsersAsync();
+            Doctors = Customers.Where(u => u.Role == "Doctor").ToList();
+            Services = await _treatmentServiceService.GetAllTreatmentServicesAsync();
+            PatientRequests = await _patientRequestService
+               .GetPatientRequestsByCustomerAndDoctorAsync(CustomerId, DoctorId);
+
+            // populate dropdown
+            var allSvc = await _treatmentServiceService.GetAllTreatmentServicesAsync();
+            ServiceItems = allSvc
+                .Select(s => new SelectListItem(s.ServiceName, s.ServiceId.ToString()))
+                .ToList();
+
 
             return Page();
         }
@@ -114,6 +141,36 @@ namespace InfertilityTreatmentSystem.Pages
 
             await _medicalRecordService.CreateMedicalRecordAsync(NewMedicalRecord);
 
+            return RedirectToPage(new { customerId, doctorId });
+        }
+
+        public async Task<IActionResult> OnPostCreatePatientRequestAsync(Guid customerId, Guid doctorId)
+        {
+            // re-populate ServiceItems on validation failure
+            var allSvc = await _treatmentServiceService.GetAllTreatmentServicesAsync();
+            ServiceItems = allSvc
+                .Select(s => new SelectListItem(s.ServiceName, s.ServiceId.ToString()))
+                .ToList();
+
+            if (NewRequest.ServiceId == Guid.Empty)
+                ModelState.AddModelError(nameof(NewRequest.ServiceId), "Vui lòng chọn dịch vụ.");
+
+            if (string.IsNullOrWhiteSpace(NewRequest.Note))
+                ModelState.AddModelError(nameof(NewRequest.Note), "Ghi chú không được để trống.");
+
+            if (!ModelState.IsValid)
+                return Page();
+
+            // fill in the FKs & timestamps
+            NewRequest.RequestId = Guid.NewGuid();
+            NewRequest.CustomerId = customerId;
+            NewRequest.DoctorId = doctorId;
+            NewRequest.RequestedDate = DateTime.Now;
+            NewRequest.CreatedDate = DateTime.Now;
+
+            await _patientRequestService.CreatePatientRequestAsync(NewRequest);
+
+            // redirect back to same route
             return RedirectToPage(new { customerId, doctorId });
         }
     }

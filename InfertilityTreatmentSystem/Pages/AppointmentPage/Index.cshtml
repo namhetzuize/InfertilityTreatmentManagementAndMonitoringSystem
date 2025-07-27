@@ -41,7 +41,12 @@
                 <td>@appointment.Note</td>
                 <td>
                     @* Details: Mọi role đều có *@
-                    <a class="btn btn-info btn-sm" asp-page="./MedicalProfileDetails" asp-route-id="@appointment.CustomerId" asp-route-id="@appointment.DoctorId">Details</a>
+                    <a class="btn btn-info btn-sm"
+                       asp-page="/MedicalProfileDetails"
+                       asp-route-customerId="@appointment.CustomerId"
+                       asp-route-doctorId="@appointment.DoctorId">
+                        Details
+                    </a>
 
                     @* Edit: Chỉ Admin *@
                     @if (role == "Admin")
