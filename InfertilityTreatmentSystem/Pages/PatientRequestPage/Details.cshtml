@@ -2,23 +2,116 @@
 @model InfertilityTreatmentSystem.Pages.PatientRequestPage.DetailsModel
 
 @{
-    ViewData["Title"] = "Patient Request Details";
+    ViewData["Title"] = "Chi tiết yêu cầu dịch vụ";
+
+    var vietnamCulture = new System.Globalization.CultureInfo("vi-VN");
+    var createdDate = Model.PatientRequest?.CreatedDate ?? DateTime.UtcNow;
+
+    var vnTimeZone = TimeZoneInfo.FindSystemTimeZoneById("SE Asia Standard Time");
+    var vietnamDateTime = TimeZoneInfo.ConvertTimeFromUtc(createdDate.ToUniversalTime(), vnTimeZone);
+
+    string formattedDate = vietnamDateTime.ToString("dddd, 'ngày' dd 'tháng' MM 'năm' yyyy 'lúc' HH:mm", vietnamCulture);
+
+    var isDoctor = User.IsInRole("Doctor");
+    var isCustomer = User.IsInRole("Customer");
 }
 
-<h1>Patient Request Details</h1>
+<div class="container py-5">
+    <div class="text-center mb-4">
+        <h2 class="fw-bold text-primary">📋 Chi tiết yêu cầu dịch vụ</h2>
+        <p class="text-muted">Thông tin chi tiết về yêu cầu sử dụng dịch vụ của bệnh nhân.</p>
+    </div>
 
-<div>
-    <h3>Request Information</h3>
-    <p><strong>Customer:</strong> @Model.Request.Customer?.UserName</p>
-    <p><strong>Doctor:</strong> @Model.Request.Doctor?.UserName</p>
-    <p><strong>Service:</strong> @Model.Request.Service?.ServiceName</p>
-    <p><strong>Note:</strong> @Model.Request.Note</p>
-    <p><strong>Requested Date:</strong> @Model.Request.RequestedDate.ToString("MM/dd/yyyy")</p>
-    <p><strong>Created Date:</strong> @Model.Request.CreatedDate.ToString("MM/dd/yyyy")</p>
+    <div class="card shadow-sm border-0 rounded-4 mb-4">
+        <div class="card-body px-5 py-4">
+            <h4 class="mb-4 text-success fw-semibold">🧾 Thông tin yêu cầu</h4>
+
+            <div class="mb-3">
+                <strong>👨‍⚕️ Bác sĩ:</strong>
+                <span class="badge bg-primary text-light fs-6">@Model.Doctor?.FullName</span>
+            </div>
+
+            <div class="mb-3">
+                <strong>👤 Bệnh nhân:</strong>
+                <span class="badge bg-danger text-light fs-6">@Model.Customer?.FullName</span>
+            </div>
+
+            <div class="mb-3">
+                <strong>🩺 Dịch vụ:</strong>
+                <div class="text-dark">@Model.PatientRequest?.Service?.ServiceName</div>
+            </div>
+
+            <div class="mb-3">
+                <strong>📝 Ghi chú:</strong>
+                <div class="text-dark">@Model.PatientRequest?.Note</div>
+            </div>
+
+            <div class="mb-3">
+                <strong>📅 Ngày tạo:</strong>
+                <span>@formattedDate</span>
+            </div>
+        </div>
+    </div>
+
+
+    @if (isCustomer)
+    {
+        <div class="d-flex justify-content-between gap-2 flex-wrap">
+            <a href="@Url.Page("./Edit", new { requestId = Model.PatientRequest?.RequestId })"
+           class="btn btn-outline-warning btn-lg rounded-pill px-4 fw-semibold">
+            ✏️ Chỉnh sửa
+        </a>
+
+        <a href="@Url.Page("./Delete", new { requestId = Model.PatientRequest?.RequestId })"
+           class="btn btn-outline-danger btn-lg rounded-pill px-4 fw-semibold">
+            🗑️ Xoá yêu cầu
+        </a>
+
+
+        <a asp-page="/MedicalProfileDetails"
+           asp-route-customerId="@Model.CustomerId"
+           asp-route-doctorId="@Model.DoctorId"
+           class="btn btn-outline-secondary btn-lg rounded-pill px-4 fw-semibold">
+            ⬅️ Quay lại hồ sơ bệnh án
+        </a>
+    </div>
+    }
+
+    @if (isDoctor)
+    {
+        <div class="d-flex justify-content-between gap-2 flex-wrap">
+        
+            <a asp-page="/MedicalProfileDetails"
+               asp-route-customerId="@Model.CustomerId"
+               asp-route-doctorId="@Model.DoctorId"
+               class="btn btn-outline-secondary btn-lg rounded-pill px-4 fw-semibold">
+                ⬅️ Quay lại hồ sơ bệnh án
+            </a>
+        </div>
+    }
+    
 </div>
 
-<div>
-    <a href="@Url.Page("./Edit", new { requestId = Model.Request.RequestId })" class="btn btn-warning">Edit</a>
-    <a href="@Url.Page("./Delete", new { requestId = Model.Request.RequestId })" class="btn btn-danger">Delete</a>
-    <a href="@Url.Page("./Index")" class="btn btn-secondary">Back to List</a>
-</div>
+<style>
+    .card {
+        transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+    }
+
+        .card:hover {
+            transform: scale(1.01);
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+        }
+
+    .btn:hover {
+        transform: translateY(-2px);
+    }
+
+    .btn {
+        transition: all 0.2s ease-in-out;
+    }
+
+    .badge {
+        padding: 0.5em 1em;
+        font-size: 1rem;
+    }
+</style>

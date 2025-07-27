@@ -36,6 +36,7 @@ namespace InfertilityTreatmentSystem.Pages
         public List<Schedule> Schedules { get; set; } = new();
         public List<PatientRequest> PatientRequests { get; set; } = new();
         public List<MedicalRecord> MedicalRecords { get; set; } = new();
+        public List<TreatmentService> TreatmentServices { get; set; } = new();
 
         [BindProperty(SupportsGet = true)]
         public Guid CustomerId { get; set; }
@@ -46,8 +47,10 @@ namespace InfertilityTreatmentSystem.Pages
         public PatientRequest NewRequest { get; set; }
         public List<User> Customers { get; set; }
         public List<User> Doctors { get; set; }
-        public List<TreatmentService> Services { get; set; }
+        
         public List<SelectListItem> ServiceItems { get; set; }
+        [BindProperty]
+        public PatientRequest NewPatientRequest { get; set; }
 
 
         [BindProperty(SupportsGet = true)]
@@ -60,6 +63,7 @@ namespace InfertilityTreatmentSystem.Pages
             DoctorId = doctorId;
             Customer = await _userService.GetUserByIdAsync(customerId);
 
+
             Appointment = await _appointmentService.GetAppointmentByCustomerAndDoctorAsync(customerId, doctorId);
             AppointmentId = Appointment.AppointmentId;
             Schedules = await _scheduleService.GetSchedulesByCustomerAndDoctorAsync(customerId, doctorId);
@@ -67,7 +71,7 @@ namespace InfertilityTreatmentSystem.Pages
             MedicalRecords = await _medicalRecordService.GetMedicalRecordsByCustomerAndDoctorAsync(customerId, doctorId);
             Customers = await _userService.GetAllUsersAsync();
             Doctors = Customers.Where(u => u.Role == "Doctor").ToList();
-            Services = await _treatmentServiceService.GetAllTreatmentServicesAsync();
+            TreatmentServices = await _treatmentServiceService.GetAllTreatmentServicesAsync();
             PatientRequests = await _patientRequestService
                .GetPatientRequestsByCustomerAndDoctorAsync(CustomerId, DoctorId);
 
@@ -144,34 +148,32 @@ namespace InfertilityTreatmentSystem.Pages
             return RedirectToPage(new { customerId, doctorId });
         }
 
-        public async Task<IActionResult> OnPostCreatePatientRequestAsync(Guid customerId, Guid doctorId)
+        public async Task<IActionResult> OnPostCreateRequestAsync(Guid customerId, Guid doctorId)
         {
-            // re-populate ServiceItems on validation failure
             var allSvc = await _treatmentServiceService.GetAllTreatmentServicesAsync();
             ServiceItems = allSvc
                 .Select(s => new SelectListItem(s.ServiceName, s.ServiceId.ToString()))
                 .ToList();
 
-            if (NewRequest.ServiceId == Guid.Empty)
-                ModelState.AddModelError(nameof(NewRequest.ServiceId), "Vui lòng chọn dịch vụ.");
+            if (NewPatientRequest.ServiceId == Guid.Empty)
+                ModelState.AddModelError(nameof(NewPatientRequest.ServiceId), "Vui lòng chọn dịch vụ.");
 
-            if (string.IsNullOrWhiteSpace(NewRequest.Note))
-                ModelState.AddModelError(nameof(NewRequest.Note), "Ghi chú không được để trống.");
+            if (string.IsNullOrWhiteSpace(NewPatientRequest.Note))
+                ModelState.AddModelError(nameof(NewPatientRequest.Note), "Ghi chú không được để trống.");
 
             if (!ModelState.IsValid)
                 return Page();
 
-            // fill in the FKs & timestamps
-            NewRequest.RequestId = Guid.NewGuid();
-            NewRequest.CustomerId = customerId;
-            NewRequest.DoctorId = doctorId;
-            NewRequest.RequestedDate = DateTime.Now;
-            NewRequest.CreatedDate = DateTime.Now;
+            NewPatientRequest.RequestId = Guid.NewGuid();
+            NewPatientRequest.CustomerId = customerId;
+            NewPatientRequest.DoctorId = doctorId;
+            NewPatientRequest.RequestedDate = DateTime.Now;
+            NewPatientRequest.CreatedDate = DateTime.Now;
 
-            await _patientRequestService.CreatePatientRequestAsync(NewRequest);
+            await _patientRequestService.CreatePatientRequestAsync(NewPatientRequest);
 
-            // redirect back to same route
             return RedirectToPage(new { customerId, doctorId });
         }
+
     }
 }

@@ -2,55 +2,67 @@
 @model InfertilityTreatmentSystem.Pages.PatientRequestPage.EditModel
 
 @{
-    ViewData["Title"] = "Edit Patient Request";
+    ViewData["Title"] = "Chỉnh sửa yêu cầu dịch vụ";
+    var customerName = Model.Customers.FirstOrDefault(c => c.UserId == Model.Request.CustomerId)?.FullName;
+    var doctorName = Model.Doctors.FirstOrDefault(d => d.UserId == Model.Request.DoctorId)?.FullName;
 }
 
-<h1>Edit Patient Request</h1>
-
-<form method="post">
-    <div class="mb-3">
-        <label for="CustomerId" class="form-label">Customer</label>
-        <select class="form-control" id="CustomerId" name="CustomerId" required>
-            @foreach (var customer in Model.Customers)
-            {
-                <option value="@customer.UserId"
-                        selected="@(customer.UserId == Model.Request.CustomerId)">
-                    @customer.UserName
-                </option>
-            }
-        </select>
+<div class="container py-5">
+    <div class="text-center mb-4">
+        <h2 class="fw-bold text-primary">✏️ Chỉnh sửa yêu cầu dịch vụ</h2>
+        <p class="text-muted">Cập nhật thông tin liên quan đến yêu cầu dịch vụ của bệnh nhân.</p>
     </div>
 
-    <div class="mb-3">
-        <label for="DoctorId" class="form-label">Doctor</label>
-        <select class="form-control" id="DoctorId" name="DoctorId" required>
-            @foreach (var doctor in Model.Doctors)
-            {
-                <option value="@doctor.UserId"
-                        selected="@(doctor.UserId == Model.Request.DoctorId)">
-                    @doctor.UserName
-                </option>
-            }
-        </select>
-    </div>
 
-    <div class="mb-3">
-        <label for="ServiceId" class="form-label">Service</label>
-        <select class="form-control" id="ServiceId" name="ServiceId" required>
-            @foreach (var service in Model.Services)
-            {
-                <option value="@service.ServiceId"
-                        selected="@(service.ServiceId == Model.Request.ServiceId)">
-                    @service.ServiceName
-                </option>
-            }
-        </select>
-    </div>
 
-    <div class="mb-3">
-        <label for="Note" class="form-label">Note</label>
-        <textarea class="form-control" id="Note" name="Note" required>@Model.Request.Note</textarea>
-    </div>
+   
+        <form method="post" class="mx-auto" style="max-width: 700px;">
+        <input type="hidden" asp-for="Request.RequestId" />
+    <input type="hidden" asp-for="Request.CustomerId" />
+    <input type="hidden" asp-for="Request.DoctorId" />
+       
+        <div class="mb-3">
+            <label class="form-label">👤 Bệnh nhân</label>
+            <input class="form-control" value="@customerName" disabled />
+        </div>
 
-    <button type="submit" class="btn btn-primary">Update</button>
-</form>
+        <div class="mb-3">
+            <label class="form-label">👨‍⚕️ Bác sĩ</label>
+            <input class="form-control" value="@doctorName" disabled />
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="Request.Note" class="form-label fw-semibold">📝 Ghi chú</label>
+            <textarea asp-for="Request.Note" class="form-control" rows="4"></textarea>
+            <span asp-validation-for="Request.Note" class="text-danger"></span>
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="Request.ServiceId" class="form-label fw-semibold">🩺 Dịch vụ</label>
+            <select asp-for="Request.ServiceId" class="form-select">
+                <option disabled selected>-- Chọn dịch vụ --</option>
+                @foreach (var service in Model.Services)
+                {
+                    <option value="@service.ServiceId">@service.ServiceName</option>
+                }
+            </select>
+            <span asp-validation-for="Request.ServiceId" class="text-danger"></span>
+        </div>
+
+        <div class="d-flex justify-content-between flex-wrap gap-2 mt-4">
+            <button type="submit" class="btn btn-success btn-lg rounded-pill px-4 fw-semibold">
+                💾 Lưu thay đổi
+            </button>
+
+            <a asp-page="/PatientRequestPage/Details"
+               asp-route-requestId="@Model.Request.RequestId"
+               class="btn btn-outline-secondary btn-lg rounded-pill px-4 fw-semibold">
+                ⬅️ Quay lại chi tiết
+            </a>
+        </div>
+    </form>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

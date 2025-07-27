@@ -3,64 +3,129 @@
 @using System.Security.Claims
 
 @{
-    ViewData["Title"] = "Appointments";
+    ViewData["Title"] = "Lịch điều trị";
     var role = User.FindFirstValue(ClaimTypes.Role);
-   
 }
 
-<h1>Appointments</h1>
+<style>
+    .btn-custom {
+        transition: all 0.3s ease;
+        border-radius: 8px;
+    }
 
-
-
-@if (role == "Admin" || role == "Customer")
-{
-    <a class="btn btn-primary mb-3" asp-page="./Create">Create New Appointment</a>
-}
-
-<table class="table table-bordered">
-    <thead>
-        <tr>
-            <th>Customer</th>
-            <th>Doctor</th>
-            <th>Service</th>
-            <th>Appointment Date</th>
-            <th>Status</th>
-            <th>Note</th>
-            <th>Actions</th> <!-- Luôn hiện cột actions nếu có ít nhất 1 role có quyền -->
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var appointment in Model.Appointments)
-        {
-            <tr>
-                <td>@(appointment.Customer?.FullName ?? "N/A")</td>
-                <td>@(appointment.Doctor?.FullName ?? "N/A")</td>
-                <td>@(appointment.Service?.ServiceName ?? "N/A")</td>
-                <td>@appointment.AppointmentDate.ToString("dd/MM/yyyy HH:mm")</td>
-                <td>@appointment.Status</td>
-                <td>@appointment.Note</td>
-                <td>
-                    @* Details: Mọi role đều có *@
-                    <a class="btn btn-info btn-sm"
-                       asp-page="/MedicalProfileDetails"
-                       asp-route-customerId="@appointment.CustomerId"
-                       asp-route-doctorId="@appointment.DoctorId">
-                        Details
-                    </a>
-
-                    @* Edit: Chỉ Admin *@
-                    @if (role == "Admin")
-                    {
-                        <a class="btn btn-warning btn-sm" asp-page="./Edit" asp-route-id="@appointment.AppointmentId">Edit</a>
-                    }
-
-                    @* Delete: Admin và Customer *@
-                    @if (role == "Admin" || role == "Customer")
-                    {
-                        <a class="btn btn-danger btn-sm" asp-page="./Delete" asp-route-appointmentId="@appointment.AppointmentId">Delete</a>
-                    }
-                </td>
-            </tr>
+        .btn-custom:hover {
+            transform: scale(1.05);
+            opacity: 0.9;
         }
-    </tbody>
-</table>
+
+    .table thead th {
+        background-color: #007BFF;
+        color: white;
+        text-align: center;
+    }
+
+    .table tbody td {
+        vertical-align: middle;
+        text-align: center;
+    }
+
+    .table tbody tr:hover {
+        background-color: #f8f9fa;
+        transition: background-color 0.3s;
+    }
+
+    .page-header {
+        font-size: 2rem;
+        font-weight: 700;
+        color: #343a40;
+        margin-bottom: 1.5rem;
+        border-left: 5px solid #007BFF;
+        padding-left: 12px;
+        animation: fadeIn 1s ease-in-out;
+    }
+
+    @@keyframes fadeIn {
+        from
+
+    {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+    }
+</style>
+
+<div class="container py-4">
+    <h1 class="page-header">📅 Lịch điều trị</h1>
+
+    @if (role == "Admin" || role == "Customer")
+    {
+        <a class="btn btn-success btn-custom mb-4" asp-page="./Create">
+            ➕ Đặt lịch mới
+        </a>
+    }
+
+    <div class="table-responsive shadow rounded">
+        <table class="table table-bordered table-hover">
+            <thead>
+                <tr>
+                    <th>👤 Bệnh nhân</th>
+                    <th>👨‍⚕️ Bác sĩ</th>
+                    <th>🩺 Dịch vụ</th>
+                    <th>📆 Ngày hẹn</th>
+                    <th>📌 Trạng thái</th>
+                    <th>📝 Ghi chú</th>
+                    <th>⚙️ Thao tác</th>
+                 
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var appointment in Model.Appointments)
+                {
+                    <tr>
+                        <td>@(appointment.Customer?.FullName ?? "N/A")</td>
+                        <td>@(appointment.Doctor?.FullName ?? "N/A")</td>
+                        <td>@(appointment.Service?.ServiceName ?? "N/A")</td>
+                        <td>@appointment.AppointmentDate.ToString("dd/MM/yyyy HH:mm")</td>
+                        <td>@appointment.Status</td>
+                        <td>@appointment.Note</td>
+                        <td>
+
+                            @if (appointment.Status == "Success"){
+                            <a class="btn btn-info btn-sm btn-custom"
+                               asp-page="/MedicalProfileDetails"
+                               asp-route-customerId="@appointment.CustomerId"
+                               asp-route-doctorId="@appointment.DoctorId">
+                                Chi tiết
+                            </a>
+                            }
+
+                            @if (role == "Admin")
+                            {
+                                <a class="btn btn-warning btn-sm btn-custom"
+                                   asp-page="./Edit"
+                                   asp-route-id="@appointment.AppointmentId">
+                                    Chỉnh sửa
+                                </a>
+                            }
+
+                            @if (role == "Admin" || role == "Customer")
+                            {
+                                <a class="btn btn-danger btn-sm btn-custom"
+                                   asp-page="./Delete"
+                                   asp-route-appointmentId="@appointment.AppointmentId">
+                                    Xóa
+                                </a>
+                            }
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

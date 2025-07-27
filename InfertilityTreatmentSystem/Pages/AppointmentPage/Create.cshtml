@@ -1,66 +1,148 @@
 ﻿@page
 @model InfertilityTreatmentSystem.Pages.AppointmentPage.CreateModel
 @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@{
+    ViewData["Title"] = "Tạo lịch hẹn";
+}
 
-<h1>Create Appointment</h1>
+<style>
+    .form-container {
+        background-color: #ffffff;
+        border-radius: 16px;
+        padding: 30px;
+        box-shadow: 0 0 15px rgba(0, 123, 255, 0.2);
+        animation: fadeInUp 0.8s ease-in-out;
+    }
 
-<form method="post">
-    <!-- this will show our duplicate-appointment error (and any others) -->
-    <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+    @@keyframes fadeInUp {
+        from
 
-    <input asp-for="Appointment.CustomerId" type="hidden" />
+    {
+        opacity: 0;
+        transform: translateY(20px);
+    }
 
-    <div class="mb-3">
-        <label asp-for="Appointment.DoctorId" class="form-label">Doctor</label>
-        <select asp-for="Appointment.DoctorId"
-                class="form-select"
-                asp-items="Model.Doctors">
-            <option value="">-- select doctor --</option>
-        </select>
-        <span asp-validation-for="Appointment.DoctorId" class="text-danger"></span>
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+    }
+
+    .form-label {
+        font-weight: 600;
+    }
+
+    .form-control,
+    .form-select {
+        border-radius: 10px;
+        transition: all 0.3s ease;
+    }
+
+        .form-control:focus,
+        .form-select:focus {
+            box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+            transform: scale(1.02);
+        }
+
+    .btn-primary {
+        background-color: #007BFF;
+        border-radius: 12px;
+        padding: 10px 20px;
+        font-weight: 600;
+        transition: 0.3s;
+    }
+
+        .btn-primary:hover {
+            background-color: #0056b3;
+            transform: scale(1.05);
+        }
+
+    .btn-secondary {
+        border-radius: 12px;
+        padding: 10px 20px;
+        font-weight: 500;
+    }
+
+    h1 {
+        font-weight: bold;
+        margin-bottom: 25px;
+        color: #343a40;
+        animation: fadeIn 1s ease-in-out;
+    }
+
+    @@keyframes fadeIn {
+        from
+
+    {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+
+    }
+</style>
+
+<div class="container mt-5 mb-5">
+    <div class="form-container">
+        <h1>📅 Tạo lịch hẹn mới</h1>
+
+        <form method="post">
+            <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+            <input asp-for="Appointment.CustomerId" type="hidden" />
+
+            <div class="mb-3">
+                <label asp-for="Appointment.DoctorId" class="form-label">👨‍⚕️ Chọn bác sĩ</label>
+                <select asp-for="Appointment.DoctorId" class="form-select" asp-items="Model.Doctors">
+                    <option value="">-- Chọn bác sĩ --</option>
+                </select>
+                <span asp-validation-for="Appointment.DoctorId" class="text-danger"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="Appointment.ServiceId" class="form-label">🩺 Chọn dịch vụ</label>
+                <select asp-for="Appointment.ServiceId" class="form-select" asp-items="Model.Services">
+                    <option value="">-- Chọn dịch vụ --</option>
+                </select>
+                <span asp-validation-for="Appointment.ServiceId" class="text-danger"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="Appointment.AppointmentDate" class="form-label">🕒 Ngày & giờ hẹn</label>
+                <input asp-for="Appointment.AppointmentDate" type="datetime-local" class="form-control" />
+                <span asp-validation-for="Appointment.AppointmentDate" class="text-danger"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="Appointment.Note" class="form-label">📝 Ghi chú</label>
+                <textarea asp-for="Appointment.Note" class="form-control" rows="3"></textarea>
+                <span asp-validation-for="Appointment.Note" class="text-danger"></span>
+            </div>
+
+            <input asp-for="Appointment.Status" type="hidden" value="Pending" />
+
+            <div class="d-flex gap-3">
+                <button type="submit" class="btn btn-primary">💾 Tạo lịch</button>
+                <a asp-page="./Index" class="btn btn-secondary">❌ Hủy</a>
+            </div>
+        </form>
     </div>
-
-    <div class="mb-3">
-        <label asp-for="Appointment.ServiceId" class="form-label">Service</label>
-        <select asp-for="Appointment.ServiceId"
-                class="form-select"
-                asp-items="Model.Services">
-            <option value="">-- select service --</option>
-        </select>
-        <span asp-validation-for="Appointment.ServiceId" class="text-danger"></span>
-    </div>
-
-    <div class="mb-3">
-        <label asp-for="Appointment.AppointmentDate" class="form-label">Date &amp; Time</label>
-        <input asp-for="Appointment.AppointmentDate"
-               type="datetime-local"
-               class="form-control" />
-        <span asp-validation-for="Appointment.AppointmentDate" class="text-danger"></span>
-    </div>
-
-    <div class="mb-3">
-        <label asp-for="Appointment.Note" class="form-label">Note</label>
-        <textarea asp-for="Appointment.Note" class="form-control" rows="3"></textarea>
-        <span asp-validation-for="Appointment.Note" class="text-danger"></span>
-    </div>
-
-    <input asp-for="Appointment.Status" type="hidden" value="Pending" />
-
-    <button type="submit" class="btn btn-primary">Create</button>
-    <a asp-page="./Index" class="btn btn-secondary ms-2">Cancel</a>
-</form>
+</div>
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
     <script>
-        document.querySelector('form').addEventListener('submit', function(e) {
-          const input = document.querySelector('[name="Appointment.AppointmentDate"]');
-          if (!input.value) return;
-          const hour = new Date(input.value).getHours();
-          if (hour < 8 || hour >= 17) {
-            alert("Vui lòng chọn giờ trong khoảng từ 8h đến 17h.");
-            e.preventDefault();
-          }
+        document.querySelector('form').addEventListener('submit', function (e) {
+            const input = document.querySelector('[name="Appointment.AppointmentDate"]');
+            if (!input.value) return;
+            const hour = new Date(input.value).getHours();
+            if (hour < 8 || hour >= 17) {
+                alert("⚠️ Vui lòng chọn giờ trong khoảng từ 8h đến 17h.");
+                e.preventDefault();
+            }
         });
     </script>
 }

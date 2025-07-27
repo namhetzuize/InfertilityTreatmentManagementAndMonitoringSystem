@@ -1,59 +1,79 @@
-﻿@page "/MedicalProfileDetails/{customerId:guid}/{doctorId:guid}"
+﻿@page "{customerId:guid}/{doctorId:guid}"
 @model InfertilityTreatmentSystem.Pages.MedicalProfileDetailsModel
-@using System.Security.Claims
-
 @{
     ViewData["Title"] = "Chi tiết hồ sơ bệnh án";
-    var role = User.FindFirstValue(ClaimTypes.Role);
+    var isDoctor = User.IsInRole("Doctor");
+    var isCustomer = User.IsInRole("Customer");
 }
 
 <div class="container py-4">
-    <h2 class="fw-bold text-primary mb-4">
-        🩺 Hồ sơ bệnh nhân: @Model.Customer?.FullName
-    </h2>
+    <h2 class="fw-bold text-primary mb-4">🩺 Hồ sơ bệnh nhân: @Model.Customer?.FullName</h2>
 
-    @* ───── LỊCH KHÁM ───── *@
     <div class="mb-4">
         <h4 class="text-success">📅 Lịch khám</h4>
-
-        @* Only doctors can create new schedules *@
-        @if (role == "Doctor")
+        @if (isDoctor)
         {
             <form method="post" asp-page-handler="CreateSchedule"
-                  asp-route-customerId="@Model.Customer.UserId"
-                  asp-route-doctorId="@Model.DoctorId"
-                  class="row g-2 mb-3">
-                <div class="col-md-4">
-                    <label class="form-label">Ngày khám:</label>
-                    <input asp-for="NewSchedule.ScheduleDate" type="datetime-local" class="form-control" />
-                </div>
-                <div class="col-md-4">
-                    <label class="form-label">Dịch vụ:</label>
-                    <input asp-for="NewSchedule.SerivceName" class="form-control" />
-                </div>
-                <div class="col-md-4">
-                    <label class="form-label">Ghi chú:</label>
-                    <input asp-for="NewSchedule.Note" class="form-control" />
-                </div>
-                <div class="col-12">
+            asp-route-customerId="@Model.Customer.UserId"
+            asp-route-doctorId="@Model.DoctorId">
+                <div class="row g-2 mb-3">
+                    <div class="col-md-4">
+                        <label class="form-label">Ngày khám:</label>
+                        <input asp-for="NewSchedule.ScheduleDate" type="datetime-local" class="form-control" />
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">Dịch vụ:</label>
+                        <input asp-for="NewSchedule.SerivceName" class="form-control" />
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">Ghi chú:</label>
+                        <input asp-for="NewSchedule.Note" class="form-control" />
+                    </div>
                     <button type="submit" class="btn btn-primary">➕ Tạo lịch khám</button>
                 </div>
             </form>
         }
-
-        @* everyone can view schedules *@
-        @if (Model.Schedules?.Any() == true)
+        @if (Model.Schedules != null && Model.Schedules.Any())
         {
-            <button class="btn btn-outline-primary mb-3" data-bs-toggle="collapse" data-bs-target="#scheduleListCollapse">
+            var sortedSchedules = Model.Schedules
+            .Where(s => s.ScheduleDate.HasValue)
+            .OrderBy(s => s.ScheduleDate)
+            .ToList();
+
+            <button class="btn btn-outline-primary mb-3 d-flex align-items-center gap-2"
+            type="button"
+            data-bs-toggle="collapse"
+            data-bs-target="#scheduleListCollapse"
+            aria-expanded="false"
+            aria-controls="scheduleListCollapse"
+            id="toggleScheduleBtn">
                 📅 Xem lịch khám
+                <span id="collapseIcon">▼</span>
             </button>
+
             <div class="collapse" id="scheduleListCollapse">
                 <ul class="list-group">
-                    @foreach (var sch in Model.Schedules.OrderBy(s => s.ScheduleDate))
+                    @foreach (var schedule in sortedSchedules)
                     {
-                        <li class="list-group-item">
-                            @sch.ScheduleDate?.ToString("dd/MM/yyyy HH:mm") – <strong>@sch.SerivceName</strong><br />
-                            <small>@sch.Note</small>
+                        var date = schedule.ScheduleDate.Value;
+                        var vietnamCulture = new System.Globalization.CultureInfo("vi-VN");
+                        string formattedDate = date.ToString("dddd, 'ngày' dd 'tháng' MM 'năm' yyyy 'lúc' HH:mm", vietnamCulture);
+
+                        <li class="list-group-item p-0 border-0">
+                            <a asp-page="/SchedulePage/Details"
+                            asp-route-scheduleId="@schedule.ScheduleId"
+                            asp-route-appointmentId="@Model.AppointmentId"
+                            class="d-block px-4 py-3 text-decoration-none text-dark schedule-item">
+                                <div class="fw-semibold text-primary mb-1">
+                                    📅 @formattedDate
+                                </div>
+                                <div>
+                                    <strong>Dịch vụ:</strong> @schedule.SerivceName
+                                </div>
+                                <div>
+                                    <strong>Ghi chú:</strong> @schedule.Note
+                                </div>
+                            </a>
                         </li>
                     }
                 </ul>
@@ -63,19 +83,19 @@
         {
             <div class="alert alert-info">Không có lịch khám nào.</div>
         }
+
     </div>
 
-    @* ───── HỒ SƠ BỆNH ÁN ───── *@
+
     <div class="mb-4">
         <h4 class="text-danger">📋 Hồ sơ bệnh án</h4>
-
-        @* Only doctors can add new medical records *@
-        @if (role == "Doctor")
+        @if (isDoctor)
         {
             <form method="post" asp-page-handler="CreateMedicalRecord"
-                  asp-route-customerId="@Model.Customer.UserId"
-                  asp-route-doctorId="@Model.DoctorId"
-                  class="row g-2 mb-3 bg-light border p-3 rounded">
+            asp-route-customerId="@Model.Customer.UserId"
+              asp-route-doctorId="@Model.DoctorId"
+              class="mb-3 border rounded p-3 bg-light">
+            <div class="row g-2">
                 <div class="col-md-4">
                     <label class="form-label">Kết quả xét nghiệm:</label>
                     <input asp-for="NewMedicalRecord.TestResults" class="form-control" />
@@ -88,30 +108,64 @@
                     <label class="form-label">Ghi chú:</label>
                     <input asp-for="NewMedicalRecord.Note" class="form-control" />
                 </div>
-                <div class="col-12">
-                    <button type="submit" class="btn btn-danger">➕ Tạo hồ sơ bệnh án</button>
-                </div>
-            </form>
+            </div>
+            <button type="submit" class="btn btn-danger mt-3">➕ Tạo hồ sơ bệnh án</button>
+        </form>
         }
 
-        @* everyone can view records *@
-        @if (Model.MedicalRecords?.Any() == true)
+        @* Danh sách hồ sơ như cũ *@
+        @if (Model.MedicalRecords!= null && Model.MedicalRecords.Any())
         {
-            <button class="btn btn-outline-danger mb-3" data-bs-toggle="collapse" data-bs-target="#recordListCollapse">
+            var sortMedicalRecords = Model.MedicalRecords
+            
+            .OrderBy(s => s.CreatedDate)
+            .ToList();
+            <button class="btn btn-outline-danger mb-3 d-flex align-items-center gap-2"
+                    type="button"
+                    data-bs-toggle="collapse"
+                    data-bs-target="#recordListCollapse"
+                    aria-expanded="false"
+                    aria-controls="recordListCollapse"
+                    id="toggleRecordBtn">
                 📋 Xem hồ sơ bệnh án
+                <span id="collapseIcon">▼</span>
             </button>
             <div class="collapse" id="recordListCollapse">
-                <ul class="list-group">
-                    @foreach (var mr in Model.MedicalRecords.OrderBy(r => r.CreatedDate))
+            <ul class="list-group">
+                    @foreach (var record in sortMedicalRecords)
                     {
-                        <li class="list-group-item">
-                            <strong>Ngày:</strong> @mr.CreatedDate.ToString("dd/MM/yyyy HH:mm")<br />
-                            <strong>Test:</strong> @mr.TestResults<br />
-                            <strong>Rx:</strong> @mr.Prescription<br />
-                            <em>@mr.Note</em>
-                        </li>
-                    }
-                </ul>
+                        var date = record.CreatedDate;
+                        var vietnamCulture = new System.Globalization.CultureInfo("vi-VN");
+                        string formattedDate = date.ToString("dddd, 'ngày' dd 'tháng' MM 'năm' yyyy 'lúc' HH:mm", vietnamCulture);
+               
+                    <li class="list-group-item">
+                        <a asp-page="/MedicalRecordPage/Details"
+                               asp-route-recordId="@record.RecordId"
+                               asp-route-appointmentId="@Model.AppointmentId"
+                               class="d-block px-4 py-3 text-decoration-none text-dark schedule-item">
+                               
+                                <div>
+                                    <strong style="color: red;">💊 Đơn thuốc:</strong>
+                                    <span style="color: red;">@record.Prescription</span><br />
+                                </div>
+                        <div>
+                                    <strong>Kết quả xét nghiệm:</strong> @record.TestResults<br />
+                        </div>
+                                
+                                <div>
+                                    <strong>Ghi chú:</strong> @record.Note
+                                </div>
+                                <div>
+                                    <strong>Ngày tạo:</strong>
+                                    
+                                     @formattedDate
+                                </div>
+                       
+                       
+                        </a>
+                    </li>
+                }
+            </ul>
             </div>
         }
         else
@@ -120,62 +174,131 @@
         }
     </div>
 
-    @* ───── YÊU CẦU TỪ BỆNH NHÂN ───── *@
+
     <div class="mb-4">
-        <h4 class="text-warning">📝 Yêu cầu từ bệnh nhân</h4>
+        <button class="btn btn-outline-warning btn-xl d-flex align-items-center gap-2 mb-2"
+                type="button"
+                data-bs-toggle="collapse"
+                data-bs-target="#patientRequestsCollapse"
+                aria-expanded="false"
+                aria-controls="patientRequestsCollapse"
+                id="togglePatientRequestBtn">
+            📝 Yêu cầu từ bệnh nhân <span id="iconPatientRequest">▼</span>
+        </button>
 
-        @if (role == "Customer")
+        @if (isCustomer)
         {
-            <form method="post"
-                  asp-page-handler="CreatePatientRequest"
-                  asp-route-customerId="@Model.CustomerId"
+            <form method="post" asp-page-handler="CreateRequest"
+                  asp-route-customerId="@Model.Customer.UserId"
                   asp-route-doctorId="@Model.DoctorId"
-                  class="row g-2 mb-3 bg-light border p-3 rounded">
-
-                <div class="col-md-6">
-                    <label class="form-label">Dịch vụ yêu cầu:</label>
-                    <select asp-for="NewRequest.ServiceId"
-                            asp-items="Model.ServiceItems"
-                            class="form-select">
-                        <option value="">-- Chọn dịch vụ --</option>
-                    </select>
-                    <span asp-validation-for="NewRequest.ServiceId" class="text-danger"></span>
+                  class="mb-3 border rounded p-3 bg-light">
+                <div class="row g-2">
+                    <div class="col-md-6">
+                        <label class="form-label">Dịch vụ:</label>
+                        <select asp-for="NewPatientRequest.ServiceId" class="form-select">
+                            <option value="">-- Chọn dịch vụ --</option>
+                            @foreach (var service in Model.TreatmentServices)
+                            {
+                                <option value="@service.ServiceId">@service.ServiceName</option>
+                            }
+                        </select>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Ghi chú:</label>
+                        <input asp-for="NewPatientRequest.Note" class="form-control" />
+                    </div>
                 </div>
-
-                <div class="col-md-6">
-                    <label class="form-label">Ghi chú:</label>
-                    <input asp-for="NewRequest.Note" class="form-control" />
-                    <span asp-validation-for="NewRequest.Note" class="text-danger"></span>
-                </div>
-
-                <div class="col-12">
-                    <button type="submit" class="btn btn-warning">➕ Tạo yêu cầu</button>
-                </div>
+                <button type="submit" class="btn btn-warning mt-3">➕ Gửi yêu cầu</button>
             </form>
         }
 
-        @if (Model.PatientRequests?.Any() == true)
-        {
-            <button class="btn btn-outline-warning mb-2"
-                    data-bs-toggle="collapse"
-                    data-bs-target="#reqListCollapse">
-                📝 Xem yêu cầu
-            </button>
-            <div class="collapse" id="reqListCollapse">
+        <div class="collapse" id="patientRequestsCollapse">
+            @if (Model.PatientRequests.Any())
+            {
                 <ul class="list-group">
-                    @foreach (var pr in Model.PatientRequests)
+                    @foreach (var request in Model.PatientRequests.OrderByDescending(r => r.CreatedDate))
                     {
-                        <li class="list-group-item">
-                            <strong>@pr.RequestedDate: </strong>
-                            @pr.Service.ServiceName – @pr.Note
+                        var date = request.CreatedDate;
+                        var vietnamCulture = new System.Globalization.CultureInfo("vi-VN");
+                        string formattedDate = date.ToString("dddd, 'ngày' dd 'tháng' MM 'năm' yyyy 'lúc' HH:mm", vietnamCulture);
+
+                        <li class="list-group-item p-0">
+                            <a asp-page="/PatientRequestPage/Details"
+                               asp-route-requestId="@request.RequestId"
+                               
+                               class="d-block px-4 py-3 text-decoration-none text-dark schedule-item">
+                                <div>
+                                    <strong style="color: #c47f00;">🩺 Dịch vụ:</strong>
+                                    <span>@request.Service?.ServiceName</span>
+                                </div>
+                                <div>
+                                    <strong>Ghi chú:</strong> @request.Note
+                                </div>
+                                <div>
+                                    <strong>Ngày tạo:</strong> @formattedDate
+                                </div>
+                            </a>
                         </li>
                     }
                 </ul>
-            </div>
-        }
-        else
-        {
-            <div class="alert alert-info">Chưa có yêu cầu nào.</div>
-        }
+            }
+            else
+            {
+                <div class="alert alert-info mt-2">Không có yêu cầu từ bệnh nhân.</div>
+            }
+        </div>
     </div>
-</div>
+
+    
+<style>
+    .schedule-item {
+        border-radius: 8px;
+        transition: background-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+    }
+
+    .schedule-item:hover {
+        background-color: #f0f8ff;
+        box-shadow: 0 0 8px rgba(0, 123, 255, 0.2);
+        text-decoration: none;
+    }
+
+    .list-group-item {
+        background-color: transparent;
+    }
+
+    
+    </style>
+    @section Scripts {
+        <script>
+            document.querySelector("form[method='post']").addEventListener("submit", function (e) {
+                const dateInput = document.querySelector("input[name='NewSchedule.ScheduleDate']");
+                const serviceInput = document.querySelector("input[name='NewSchedule.SerivceName']");
+                const date = new Date(dateInput.value);
+                const now = new Date();
+
+                let errors = [];
+
+                if (!dateInput.value) {
+                    errors.push("Vui lòng chọn ngày khám.");
+                } else {
+                    if (date <= now) {
+                        errors.push("Ngày khám phải lớn hơn hiện tại.");
+                    }
+
+                    const hour = date.getHours();
+                    if (hour < 8 || hour >= 17) {
+                        errors.push("Giờ khám phải từ 08:00 đến 17:00.");
+                    }
+                }
+
+                if (!serviceInput.value.trim()) {
+                    errors.push("Dịch vụ không được để trống.");
+                }
+
+                if (errors.length > 0) {
+                    e.preventDefault();
+                    alert(errors.join("\n"));
+                }
+            });
+        </script>
+    }

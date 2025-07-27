@@ -19,26 +19,29 @@ namespace InfertilityTreatmentSystem.Pages.PatientRequestPage
 
         public async Task<IActionResult> OnGetAsync(Guid requestId)
         {
+            // Retrieve the medical record by its RecordId
             Request = await _patientRequestService.GetPatientRequestByIdAsync(requestId);
 
             if (Request == null)
             {
-                return NotFound(); // Return 404 if the record is not found
+                return NotFound(); // If no record is found, return NotFound
             }
 
-            return Page(); // Return the page with details
+            return Page(); // Return the page if the record is found
         }
 
-        public async Task<IActionResult> OnPostAsync()
+        public async Task<IActionResult> OnPostAsync(Guid requestId)
         {
+            var request = await _patientRequestService.GetPatientRequestByIdAsync(requestId);
             if (Request != null)
             {
-                // Delete the request using DeletePatientRequestByIdAsync
+                Guid customerId = request.CustomerId;
+                Guid doctorId = request.DoctorId;
                 await _patientRequestService.DeletePatientRequestByIdAsync(Request.RequestId);
-                return RedirectToPage("./Index");
+                return RedirectToPage("/MedicalProfileDetails", new { customerId = customerId, doctorId = doctorId });
             }
 
-            return NotFound(); // Return 404 if the record is not found
+            return NotFound();
         }
     }
 }

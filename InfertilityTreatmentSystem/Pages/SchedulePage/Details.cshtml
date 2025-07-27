@@ -3,7 +3,7 @@
 
 @{
     ViewData["Title"] = "Chi tiết lịch khám";
-   var vietnamCulture = new System.Globalization.CultureInfo("vi-VN");
+    var vietnamCulture = new System.Globalization.CultureInfo("vi-VN");
     var scheduleDate = Model.Schedule?.ScheduleDate ?? DateTime.UtcNow;
 
     // Đảm bảo chuyển sang giờ Việt Nam
@@ -11,6 +11,9 @@
     var vietnamDateTime = TimeZoneInfo.ConvertTimeFromUtc(scheduleDate.ToUniversalTime(), vnTimeZone);
 
     string formattedDate = vietnamDateTime.ToString("dddd, 'ngày' dd 'tháng' MM 'năm' yyyy 'lúc' HH:mm", vietnamCulture);
+
+    var isDoctor = User.IsInRole("Doctor");
+    var isCustomer = User.IsInRole("Customer");
 
 }
 
@@ -47,9 +50,10 @@
             </div>
         </div>
     </div>
-
-    <div class="d-flex justify-content-between gap-2 flex-wrap">
-        <a href="@Url.Page("./Edit", new { scheduleId = Model.Schedule.ScheduleId, appointmentId = Model.Schedule.AppointmentId })"
+    @if (isDoctor)
+    {
+        <div class="d-flex justify-content-between gap-2 flex-wrap">
+            <a href="@Url.Page("./Edit", new { scheduleId = Model.Schedule.ScheduleId, appointmentId = Model.Schedule.AppointmentId })"
            class="btn btn-outline-warning btn-lg rounded-pill px-4 fw-semibold">
             ✏️ Chỉnh sửa
         </a>
@@ -66,6 +70,17 @@
             ⬅️ Quay lại hồ sơ bệnh án
         </a>
     </div>
+    }
+    @if (isCustomer){
+    <div class="d-flex justify-content-between gap-2 flex-wrap">
+        <a asp-page="/MedicalProfileDetails"
+           asp-route-customerId="@Model.CustomerId"
+           asp-route-doctorId="@Model.DoctorId"
+           class="btn btn-outline-secondary btn-lg rounded-pill px-4 fw-semibold">
+            ⬅️ Quay lại hồ sơ bệnh án
+        </a>
+    </div>
+    }
 </div>
 
 <style>

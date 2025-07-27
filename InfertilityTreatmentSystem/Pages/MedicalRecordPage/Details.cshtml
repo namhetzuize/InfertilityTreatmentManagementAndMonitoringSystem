@@ -11,6 +11,8 @@
     var vietnamDateTime = TimeZoneInfo.ConvertTimeFromUtc(createdDate.ToUniversalTime(), vnTimeZone);
 
     string formattedDate = vietnamDateTime.ToString("dddd, 'ngày' dd 'tháng' MM 'năm' yyyy", vietnamCulture);
+    var isDoctor = User.IsInRole("Doctor");
+    var isCustomer = User.IsInRole("Customer");
 }
 
 <div class="container py-5">
@@ -23,7 +25,7 @@
         <div class="card-body px-5 py-4">
             <h4 class="mb-4 text-success fw-semibold">🧾 Thông tin bệnh án</h4>
 
-            
+
 
             <div class="mb-3">
                 <strong>👨‍⚕️ Bác sĩ:</strong>
@@ -56,9 +58,10 @@
             </div>
         </div>
     </div>
-
-    <div class="d-flex justify-content-between gap-2 flex-wrap">
-        <a href="@Url.Page("./Edit", new { recordId = Model.MedicalRecord.RecordId, appointmentId = Model.MedicalRecord.AppointmentId })"
+    @if (isDoctor)
+    {
+        <div class="d-flex justify-content-between gap-2 flex-wrap">
+            <a href="@Url.Page("./Edit", new { recordId = Model.MedicalRecord.RecordId, appointmentId = Model.MedicalRecord.AppointmentId })"
            class="btn btn-outline-warning btn-lg rounded-pill px-4 fw-semibold">
             ✏️ Chỉnh sửa
         </a>
@@ -75,6 +78,18 @@
             ⬅️ Quay lại hồ sơ bệnh án
         </a>
     </div>
+    }
+    @if (isCustomer)
+    {
+        <div class="d-flex justify-content-between gap-2 flex-wrap">
+            <a asp-page="/MedicalProfileDetails"
+               asp-route-customerId="@Model.CustomerId"
+               asp-route-doctorId="@Model.DoctorId"
+               class="btn btn-outline-secondary btn-lg rounded-pill px-4 fw-semibold">
+                ⬅️ Quay lại hồ sơ bệnh án
+            </a>
+        </div>
+    }
 </div>
 
 <style>

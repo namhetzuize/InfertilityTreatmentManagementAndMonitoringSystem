@@ -11,31 +11,44 @@ namespace InfertilityTreatmentSystem.Pages.PatientRequestPage
         private readonly UserService _userService;
         private readonly TreatmentServiceService _treatmentServiceService;
 
-        public PatientRequest Request { get; set; }
-
-        public DetailsModel(PatientRequestService patientRequestService, UserService userService, TreatmentServiceService treatmentServiceService)
+        public DetailsModel(
+            PatientRequestService patientRequestService,
+            UserService userService,
+            TreatmentServiceService treatmentServiceService)
         {
             _patientRequestService = patientRequestService;
             _userService = userService;
             _treatmentServiceService = treatmentServiceService;
         }
 
-        public async Task<IActionResult> OnGetAsync(Guid requestId)
-        {
-            // Get the patient request by its ID
-            Request = await _patientRequestService.GetPatientRequestByIdAsync(requestId);
+        public PatientRequest PatientRequest { get; set; }
 
-            if (Request == null)
+        public User Customer { get; set; }
+        public User Doctor { get; set; }
+        public TreatmentService Service { get; set; }
+
+        [BindProperty(SupportsGet = true)]
+        public Guid RequestId { get; set; }
+
+        public Guid DoctorId { get; set; }
+        public Guid CustomerId { get; set; }
+
+        public async Task<IActionResult> OnGetAsync()
+        {
+            PatientRequest = await _patientRequestService.GetPatientRequestByIdAsync(RequestId);
+            if (PatientRequest == null)
             {
-                return NotFound(); // Return a 404 page if the request is not found
+                return NotFound();
             }
 
-            // Fetch related customer, doctor, and service details
-            Request.Customer = await _userService.GetUserByIdAsync(Request.CustomerId);
-            Request.Doctor = await _userService.GetUserByIdAsync(Request.DoctorId);
-            Request.Service = await _treatmentServiceService.GetTreatmentServiceByIdAsync(Request.ServiceId);
+            // Lấy thông tin liên quan
+            Customer = await _userService.GetUserByIdAsync(PatientRequest.CustomerId);
+            Doctor = await _userService.GetUserByIdAsync(PatientRequest.DoctorId);
+            PatientRequest.Service = await _treatmentServiceService.GetTreatmentServiceByIdAsync(PatientRequest.ServiceId);
 
-            return Page(); // Return the page with all the details
+            CustomerId = PatientRequest.CustomerId;
+            DoctorId = PatientRequest.DoctorId;
+            return Page();
         }
     }
 }
