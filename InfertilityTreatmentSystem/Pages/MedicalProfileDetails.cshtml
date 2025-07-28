@@ -194,21 +194,16 @@
                   class="mb-3 border rounded p-3 bg-light">
                 <div class="row g-2">
                     <div class="col-md-6">
-                        <label class="form-label">Dịch vụ:</label>
-                        <select asp-for="NewPatientRequest.ServiceId" class="form-select">
+                        <label for="serviceSelect">Dịch vụ</label>
+                        <select id="serviceSelect" asp-for="NewPatientRequest.ServiceId" class="form-control" asp-items="Model.ServiceItems">
                             <option value="">-- Chọn dịch vụ --</option>
-                           @foreach (var service in Model.TreatmentServices)
-{
-                                @Html.DropDownListFor(model => model.NewPatientRequest.ServiceId,
-                                new SelectList(Model.TreatmentServices, "ServiceId", "ServiceName", Model.NewPatientRequest?.ServiceId),
-                                                "-- Chọn dịch vụ --",
-                                                new { @class = "form-select" })
-}
                         </select>
+                        <span asp-validation-for="NewPatientRequest.ServiceId" class="text-danger"></span>
                     </div>
                     <div class="col-md-6">
-                        <label class="form-label">Ghi chú:</label>
-                        <input asp-for="NewPatientRequest.Note" class="form-control" />
+                        <label for="note">Ghi chú</label>
+    <textarea id="note" asp-for="NewPatientRequest.Note" class="form-control"></textarea>
+                        <span asp-validation-for="NewPatientRequest.Note" class="text-danger"></span>
                     </div>
                 </div>
                 <button type="submit" class="btn btn-warning mt-3">➕ Gửi yêu cầu</button>
@@ -272,6 +267,8 @@
     
     </style>
     @section Scripts {
+
+        <partial name="_ValidationScriptsPartial" />
         <script>
             document.querySelector("form[method='post']").addEventListener("submit", function (e) {
                 const dateInput = document.querySelector("input[name='NewSchedule.ScheduleDate']");
@@ -305,3 +302,4 @@
             });
         </script>
     }
+   
