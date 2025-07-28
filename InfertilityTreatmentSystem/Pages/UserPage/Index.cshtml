@@ -1,78 +1,105 @@
 ﻿@page
+@using Microsoft.AspNetCore.Authorization
 @model InfertilityTreatmentSystem.Pages.UserPage.IndexModel
-
+@attribute [Authorize(Roles = "Admin")]
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Users";
 }
 
-<h1>Index</h1>
+<div class="container my-5">
+    <div class="card shadow-sm">
+        <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+            <h2 class="mb-0">Users</h2>
+            <a asp-page="Create" class="btn btn-outline-light btn-sm">
+                + Create New
+            </a>
+        </div>
 
-<p>
-    <a asp-page="Create">Create New</a>
-</p>
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.User[0].UserName)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.User[0].Password)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.User[0].FullName)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.User[0].Age)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.User[0].PhoneNumber)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.User[0].Role)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.User[0].IsActive)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.User[0].Avatar)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model.User) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.UserName)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Password)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.FullName)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Age)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.PhoneNumber)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Role)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.IsActive)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Avatar)
-            </td>
-            <td>
-                <a asp-page="./Edit" asp-route-id="@item.UserId">Edit</a> |
-                <a asp-page="./Details" asp-route-id="@item.UserId">Details</a> |
-                <a asp-page="./Delete" asp-route-id="@item.UserId">Delete</a>
-            </td>
-        </tr>
-}
-    </tbody>
-</table>
+        <div class="card-body p-0">
+            <table class="table table-hover mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th>@Html.DisplayNameFor(m => m.Users[0].UserName)</th>
+                        <th>@Html.DisplayNameFor(m => m.Users[0].FullName)</th>
+                        <th>@Html.DisplayNameFor(m => m.Users[0].Age)</th>
+                        <th>@Html.DisplayNameFor(m => m.Users[0].PhoneNumber)</th>
+                        <th>@Html.DisplayNameFor(m => m.Users[0].Role)</th>
+                        <th class="text-end">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var u in Model.Users)
+                    {
+                        <tr class="align-middle">
+                            <td>@u.UserName</td>
+                            <td>@u.FullName</td>
+                            <td>@u.Age</td>
+                            <td>@u.PhoneNumber</td>
+                            <td>
+                                <span class="badge @(
+                                      u.Role == "Admin" ? "bg-dark" :
+                                      u.Role == "Doctor" ? "bg-success" :
+                                      u.Role == "Customer" ? "bg-info" :
+                                                             "bg-secondary"
+                                                                ) text - white">
+                                @u.Role
+                            </span>
+                        </td>
+                        <td class="text-end">
+                            <a asp-page="./Details"
+                               asp-route-userId="@u.UserId"
+                               class="btn btn-sm btn-outline-primary me-1">
+                                Details
+                            </a>
+                            <a asp-page="./Delete"
+                               asp-route-userId="@u.UserId"
+                               class="btn btn-sm btn-outline-danger">
+                                Delete
+                            </a>
+                        </td>
+                    </tr>
+                                        }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<style>
+    /* Highlight row background on hover */
+    .table-hover tbody tr:hover {
+        background-color: rgba(0, 123, 255, 0.1);
+    }
+
+    /* Strong button hover/active */
+    .btn-outline-primary:hover,
+    .btn-outline-primary:focus {
+        background-color: #0056b3;
+        color: #fff;
+        border-color: #0056b3;
+    }
+
+    .btn-outline-danger:hover,
+    .btn-outline-danger:focus {
+        background-color: #c82333;
+        color: #fff;
+        border-color: #c82333;
+    }
+
+    .btn-outline-light:hover,
+    .btn-outline-light:focus {
+        background-color: rgba(255,255,255,0.2);
+        color: #fff;
+        border-color: #fff;
+    }
+
+    /* Zebra striping for clarity */
+    .table tbody tr:nth-of-type(odd) {
+        background-color: #f8f9fa;
+    }
+
+    /* Card shadow intensifies on hover */
+    .card:hover {
+        box-shadow: 0 0 20px rgba(0,0,0,0.15);
+    }
+</style>

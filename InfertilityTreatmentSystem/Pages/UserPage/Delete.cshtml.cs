@@ -1,60 +1,34 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using InfertilityTreatmentSystem.BLL.Service;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using Microsoft.EntityFrameworkCore;
-using InfertilityTreatmentSystem.DAL.Models;
 
 namespace InfertilityTreatmentSystem.Pages.UserPage
 {
+    [Authorize(Roles = "Admin")]
     public class DeleteModel : PageModel
     {
-        private readonly InfertilityTreatmentSystem.DAL.Models.InfertilityTreatmentDBContext _context;
+        private readonly UserService _userService;
 
-        public DeleteModel(InfertilityTreatmentSystem.DAL.Models.InfertilityTreatmentDBContext context)
+        public DeleteModel(UserService userService)
         {
-            _context = context;
+            _userService = userService;
         }
 
-        [BindProperty]
-        public User User { get; set; } = default!;
+        [BindProperty(SupportsGet = true)]
+        public Guid UserId { get; set; }
 
-        public async Task<IActionResult> OnGetAsync(Guid? id)
+        public async Task<IActionResult> OnGetAsync(Guid userId)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var user = await _context.Users.FirstOrDefaultAsync(m => m.UserId == id);
-
-            if (user is not null)
-            {
-                User = user;
-
-                return Page();
-            }
-
-            return NotFound();
+            // Just render the confirmation UI; no need to load full user details
+            UserId = userId;
+            return Page();
         }
 
-        public async Task<IActionResult> OnPostAsync(Guid? id)
+        public async Task<IActionResult> OnPostAsync()
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var user = await _context.Users.FindAsync(id);
-            if (user != null)
-            {
-                User = user;
-                _context.Users.Remove(User);
-                await _context.SaveChangesAsync();
-            }
-
+            // call your service method
+            await _userService.DeleteUserByIdAsync(UserId);
             return RedirectToPage("./Index");
         }
     }
