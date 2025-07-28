@@ -197,10 +197,13 @@
                         <label class="form-label">Dịch vụ:</label>
                         <select asp-for="NewPatientRequest.ServiceId" class="form-select">
                             <option value="">-- Chọn dịch vụ --</option>
-                            @foreach (var service in Model.TreatmentServices)
-                            {
-                                <option value="@service.ServiceId">@service.ServiceName</option>
-                            }
+                           @foreach (var service in Model.TreatmentServices)
+{
+                                @Html.DropDownListFor(model => model.NewPatientRequest.ServiceId,
+                                new SelectList(Model.TreatmentServices, "ServiceId", "ServiceName", Model.NewPatientRequest?.ServiceId),
+                                                "-- Chọn dịch vụ --",
+                                                new { @class = "form-select" })
+}
                         </select>
                     </div>
                     <div class="col-md-6">

@@ -65,8 +65,6 @@ namespace InfertilityTreatmentSystem.BLL.Service
             user.FullName = updatedUser.FullName;
             user.Age = updatedUser.Age;
             user.PhoneNumber = updatedUser.PhoneNumber;
-            user.Role = updatedUser.Role;
-            user.IsActive = updatedUser.IsActive;
 
             _unitOfWork.UserRepository.PrepareUpdate(user);
             await _unitOfWork.UserRepository.SaveAsync();

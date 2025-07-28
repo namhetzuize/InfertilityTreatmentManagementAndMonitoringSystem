@@ -1,0 +1,93 @@
+﻿@page
+@model InfertilityTreatmentSystem.Pages.AdminDashboardModel
+@{
+    ViewData["Title"] = "Admin Dashboard";
+}
+<div class="d-flex">
+    <!-- Sidebar -->
+    <nav class="bg-light border-end" style="width:240px; min-height:100vh;">
+        <div class="list-group list-group-flush">
+            <a asp-page="./AdminDashboard" class="list-group-item list-group-item-action active">
+                🏠 Dashboard
+            </a>
+            <a asp-page="/UserPage/Index" class="list-group-item list-group-item-action">
+                👥 Users
+            </a>
+            <a asp-page="/AppointmentPage/Index" class="list-group-item list-group-item-action">
+                📅 Appointments
+            </a>
+            <a asp-page="/BlogPage/Index" class="list-group-item list-group-item-action">
+                📝 Blogs
+            </a>
+            <a asp-page="/PatientRequestPage/Index" class="list-group-item list-group-item-action">
+                📨 Requests
+            </a>
+            <a asp-page="/TreatmentServicePage/Index" class="list-group-item list-group-item-action">
+                🏥 Services
+            </a>
+        </div>
+    </nav>
+
+    <!-- Main content -->
+    <div class="flex-fill p-4">
+        <h1 class="mb-4">@ViewData["Title"]</h1>
+        <div class="row gy-4">
+            <div class="col-md-4">
+                <div class="card text-white bg-primary h-100">
+                    <div class="card-body">
+                        <h5 class="card-title">Total Users</h5>
+                        <p class="display-4">@Model.TotalUsers</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card text-white bg-success h-100">
+                    <div class="card-body">
+                        <h5 class="card-title">Doctors</h5>
+                        <p class="display-4">@Model.TotalDoctors</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card text-white bg-info h-100">
+                    <div class="card-body">
+                        <h5 class="card-title">Customers</h5>
+                        <p class="display-4">@Model.TotalCustomers</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card text-white bg-warning h-100">
+                    <div class="card-body">
+                        <h5 class="card-title">Appointments</h5>
+                        <p class="display-4">@Model.TotalAppointments</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card text-white bg-secondary h-100">
+                    <div class="card-body">
+                        <h5 class="card-title">Blogs</h5>
+                        <p class="display-4">@Model.TotalBlogs</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card text-white bg-danger h-100">
+                    <div class="card-body">
+                        <h5 class="card-title">Requests</h5>
+                        <p class="display-4">@Model.TotalRequests</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card text-white bg-dark h-100">
+                    <div class="card-body">
+                        <h5 class="card-title">Services</h5>
+                        <p class="display-4">@Model.TotalServices</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

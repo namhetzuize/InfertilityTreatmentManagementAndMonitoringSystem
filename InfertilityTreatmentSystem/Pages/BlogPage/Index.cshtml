@@ -1,6 +1,5 @@
-﻿@page "{pageIndex?}"
+﻿@page
 @model InfertilityTreatmentSystem.Pages.BlogPage.IndexModel
-
 @{
     ViewData["Title"] = "Blogs";
 }
@@ -11,7 +10,12 @@
     <input type="text"
            name="searchTerm"
            value="@Model.searchTerm"
-           placeholder="Search..." />
+           placeholder="Search…" />
+    @* preserve the doctor filter on search *@
+    @if (Model.DoctorId.HasValue)
+    {
+        <input type="hidden" name="DoctorId" value="@Model.DoctorId" />
+    }
     <button type="submit" class="btn btn-secondary">Search</button>
 </form>
 
@@ -32,37 +36,54 @@
                 <tr>
                     <td>@b.Title</td>
                     <td>@b.Content</td>
-                    <td>@b.CreatedDate?.ToString("yyyy-MM-dd")</td>
                     <td>
-                        <a asp-page="./Details"
-                           asp-route-blogId="@b.BlogId"
-                           class="btn btn-sm btn-info">
-                            Details
-                        </a>
-                    </td>
-                </tr>
-            }
+                        @(
+                                        b.CreatedDate.HasValue
+                                        ? b.CreatedDate.Value.ToString("dd-MM-yyyy HH:mm:ss")
+                                        : ""
+                                        )
+                </td>
+                <td>
+                    <a asp-page="./Details"
+                       asp-route-blogId="@b.BlogId"
+                       class="btn btn-sm btn-info">
+                        Details
+                    </a>
+                </td>
+            </tr>
+                }
         </tbody>
     </table>
 
-    <nav>
-        <ul class="pagination">
-            @for (int i = 1; i <= Model.TotalPages; i++)
-            {
-                <li class="page-item @(i == Model.PageIndex ? "active" : "")">
-                    <a class="page-link"
-                       asp-route-pageIndex="@i"
-                       asp-route-searchTerm="@Model.searchTerm">
-                        @i
-                    </a>
-                </li>
-            }
-        </ul>
-    </nav>
+    @* only show pager when not filtered by a doctor *@
+    @if (!Model.DoctorId.HasValue)
+    {
+        <nav>
+            <ul class="pagination">
+                @for (int i = 1; i <= Model.TotalPages; i++)
+                {
+                    <li class="page-item @(i == Model.PageIndex ? "active" : "")">
+                        <a class="page-link"
+                           asp-route-pageIndex="@i"
+                           asp-route-searchTerm="@Model.searchTerm">
+                            @i
+                        </a>
+                    </li>
+                }
+            </ul>
+        </nav>
+    }
 }
 else
 {
     <p>No blogs found.</p>
 }
 
-<a asp-page="./Create" class="btn btn-primary">Create New Blog</a>
+@if (User.IsInRole("Admin") || User.IsInRole("Doctor"))
+{
+    <a asp-page="./Create"
+       asp-route-doctorId="@Model.DoctorId"
+       class="btn btn-primary">
+        Create New Blog
+    </a>
+}

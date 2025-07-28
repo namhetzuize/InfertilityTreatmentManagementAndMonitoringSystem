@@ -2,6 +2,7 @@
 #nullable disable
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 namespace InfertilityTreatmentSystem.DAL.Models;
 
@@ -13,8 +14,10 @@ public partial class PatientRequest
 
     public Guid DoctorId { get; set; }
 
+    [Required(ErrorMessage = "Vui lòng chọn dịch vụ.")]
     public Guid ServiceId { get; set; }
 
+    [Required(ErrorMessage = "Ghi chú không được để trống.")]
     public string Note { get; set; }
 
     public DateTime RequestedDate { get; set; }

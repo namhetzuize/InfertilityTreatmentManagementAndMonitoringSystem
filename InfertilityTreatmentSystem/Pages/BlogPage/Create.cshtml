@@ -1,39 +1,31 @@
 ﻿@page
 @model InfertilityTreatmentSystem.Pages.BlogPage.CreateModel
-
 @{
-    Layout = null;
     ViewData["Title"] = "Create Blog";
 }
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - Create Blog</title>
+<h1>@ViewData["Title"]</h1>
 
-    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
-</head>
-<body>
-    <div class="container">
-        <h1 class="my-4">@ViewData["Title"]</h1>
-
-        <form method="post">
-            <div class="mb-3">
-                <label for="Title" class="form-label">Title</label>
-                <input type="text" class="form-control" id="Title" name="Title" required />
-            </div>
-            <div class="mb-3">
-                <label for="Content" class="form-label">Content</label>
-                <textarea class="form-control" id="Content" name="Content" rows="3" required></textarea>
-            </div>
-
-            <button type="submit" class="btn btn-primary">Create</button>
-        </form>
+<form method="post">
+    <div class="mb-3">
+        <label asp-for="NewBlog.Title" class="form-label"></label>
+        <input asp-for="NewBlog.Title" class="form-control" />
+        <span asp-validation-for="NewBlog.Title" class="text-danger"></span>
+    </div>
+    <div class="mb-3">
+        <label asp-for="NewBlog.Content" class="form-label"></label>
+        <textarea asp-for="NewBlog.Content" class="form-control" rows="4"></textarea>
+        <span asp-validation-for="NewBlog.Content" class="text-danger"></span>
+    </div>
+    <div class="mb-3">
+        <label asp-for="NewBlog.BlogImage" class="form-label"></label>
+        <input asp-for="NewBlog.BlogImage" class="form-control" />
+        <span asp-validation-for="NewBlog.BlogImage" class="text-danger"></span>
     </div>
 
-    <script src="~/lib/jquery/dist/jquery.min.js"></script>
-    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-</body>
-</html>
+    <button type="submit" class="btn btn-primary">Create</button>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

@@ -4,7 +4,7 @@
     var homeUrl = role switch
     {
         "Doctor" => "/Doctor",
-        "Admin" => "/AdminHome",
+        "Admin" => "/AdminDashboard",
         _ => "/"
     };
 }
@@ -23,19 +23,32 @@
 
     <header class="bg-primary text-white py-2">
         <div class="container d-flex justify-content-between align-items-center">
-            <!-- Left: Logo and Home -->
+
+            <!-- Left: Logo + (only for non-Admins) the nav links -->
             <div class="d-flex align-items-center gap-4">
-                <a class="text-white fw-bold text-decoration-none me-3" href="@homeUrl">Infertility Treatment</a>
-                <a class="text-white text-decoration-none" href="/BlogPage/Index">Blog</a>
-                <a class="text-white text-decoration-none" href="/FeedbackPage">Feedback</a>
-                <a class="text-white text-decoration-none" href="/MedicalRecordPage">Medical Records</a>
-                <a class="text-white text-decoration-none" href="/PatientRequestPage">Patient Requests</a>
-                <a class="text-white text-decoration-none" href="/TreatmentServicePage">Treatment Services</a>
+                <a class="text-white fw-bold text-decoration-none me-3" href="@homeUrl">
+                    Infertility Treatment
+                </a>
+
+                @* Only show these on Doctor/Customer *@
+                @if (role == "Doctor" || role == "Customer")
+                {
+                    <a class="text-white text-decoration-none" href="/BlogPage/Index">Blog</a>
+                    <a class="text-white text-decoration-none" href="/FeedbackPage">Feedback</a>
+                    <a class="text-white text-decoration-none" href="/MedicalRecordPage">Medical Records</a>
+                    <a class="text-white text-decoration-none" href="/PatientRequestPage">Patient Requests</a>
+                    <a class="text-white text-decoration-none" href="/TreatmentServicePage">Treatment Services</a>
+                }
             </div>
 
-            <!-- Right: Navbar Links -->
+            <!-- Right: (only for Doctor/Customer) appointment link, then auth buttons -->
             <div class="d-flex align-items-center gap-4">
-                <a class="text-white text-decoration-none" href="/AppointmentPage/Index">📅 Kiểm tra lịch hẹn</a>
+                @if (role == "Doctor" || role == "Customer")
+                {
+                    <a class="text-white text-decoration-none" href="/AppointmentPage/Index">
+                        📅 Kiểm tra lịch hẹn
+                    </a>
+                }
 
                 @if (!User.Identity.IsAuthenticated)
                 {
@@ -44,17 +57,14 @@
                 }
                 else
                 {
-                    <!-- Add Username and link to UserDetails -->
-                    @if (User.Identity.IsAuthenticated)
-                    {
-                        <a class="text-white text-decoration-none"
-                           href="@Url.Page("/UserPage/Details", new { userId = User.FindFirst("UserId")?.Value })">
-                            @User.FindFirst("FullName")?.Value
-                        </a>
-                    }
+                    <a class="text-white text-decoration-none"
+                       href="@Url.Page("/UserPage/Details", new { userId = User.FindFirst("UserId")?.Value })">
+                        @User.FindFirst("FullName")?.Value
+                    </a>
                     <a class="btn btn-danger btn-sm" href="/Login?handler=Logout">Đăng xuất</a>
                 }
             </div>
+
         </div>
     </header>
 

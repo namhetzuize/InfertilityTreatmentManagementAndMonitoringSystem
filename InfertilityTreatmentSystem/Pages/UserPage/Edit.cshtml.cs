@@ -16,36 +16,41 @@ namespace InfertilityTreatmentSystem.Pages.UserPage
             _userService = userService;
         }
 
+        // Route-bound userId
+        [BindProperty(SupportsGet = true)]
+        public Guid UserId { get; set; }
+
+        // The edited user
         [BindProperty]
         public User User { get; set; }
 
         public async Task<IActionResult> OnGetAsync(Guid userId)
         {
-            User = await _userService.GetUserByIdAsync(userId);
+            // load into User
+            var u = await _userService.GetUserByIdAsync(userId);
+            if (u == null) return NotFound();
 
-            if (User == null)
-            {
-                return NotFound();
-            }
-
+            User = u;
             return Page();
         }
 
         public async Task<IActionResult> OnPostAsync()
         {
             if (!ModelState.IsValid)
-            {
                 return Page();
-            }
 
             try
             {
-                await _userService.UpdateUserAsync(User);
-                return RedirectToPage("./Details", new { userId = User.UserId });
+                // call the UpdateUserByIdAsync helper
+                await _userService.UpdateUserByIdAsync(UserId, User);
+                // redirect back to the Details page of that user
+                return RedirectToPage("./Details", new { userId = UserId });
             }
-            catch
+            catch (Exception ex)
             {
-                return Page(); // Handle any errors here (e.g., duplicate username)
+                // optionally log ex
+                ModelState.AddModelError(string.Empty, ex.Message);
+                return Page();
             }
         }
     }

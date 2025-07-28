@@ -27,16 +27,22 @@ namespace InfertilityTreatmentSystem.Pages
         [BindProperty(SupportsGet = true)]
         public Guid AppointmentId { get; set; }
 
+        [BindProperty(SupportsGet = true)]
+        public Guid DoctorId { get; set; }
+
         public int TotalAppointments { get; set; }
         public int TotalSchedules { get; set; }
         public string DoctorName { get; set; }
         public List<Appointment> AllAppointments { get; set; } = new List<Appointment>();
         public List<Appointment> UpcomingAppointments { get; set; } = new();
+
+
         public async Task OnGetAsync()
         {
-            
+
             var userIdClaim = User.FindFirst("UserId")?.Value;
             if (!Guid.TryParse(userIdClaim, out Guid doctorId)) return;
+            DoctorId = doctorId;
 
             var doctor = await _userService.GetUserByIdAsync(doctorId);
             DoctorName = doctor?.FullName ?? "Doctor";
@@ -44,7 +50,7 @@ namespace InfertilityTreatmentSystem.Pages
             var appointments = await _appointmentService.GetAppointmentsByDoctorIdAsync(doctorId);
 
             TotalAppointments = appointments.Count;
-            AllAppointments = appointments; 
+            AllAppointments = appointments;
             UpcomingAppointments = appointments.FindAll(a => a.AppointmentDate > DateTime.Now);
 
             var schedules = await _scheduleService.GetSchedulesByAppointmentIdAsync(AppointmentId);
@@ -61,4 +67,4 @@ namespace InfertilityTreatmentSystem.Pages
             return RedirectToPage(); // refresh
         }
     }
-    }
+}

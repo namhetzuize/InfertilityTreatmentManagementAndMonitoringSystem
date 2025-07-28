@@ -152,9 +152,13 @@ namespace InfertilityTreatmentSystem.Pages
         {
             var allSvc = await _treatmentServiceService.GetAllTreatmentServicesAsync();
             ServiceItems = allSvc
-                .Select(s => new SelectListItem(s.ServiceName, s.ServiceId.ToString()))
+                .Select(s => new SelectListItem
+                {
+                    Text = s.ServiceName,
+                    Value = s.ServiceId.ToString(),
+                    Selected = (s.ServiceId == NewPatientRequest.ServiceId)
+                })
                 .ToList();
-
             if (NewPatientRequest.ServiceId == Guid.Empty)
                 ModelState.AddModelError(nameof(NewPatientRequest.ServiceId), "Vui lòng chọn dịch vụ.");
 
@@ -162,7 +166,19 @@ namespace InfertilityTreatmentSystem.Pages
                 ModelState.AddModelError(nameof(NewPatientRequest.Note), "Ghi chú không được để trống.");
 
             if (!ModelState.IsValid)
+            {
+                // ✅ Load lại các dữ liệu cần thiết để tránh lỗi null khi render View
+                Customer = await _userService.GetUserByIdAsync(customerId);
+                DoctorId = doctorId;
+
+                Schedules = await _scheduleService.GetSchedulesByCustomerAndDoctorAsync(customerId, doctorId);
+                PatientRequests = await _patientRequestService.GetPatientRequestsByCustomerAndDoctorAsync(customerId, doctorId);
+                MedicalRecords = await _medicalRecordService.GetMedicalRecordsByCustomerAndDoctorAsync(customerId, doctorId);
+                Customers = await _userService.GetAllUsersAsync();
+                Doctors = Customers.Where(u => u.Role == "Doctor").ToList();
+
                 return Page();
+            }
 
             NewPatientRequest.RequestId = Guid.NewGuid();
             NewPatientRequest.CustomerId = customerId;

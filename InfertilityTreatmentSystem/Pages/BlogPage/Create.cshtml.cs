@@ -1,11 +1,14 @@
 ﻿using InfertilityTreatmentSystem.BLL.Service;
 using InfertilityTreatmentSystem.DAL.Models;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;  // To access session
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using Microsoft.AspNetCore.Http;  // To access session
+using System.Security.Claims;
 
 namespace InfertilityTreatmentSystem.Pages.BlogPage
 {
+    [Authorize(Roles = "Admin,Doctor")]
     public class CreateModel : PageModel
     {
         private readonly BlogService _blogService;
@@ -27,29 +30,24 @@ namespace InfertilityTreatmentSystem.Pages.BlogPage
 
         public async Task<IActionResult> OnPostAsync()
         {
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid)
+                return Page();
+
+            // pull the user’s GUID from the auth cookie / claims
+            var userIdStr = User.FindFirstValue("UserId")
+                           ?? User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (string.IsNullOrEmpty(userIdStr))
             {
-                // Retrieve UserId from session (set during login)
-                var userIdClaim = HttpContext.Session.GetString("UserId");
-
-                if (string.IsNullOrEmpty(userIdClaim))
-                {
-                    ModelState.AddModelError(string.Empty, "User is not authenticated.");
-                    return Page();
-                }
-
-                // Set the UserId from session to NewBlog.UserId
-                NewBlog.UserId = Guid.Parse(userIdClaim);
-
-                // Set the CreatedDate to the current date and time
-                NewBlog.CreatedDate = DateTime.Now;
-
-                // Create the new blog
-                await _blogService.CreateBlogAsync(NewBlog);
-                return RedirectToPage("/BlogPage/Index");
+                ModelState.AddModelError("", "Unable to identify current user.");
+                return Page();
             }
 
-            return Page();
+            NewBlog.UserId = Guid.Parse(userIdStr);
+            NewBlog.BlogId = Guid.NewGuid();
+            NewBlog.CreatedDate = DateTime.Now;
+
+            await _blogService.CreateBlogAsync(NewBlog);
+            return RedirectToPage("/BlogPage/Index", new { DoctorId = NewBlog.UserId });
         }
     }
 }

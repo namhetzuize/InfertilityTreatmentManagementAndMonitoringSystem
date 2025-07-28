@@ -13,6 +13,12 @@ namespace InfertilityTreatmentSystem.BLL.Service
             _unitOfWork = unitOfWork;
         }
 
+        public async Task<List<Blog>> GetBlogsByUserIdAsync(Guid userId)
+        {
+            var all = await _unitOfWork.BlogRepository.GetAllAsync();
+            return all.Where(b => b.UserId == userId).ToList();
+        }
+
         public async Task<List<Blog>> GetAllBlogsAsync()
         {
             return await _unitOfWork.BlogRepository.GetAllAsync();

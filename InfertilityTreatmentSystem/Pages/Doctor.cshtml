@@ -82,8 +82,10 @@
 
     <!-- Create Blog Button -->
     <div class="text-end">
-        <a href="/BlogPage/Create" class="btn btn-outline-primary btn-lg shadow-sm">
-            ✍️ Viết Blog Mới
+        <a asp-page="/BlogPage/Index"
+           asp-route-doctorId="@Model.DoctorId"
+           class="btn btn-outline-primary btn-lg shadow-sm">
+            ✍️ Quản lý blog
         </a>
     </div>
 </div>
