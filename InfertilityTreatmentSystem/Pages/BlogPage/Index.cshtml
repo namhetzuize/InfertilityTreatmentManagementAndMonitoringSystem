@@ -1,89 +1,111 @@
 ﻿@page
 @model InfertilityTreatmentSystem.Pages.BlogPage.IndexModel
 @{
-    ViewData["Title"] = "Blogs";
+    ViewData["Title"] = "📚 Danh sách Blog";
+
+    var vietnamCulture = new System.Globalization.CultureInfo("vi-VN");
+    var isDoctor = User.IsInRole("Doctor");
+    var isAdmin = User.IsInRole("Admin");
+
 }
+<div class="container py-5">
+    <div class="text-center mb-4">
+        <h2 class="fw-bold text-primary">📚 Danh sách Blog</h2>
+        <p class="text-muted">Các bài viết chia sẻ kiến thức và thông tin về điều trị hiếm muộn.</p>
+    </div>
 
-<h1>Blogs</h1>
+    <form method="get" class="mb-4 d-flex gap-2">
+        <input type="text"
+               name="searchTerm"
+               value="@Model.searchTerm"
+               placeholder="🔍 Tìm kiếm bài viết..."
+               class="form-control rounded-pill px-4" />
 
-<form method="get" class="mb-3">
-    <input type="text"
-           name="searchTerm"
-           value="@Model.searchTerm"
-           placeholder="Search…" />
-    @* preserve the doctor filter on search *@
-    @if (Model.DoctorId.HasValue)
+        @if (Model.DoctorId.HasValue)
+        {
+            <input type="hidden" name="DoctorId" value="@Model.DoctorId" />
+        }
+
+        <button type="submit" class="btn btn-outline-primary rounded-pill px-4 fw-semibold">Tìm kiếm</button>
+    </form>
+
+    @if (Model.Blogs.Any())
     {
-        <input type="hidden" name="DoctorId" value="@Model.DoctorId" />
-    }
-    <button type="submit" class="btn btn-secondary">Search</button>
-</form>
-
-@if (Model.Blogs.Any())
-{
-    <table class="table table-striped">
-        <thead>
-            <tr>
-                <th>Title</th>
-                <th>Content</th>
-                <th>Date</th>
-                <th></th>
-            </tr>
-        </thead>
-        <tbody>
+        <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
             @foreach (var b in Model.Blogs)
             {
-                <tr>
-                    <td>@b.Title</td>
-                    <td>@b.Content</td>
-                    <td>
-                        @(
-                                        b.CreatedDate.HasValue
-                                        ? b.CreatedDate.Value.ToString("dd-MM-yyyy HH:mm:ss")
-                                        : ""
-                                        )
-                </td>
-                <td>
-                    <a asp-page="./Details"
-                       asp-route-blogId="@b.BlogId"
-                       class="btn btn-sm btn-info">
-                        Details
-                    </a>
-                </td>
-            </tr>
-                }
-        </tbody>
-    </table>
+                var dateStr = b.CreatedDate.HasValue
+                ? b.CreatedDate.Value.ToString("dddd, 'ngày' dd 'tháng' MM 'năm' yyyy", vietnamCulture)
+                : "";
 
-    @* only show pager when not filtered by a doctor *@
-    @if (!Model.DoctorId.HasValue)
-    {
-        <nav>
-            <ul class="pagination">
-                @for (int i = 1; i <= Model.TotalPages; i++)
-                {
-                    <li class="page-item @(i == Model.PageIndex ? "active" : "")">
-                        <a class="page-link"
-                           asp-route-pageIndex="@i"
-                           asp-route-searchTerm="@Model.searchTerm">
-                            @i
-                        </a>
-                    </li>
-                }
-            </ul>
-        </nav>
+                <div class="col">
+                    <div class="card h-100 shadow-sm border-0 rounded-4">
+                        <div class="card-body d-flex flex-column">
+                            <h5 class="card-title fw-bold text-success">@b.Title</h5>
+                            <p class="card-text text-dark flex-grow-1">@b.Content</p>
+                            <p class="card-text text-muted small mt-3">🗓️ @dateStr</p>
+                            <a asp-page="./Details" asp-route-blogId="@b.BlogId"
+                               class="btn btn-outline-info btn-sm rounded-pill mt-auto align-self-start">
+                                📄 Xem chi tiết
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+
+        @if (!Model.DoctorId.HasValue)
+        {
+            <nav class="mt-4">
+                <ul class="pagination justify-content-center">
+                    @for (int i = 1; i <= Model.TotalPages; i++)
+                    {
+                        <li class="page-item @(i == Model.PageIndex ? "active" : "")">
+                            <a class="page-link"
+                               asp-route-pageIndex="@i"
+                               asp-route-searchTerm="@Model.searchTerm">
+                                @i
+                            </a>
+                        </li>
+                    }
+                </ul>
+            </nav>
+        }
     }
-}
-else
-{
-    <p>No blogs found.</p>
-}
+    else
+    {
+        <div class="alert alert-warning text-center mt-4">
+            Không tìm thấy bài viết nào.
+        </div>
+    }
 
-@if (User.IsInRole("Admin") || User.IsInRole("Doctor"))
-{
-    <a asp-page="./Create"
-       asp-route-doctorId="@Model.DoctorId"
-       class="btn btn-primary">
-        Create New Blog
-    </a>
-}
+    @if (isDoctor || isAdmin)
+    {
+        <div class="mt-4 text-end">
+            <a asp-page="./Create"
+               asp-route-doctorId="@Model.DoctorId"
+               class="btn btn-primary rounded-pill px-4 fw-semibold">
+                ➕ Tạo bài viết mới
+            </a>
+        </div>
+    }
+</div>
+
+<style>
+    .card {
+        transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+    }
+
+        .card:hover {
+            transform: scale(1.01);
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+        }
+
+    .btn:hover {
+        transform: translateY(-2px);
+    }
+
+    .btn, .page-link {
+        transition: all 0.2s ease-in-out;
+    }
+</style>

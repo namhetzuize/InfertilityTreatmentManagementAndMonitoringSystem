@@ -31,6 +31,9 @@ namespace InfertilityTreatmentSystem.BLL.Service
 
                 // Fetch Doctor by DoctorId
                 appointment.Doctor = await _userService.GetUserByIdAsync(appointment.DoctorId);
+
+                // Fetch Service by ServiceId
+                appointment.Service = await _treatmentServiceService.GetTreatmentServiceByIdAsync(appointment.ServiceId);
             }
 
             return appointments;

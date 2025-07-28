@@ -2,37 +2,75 @@
 @model InfertilityTreatmentSystem.Pages.PatientRequestPage.IndexModel
 
 @{
-    ViewData["Title"] = "Patient Requests";
+    ViewData["Title"] = "Yêu cầu tư vấn";
 }
 
-<h1>Patient Requests</h1>
+<style>
+    /* Hiệu ứng hover khi rê chuột */
+    tr:hover {
+        background-color: #f0f8ff !important;
+        transition: background-color 0.3s ease;
+    }
 
-<a class="btn btn-primary" asp-page="./Create">Create New Request</a>
+    /* Hiệu ứng fade-in nhẹ nhàng cho bảng */
+    .fade-in {
+        opacity: 0;
+        animation: fadeIn ease 1s forwards;
+    }
 
-<table class="table">
-    <thead>
+    @@keyframes fadeIn {
+        from
+
+    {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+    }
+
+    /* Hiệu ứng nút */
+    .btn {
+        transition: transform 0.2s ease;
+    }
+
+        .btn:hover {
+            transform: scale(1.05);
+        }
+</style>
+
+<h1 class="mb-4">Danh sách yêu cầu tư vấn</h1>
+
+<a class="btn btn-primary mb-3" asp-page="./Create">➕ Tạo yêu cầu mới</a>
+
+<table class="table table-bordered table-hover fade-in">
+    <thead class="table-light">
         <tr>
-            <th>Customer</th>
-            <th>Doctor</th>
-            <th>Service</th>
-            <th>Note</th>
-            <th>Requested Date</th>
-            <th>Actions</th>
+            <th>Khách hàng</th>
+            <th>Bác sĩ</th>
+            <th>Dịch vụ</th>
+            <th>Ghi chú</th>
+            <th>Ngày yêu cầu</th>
+            <th>Thao tác</th>
         </tr>
     </thead>
     <tbody>
         @foreach (var request in Model.PatientRequests)
         {
             <tr>
-                <td>@request.Customer?.UserName</td>
-                <td>@request.Doctor?.UserName</td>
+                <td>@request.Customer?.FullName</td>
+                <td>@request.Doctor?.FullName</td>
                 <td>@request.Service?.ServiceName</td>
                 <td>@request.Note</td>
-                <td>@request.RequestedDate.ToString("MM/dd/yyyy")</td>
+                <td>@request.RequestedDate.ToString("dd/MM/yyyy")</td>
                 <td>
-                    <a href="@Url.Page("./Details", new { requestId = request.RequestId })" class="btn btn-info">Details</a>
-                    <a href="@Url.Page("./Edit", new { requestId = request.RequestId })" class="btn btn-warning">Edit</a>
-                    <a href="@Url.Page("./Delete", new { requestId = request.RequestId })" class="btn btn-danger">Delete</a>
+                    <a href="@Url.Page("./Details", new { requestId = request.RequestId })" class="btn btn-info btn-sm">Chi tiết</a>
+                    <a href="@Url.Page("./Edit", new { requestId = request.RequestId })" class="btn btn-warning btn-sm">Chỉnh sửa</a>
+                    <a href="@Url.Page("./Delete", new { requestId = request.RequestId })" class="btn btn-danger btn-sm">Xóa</a>
                 </td>
             </tr>
         }

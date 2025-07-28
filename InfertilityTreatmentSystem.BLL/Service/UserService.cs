@@ -82,5 +82,7 @@ namespace InfertilityTreatmentSystem.BLL.Service
             _unitOfWork.UserRepository.PrepareRemove(user);
             await _unitOfWork.UserRepository.SaveAsync();
         }
+
+
     }
 }

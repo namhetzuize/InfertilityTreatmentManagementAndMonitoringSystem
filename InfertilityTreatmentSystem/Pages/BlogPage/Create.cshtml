@@ -1,31 +1,98 @@
 ﻿@page
 @model InfertilityTreatmentSystem.Pages.BlogPage.CreateModel
 @{
-    ViewData["Title"] = "Create Blog";
+    ViewData["Title"] = "✍️ Tạo bài viết mới";
+    var isDoctor = User.IsInRole("Doctor");
+    var isAdmin = User.IsInRole("Admin");
+
+    
 }
 
-<h1>@ViewData["Title"]</h1>
-
-<form method="post">
-    <div class="mb-3">
-        <label asp-for="NewBlog.Title" class="form-label"></label>
-        <input asp-for="NewBlog.Title" class="form-control" />
-        <span asp-validation-for="NewBlog.Title" class="text-danger"></span>
-    </div>
-    <div class="mb-3">
-        <label asp-for="NewBlog.Content" class="form-label"></label>
-        <textarea asp-for="NewBlog.Content" class="form-control" rows="4"></textarea>
-        <span asp-validation-for="NewBlog.Content" class="text-danger"></span>
-    </div>
-    <div class="mb-3">
-        <label asp-for="NewBlog.BlogImage" class="form-label"></label>
-        <input asp-for="NewBlog.BlogImage" class="form-control" />
-        <span asp-validation-for="NewBlog.BlogImage" class="text-danger"></span>
+<div class="container py-5">
+    <div class="text-center mb-5">
+        <h2 class="fw-bold text-primary">@ViewData["Title"]</h2>
+        <p class="text-muted">Điền thông tin để chia sẻ bài viết đến với mọi người.</p>
     </div>
 
-    <button type="submit" class="btn btn-primary">Create</button>
-</form>
+    <div class="row justify-content-center fade-in">
+        <div class="col-md-8">
+            <form method="post" class="p-4 bg-light rounded-4 shadow-sm">
+                <div class="mb-3">
+                    <label asp-for="NewBlog.Title" class="form-label fw-semibold">📝 Tiêu đề</label>
+                    <input asp-for="NewBlog.Title" class="form-control rounded-pill px-4" placeholder="Nhập tiêu đề bài viết" />
+                    <span asp-validation-for="NewBlog.Title" class="text-danger small"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="NewBlog.Content" class="form-label fw-semibold">📄 Nội dung</label>
+                    <textarea asp-for="NewBlog.Content" class="form-control" rows="6" placeholder="Nhập nội dung..."></textarea>
+                    <span asp-validation-for="NewBlog.Content" class="text-danger small"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="NewBlog.BlogImage" class="form-label fw-semibold">🖼️ Hình ảnh</label>
+                    <input asp-for="NewBlog.BlogImage" class="form-control rounded-pill px-4" placeholder="URL hình ảnh" />
+                    <span asp-validation-for="NewBlog.BlogImage" class="text-danger small"></span>
+                </div>
+
+                <div class="text-end">
+
+                    @if (isAdmin)
+    {
+                    <a asp-page="./Index" class="btn btn-outline-secondary rounded-pill px-4 fw-semibold">
+                        ⬅️ Quay lại
+                    </a>
+    }
+    @if (isDoctor)
+    {
+                    <a asp-page="/Doctor" class="btn btn-outline-secondary rounded-pill px-4 fw-semibold">
+                        ⬅️ Quay lại
+                        </a>
+                    }
+                    <button type="submit" class="btn btn-success rounded-pill px-5 py-2 fw-semibold shadow">
+                        ✅ Đăng bài viết
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
 }
+
+<style>
+    .fade-in {
+        animation: fadeIn 0.7s ease-in-out;
+    }
+
+    @@keyframes fadeIn {
+        from
+
+    {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+    }
+
+    .form-control:focus {
+        box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.25);
+        border-color: #86b7fe;
+    }
+
+    .btn:hover {
+        transform: translateY(-2px);
+        transition: all 0.2s ease-in-out;
+    }
+
+    .form-label {
+        font-weight: 600;
+    }
+</style>
