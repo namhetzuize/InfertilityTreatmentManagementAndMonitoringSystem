@@ -3,49 +3,39 @@ using InfertilityTreatmentSystem.DAL.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Authorization;
+using System.Security.Claims;
 
 namespace InfertilityTreatmentSystem.Pages.TreatmentServicePage
 {
+    [Authorize(Roles = "Admin,Doctor")]
     public class CreateModel : PageModel
     {
         private readonly TreatmentServiceService _treatmentServiceService;
-        private readonly UserService _userService;
 
-        [BindProperty]
-        public TreatmentService NewService { get; set; }
-
-        public CreateModel(TreatmentServiceService treatmentServiceService, UserService userService)
+        public CreateModel(TreatmentServiceService treatmentServiceService)
         {
             _treatmentServiceService = treatmentServiceService;
-            _userService = userService;
         }
 
-        public void OnGet()
-        {
-            // You can optionally prepopulate any values if required.
-        }
+        [BindProperty]
+        public TreatmentService TreatmentService { get; set; } = new();
 
         public async Task<IActionResult> OnPostAsync()
         {
-            if (ModelState.IsValid)
-            {
-                // Get current user id from session
-                var userIdSession = HttpContext.Session.GetString("UserId");
-
-                if (!string.IsNullOrEmpty(userIdSession))
-                {
-                    NewService.UserId = Guid.Parse(userIdSession);  // Set the UserId from the session
-
-                    // Create a new treatment service
-                    await _treatmentServiceService.CreateTreatmentServiceAsync(NewService);
-                    return RedirectToPage("./Index");
-                }
-
-                ModelState.AddModelError("", "User is not authenticated.");
+            if (!ModelState.IsValid)
                 return Page();
-            }
 
-            return Page();
+            var userIdStr = User.FindFirstValue("UserId");
+            if (!Guid.TryParse(userIdStr, out Guid userId))
+                return Unauthorized();
+
+            TreatmentService.ServiceId = Guid.NewGuid(); // Tự sinh
+            TreatmentService.UserId = userId;
+
+            await _treatmentServiceService.CreateTreatmentServiceAsync(TreatmentService);
+
+            return RedirectToPage("./Index");
         }
     }
 }

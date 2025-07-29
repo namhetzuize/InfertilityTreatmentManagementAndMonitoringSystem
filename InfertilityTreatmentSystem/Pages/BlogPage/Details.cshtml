@@ -103,9 +103,23 @@
                 {
                     if (role == "Admin" || (role == "Doctor" && Model.Blog.UserId.ToString() == currentUserId))
                     {
-                        <a href="/BlogPage/Edit?blogId=@Model.Blog.BlogId" class="btn btn-warning me-2">✏ Edit</a>
+                        <a href="/BlogPage/Edit?blogId=@Model.Blog.BlogId" class="btn btn-warning me-2">✏ Chỉnh sửa</a>
                     }
-                    <a href="/BlogPage/Index" class="btn btn-outline-secondary">⬅ Back to List</a>
+
+                    @if (role == "Doctor")
+                    {
+                        <div class="text-end">
+                            <a asp-page="/BlogPage/Index"
+                               asp-route-doctorId="@Model.DoctorId"
+                               class="btn btn-outline-primary btn-lg shadow-sm">
+                                ⬅ Quay lại danh sách của tôi
+                            </a>
+                        </div>
+                    }
+                    else
+                    {
+                        <a href="/BlogPage/Index" class="btn btn-outline-secondary">⬅ Quay lại</a>
+                    }
                 }
             </div>
         </div>

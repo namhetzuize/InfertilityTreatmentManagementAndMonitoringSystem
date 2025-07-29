@@ -14,6 +14,8 @@
 
     var isDoctor = User.IsInRole("Doctor");
     var isCustomer = User.IsInRole("Customer");
+
+    var isAdmin = User.IsInRole("Admin");
 }
 
 <div class="container py-5">
@@ -58,29 +60,41 @@
     {
         <div class="d-flex justify-content-between gap-2 flex-wrap">
             <a href="@Url.Page("./Edit", new { requestId = Model.PatientRequest?.RequestId })"
-           class="btn btn-outline-warning btn-lg rounded-pill px-4 fw-semibold">
-            ✏️ Chỉnh sửa
-        </a>
+            class="btn btn-outline-warning btn-lg rounded-pill px-4 fw-semibold">
+                ✏️ Chỉnh sửa
+            </a>
 
-        <a href="@Url.Page("./Delete", new { requestId = Model.PatientRequest?.RequestId })"
-           class="btn btn-outline-danger btn-lg rounded-pill px-4 fw-semibold">
-            🗑️ Xoá yêu cầu
-        </a>
+            <a href="@Url.Page("./Delete", new { requestId = Model.PatientRequest?.RequestId })"
+            class="btn btn-outline-danger btn-lg rounded-pill px-4 fw-semibold">
+                🗑️ Xoá yêu cầu
+            </a>
 
 
-        <a asp-page="/MedicalProfileDetails"
-           asp-route-customerId="@Model.CustomerId"
-           asp-route-doctorId="@Model.DoctorId"
-           class="btn btn-outline-secondary btn-lg rounded-pill px-4 fw-semibold">
-            ⬅️ Quay lại hồ sơ bệnh án
-        </a>
-    </div>
+            <a asp-page="/MedicalProfileDetails"
+            asp-route-customerId="@Model.CustomerId"
+            asp-route-doctorId="@Model.DoctorId"
+            class="btn btn-outline-secondary btn-lg rounded-pill px-4 fw-semibold">
+                ⬅️ Quay lại hồ sơ bệnh án
+            </a>
+        </div>
     }
 
     @if (isDoctor)
     {
         <div class="d-flex justify-content-between gap-2 flex-wrap">
-        
+
+            <a asp-page="/MedicalProfileDetails"
+            asp-route-customerId="@Model.CustomerId"
+            asp-route-doctorId="@Model.DoctorId"
+            class="btn btn-outline-secondary btn-lg rounded-pill px-4 fw-semibold">
+                ⬅️ Quay lại hồ sơ bệnh án
+            </a>
+        </div>
+    }
+    @if (isAdmin)
+    {
+        <div class="d-flex justify-content-between gap-2 flex-wrap">
+
             <a asp-page="/MedicalProfileDetails"
                asp-route-customerId="@Model.CustomerId"
                asp-route-doctorId="@Model.DoctorId"
@@ -89,7 +103,7 @@
             </a>
         </div>
     }
-    
+
 </div>
 
 <style>

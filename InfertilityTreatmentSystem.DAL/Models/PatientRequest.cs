@@ -18,6 +18,7 @@ public partial class PatientRequest
     public Guid ServiceId { get; set; }
 
     [Required(ErrorMessage = "Ghi chú không được để trống.")]
+
     public string Note { get; set; }
 
     public DateTime RequestedDate { get; set; }

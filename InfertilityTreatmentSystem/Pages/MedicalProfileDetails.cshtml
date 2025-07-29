@@ -11,28 +11,32 @@
 
     <div class="mb-4">
         <h4 class="text-success">📅 Lịch khám</h4>
+
         @if (isDoctor)
         {
-            <form method="post" asp-page-handler="CreateSchedule"
-            asp-route-customerId="@Model.Customer.UserId"
-            asp-route-doctorId="@Model.DoctorId">
-                <div class="row g-2 mb-3">
+            <form method="post"
+                  asp-page-handler="CreateSchedule"
+                  asp-route-customerId="@Model.Customer.UserId"
+                  asp-route-doctorId="@Model.DoctorId"
+                  class="mb-3 border rounded p-3 bg-light">
+                <div class="row g-2">
                     <div class="col-md-4">
-                        <label class="form-label">Ngày khám:</label>
+                        <label class="form-label">📅 Ngày khám:</label>
                         <input asp-for="NewSchedule.ScheduleDate" type="datetime-local" class="form-control" />
                     </div>
                     <div class="col-md-4">
-                        <label class="form-label">Dịch vụ:</label>
+                        <label class="form-label">🩺 Dịch vụ:</label>
                         <input asp-for="NewSchedule.SerivceName" class="form-control" />
                     </div>
                     <div class="col-md-4">
-                        <label class="form-label">Ghi chú:</label>
+                        <label class="form-label">📝 Ghi chú:</label>
                         <input asp-for="NewSchedule.Note" class="form-control" />
                     </div>
-                    <button type="submit" class="btn btn-primary">➕ Tạo lịch khám</button>
                 </div>
+                <button type="submit" class="btn btn-primary mt-3">➕ Tạo lịch khám</button>
             </form>
         }
+
         @if (Model.Schedules != null && Model.Schedules.Any())
         {
             var sortedSchedules = Model.Schedules
@@ -41,12 +45,12 @@
             .ToList();
 
             <button class="btn btn-outline-primary mb-3 d-flex align-items-center gap-2"
-            type="button"
-            data-bs-toggle="collapse"
-            data-bs-target="#scheduleListCollapse"
-            aria-expanded="false"
-            aria-controls="scheduleListCollapse"
-            id="toggleScheduleBtn">
+                    type="button"
+                    data-bs-toggle="collapse"
+                    data-bs-target="#scheduleListCollapse"
+                    aria-expanded="false"
+                    aria-controls="scheduleListCollapse"
+                    id="toggleScheduleBtn">
                 📅 Xem lịch khám
                 <span id="collapseIcon">▼</span>
             </button>
@@ -61,17 +65,17 @@
 
                         <li class="list-group-item p-0 border-0">
                             <a asp-page="/SchedulePage/Details"
-                            asp-route-scheduleId="@schedule.ScheduleId"
-                            asp-route-appointmentId="@Model.AppointmentId"
-                            class="d-block px-4 py-3 text-decoration-none text-dark schedule-item">
+                               asp-route-scheduleId="@schedule.ScheduleId"
+                               asp-route-appointmentId="@Model.AppointmentId"
+                               class="d-block px-4 py-3 text-decoration-none text-dark schedule-item">
                                 <div class="fw-semibold text-primary mb-1">
                                     📅 @formattedDate
                                 </div>
                                 <div>
-                                    <strong>Dịch vụ:</strong> @schedule.SerivceName
+                                    <strong>🩺 Dịch vụ:</strong> @schedule.SerivceName
                                 </div>
                                 <div>
-                                    <strong>Ghi chú:</strong> @schedule.Note
+                                    <strong>📝 Ghi chú:</strong> @schedule.Note
                                 </div>
                             </a>
                         </li>
@@ -83,7 +87,6 @@
         {
             <div class="alert alert-info">Không có lịch khám nào.</div>
         }
-
     </div>
 
 
@@ -94,7 +97,9 @@
             <form method="post" asp-page-handler="CreateMedicalRecord"
             asp-route-customerId="@Model.Customer.UserId"
               asp-route-doctorId="@Model.DoctorId"
-              class="mb-3 border rounded p-3 bg-light">
+                class="mb-3 border rounded p-3 bg-light">
+                 
+                
             <div class="row g-2">
                 <div class="col-md-4">
                     <label class="form-label">Kết quả xét nghiệm:</label>
@@ -192,6 +197,7 @@
                   asp-route-customerId="@Model.Customer.UserId"
                   asp-route-doctorId="@Model.DoctorId"
                   class="mb-3 border rounded p-3 bg-light">
+            
                 <div class="row g-2">
                     <div class="col-md-6">
                         <label for="serviceSelect">Dịch vụ</label>
@@ -300,6 +306,7 @@
                     alert(errors.join("\n"));
                 }
             });
+
         </script>
     }
    

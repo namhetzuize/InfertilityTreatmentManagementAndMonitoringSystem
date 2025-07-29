@@ -29,15 +29,19 @@ namespace InfertilityTreatmentSystem.Pages.TreatmentServicePage
             return Page();
         }
 
-        public async Task<IActionResult> OnPostAsync()
+        public async Task<IActionResult> OnPostAsync(Guid serviceId)
         {
-            if (Service != null)
+            var service = await _treatmentServiceService.GetByIdWithRelationsAsync(serviceId);
+            if (service == null) return NotFound();
+
+            if (service.Appointments.Any() || service.PatientRequests.Any())
             {
-                await _treatmentServiceService.DeleteTreatmentServiceByIdAsync(Service.ServiceId);
-                return RedirectToPage("./Index");
+                TempData["ErrorMessage"] = "Không thể xoá dịch vụ này vì đã được sử dụng trong lịch hẹn hoặc yêu cầu điều trị.";
+                return RedirectToPage("./Details", new { serviceId });
             }
 
-            return NotFound();
+            await _treatmentServiceService.DeleteTreatmentServiceByIdAsync(service.ServiceId);
+            return RedirectToPage("./Index");
         }
     }
 }

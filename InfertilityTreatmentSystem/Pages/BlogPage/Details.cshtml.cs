@@ -2,6 +2,7 @@
 using InfertilityTreatmentSystem.DAL.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using System.Reflection.Metadata;
 
 namespace InfertilityTreatmentSystem.Pages.BlogPage
 {
@@ -13,6 +14,7 @@ namespace InfertilityTreatmentSystem.Pages.BlogPage
         [BindProperty]
         public Blog Blog { get; set; }
         public User Author { get; set; } // To hold the Author details
+        public Guid DoctorId { get; set; }
 
         public DetailsModel(BlogService blogService, UserService userService)
         {
@@ -23,12 +25,13 @@ namespace InfertilityTreatmentSystem.Pages.BlogPage
         public async Task<IActionResult> OnGetAsync(Guid blogId)
         {
             Blog = await _blogService.GetBlogByIdAsync(blogId);
+           ;
 
             if (Blog == null)
             {
                 return NotFound();
             }
-
+            DoctorId = Blog.UserId;
             // Fetch the author of the blog
             Author = await _userService.GetUserByIdAsync(Blog.UserId);
 

@@ -2,6 +2,7 @@
 #nullable disable
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 namespace InfertilityTreatmentSystem.DAL.Models;
 
@@ -18,7 +19,7 @@ public partial class MedicalRecord
     public string Prescription { get; set; }
 
     public string TestResults { get; set; }
-
+    [Required(ErrorMessage = "Ghi chú không được để trống.")]
     public string Note { get; set; }
 
     public DateTime CreatedDate { get; set; }

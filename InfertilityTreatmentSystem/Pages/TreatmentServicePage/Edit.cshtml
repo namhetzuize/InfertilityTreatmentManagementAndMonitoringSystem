@@ -1,25 +1,122 @@
 ﻿@page "{serviceId:guid}"
 @model InfertilityTreatmentSystem.Pages.TreatmentServicePage.EditModel
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
 
 @{
-    ViewData["Title"] = "Edit Treatment Service";
+    ViewData["Title"] = "Chỉnh sửa dịch vụ điều trị";
 }
 
-<h1>Edit Treatment Service</h1>
+<style>
+    .form-container {
+        background-color: #ffffff;
+        border-radius: 16px;
+        padding: 30px;
+        box-shadow: 0 0 15px rgba(0, 123, 255, 0.2);
+        animation: fadeInUp 0.8s ease-in-out;
+    }
 
-<form method="post">
-    <div class="mb-3">
-        <label for="ServiceName" class="form-label">Service Name</label>
-        <input type="text" class="form-control" id="ServiceName" name="ServiceName" value="@Model.Service.ServiceName" required />
-    </div>
-    <div class="mb-3">
-        <label for="Description" class="form-label">Description</label>
-        <textarea class="form-control" id="Description" name="Description" rows="3" required>@Model.Service.Description</textarea>
-    </div>
-    <div class="mb-3">
-        <label for="Price" class="form-label">Price</label>
-        <input type="number" class="form-control" id="Price" name="Price" value="@Model.Service.Price" required />
-    </div>
+    @@keyframes fadeInUp {
+        from
 
-    <button type="submit" class="btn btn-primary">Save</button>
-</form>
+    {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+    }
+
+    .form-label {
+        font-weight: 600;
+    }
+
+    .form-control {
+        border-radius: 10px;
+        transition: all 0.3s ease;
+    }
+
+        .form-control:focus {
+            box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+            transform: scale(1.02);
+        }
+
+    .btn-primary {
+        background-color: #007BFF;
+        border-radius: 12px;
+        padding: 10px 20px;
+        font-weight: 600;
+        transition: 0.3s;
+    }
+
+        .btn-primary:hover {
+            background-color: #0056b3;
+            transform: scale(1.05);
+        }
+
+    .btn-secondary {
+        border-radius: 12px;
+        padding: 10px 20px;
+        font-weight: 500;
+    }
+
+    h1 {
+        font-weight: bold;
+        margin-bottom: 25px;
+        color: #343a40;
+        animation: fadeIn 1s ease-in-out;
+    }
+
+    @@keyframes fadeIn {
+        from
+
+    {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+
+    }
+</style>
+
+<div class="container mt-5 mb-5">
+    <div class="form-container">
+        <h1>🛠️ Chỉnh sửa dịch vụ điều trị</h1>
+
+        <form method="post">
+            <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+            <div class="mb-3">
+                <label asp-for="Service.ServiceName" class="form-label">💊 Tên dịch vụ</label>
+                <input asp-for="Service.ServiceName" class="form-control" />
+                <span asp-validation-for="Service.ServiceName" class="text-danger"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="Service.Description" class="form-label">📝 Mô tả</label>
+                <textarea asp-for="Service.Description" class="form-control" rows="3"></textarea>
+                <span asp-validation-for="Service.Description" class="text-danger"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="Service.Price" class="form-label">💵 Giá</label>
+                <input asp-for="Service.Price" class="form-control" type="number" min="0" step="10000" />
+                <span asp-validation-for="Service.Price" class="text-danger"></span>
+            </div>
+
+            <div class="d-flex gap-3">
+                <button type="submit" class="btn btn-primary">💾 Lưu thay đổi</button>
+                <a asp-page="./Index" class="btn btn-secondary">❌ Hủy</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

@@ -1,6 +1,7 @@
 ﻿using InfertilityTreatmentSystem.DAL;
 using InfertilityTreatmentSystem.DAL.Models;
 using InfertilityTreatmentSystem.DAL.Paging;
+using Microsoft.EntityFrameworkCore;
 
 namespace InfertilityTreatmentSystem.BLL.Service
 {
@@ -76,11 +77,11 @@ namespace InfertilityTreatmentSystem.BLL.Service
         }
         public async Task<List<PatientRequest>> GetPatientRequestsByCustomerAndDoctorAsync(Guid customerId, Guid doctorId)
         {
-            var allPatientRequests = await _unitOfWork.PatientRequestRepository.GetAllAsync();
-
-            return allPatientRequests
-                .Where(r => r.CustomerId == customerId && r.DoctorId == doctorId)
-                .ToList();
+            return await _unitOfWork.PatientRequestRepository
+     .GetQueryable()
+     .Include(r => r.Service)
+     .Where(r => r.CustomerId == customerId && r.DoctorId == doctorId)
+     .ToListAsync();
         }
 
         public async Task<PagingResponse<PatientRequest>> GetPagedPatientRequestsAsync(

@@ -102,9 +102,5 @@ namespace InfertilityTreatmentSystem.BLL.Service
             await _unitOfWork.UserRepository.SaveAsync();
         }
 
-<<<<<<< HEAD
-
-=======
->>>>>>> 40b33bbf41feaa2ca5050cd5fe29bac736328c65
     }
 }

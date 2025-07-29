@@ -42,9 +42,6 @@ namespace InfertilityTreatmentSystem.Pages
         public Guid CustomerId { get; set; }
         [BindProperty(SupportsGet = true)]
         public Guid DoctorId { get; set; }
-
-        [BindProperty]
-        public PatientRequest NewRequest { get; set; }
         public List<User> Customers { get; set; }
         public List<User> Doctors { get; set; }
         
@@ -72,8 +69,7 @@ namespace InfertilityTreatmentSystem.Pages
             Customers = await _userService.GetAllUsersAsync();
             Doctors = Customers.Where(u => u.Role == "Doctor").ToList();
             TreatmentServices = await _treatmentServiceService.GetAllTreatmentServicesAsync();
-            PatientRequests = await _patientRequestService
-               .GetPatientRequestsByCustomerAndDoctorAsync(CustomerId, DoctorId);
+          
 
             // populate dropdown
             var allSvc = await _treatmentServiceService.GetAllTreatmentServicesAsync();
@@ -126,18 +122,15 @@ namespace InfertilityTreatmentSystem.Pages
         public async Task<IActionResult> OnPostCreateMedicalRecordAsync(Guid customerId, Guid doctorId)
         {
             var appointment = await _appointmentService.GetAppointmentByCustomerAndDoctorAsync(customerId, doctorId);
-            if (!ModelState.IsValid)
+
+            if (string.IsNullOrWhiteSpace(NewMedicalRecord.Note))
             {
-                Customer = await _userService.GetUserByIdAsync(customerId);
-                DoctorId = doctorId;
-
-                Schedules = await _scheduleService.GetSchedulesByCustomerAndDoctorAsync(customerId, doctorId);
-                PatientRequests = await _patientRequestService.GetPatientRequestsByCustomerAndDoctorAsync(customerId, doctorId);
-                MedicalRecords = await _medicalRecordService.GetMedicalRecordsByCustomerAndDoctorAsync(customerId, doctorId);
-
-                return Page();
+                ModelState.AddModelError("NewMedicalRecord.Note", "Ghi chú không được để trống.");
             }
 
+
+
+        
             NewMedicalRecord.CustomerId = customerId;
             NewMedicalRecord.DoctorId = doctorId;
             NewMedicalRecord.CreatedDate = DateTime.Now;
@@ -164,6 +157,9 @@ namespace InfertilityTreatmentSystem.Pages
 
             if (string.IsNullOrWhiteSpace(NewPatientRequest.Note))
                 ModelState.AddModelError(nameof(NewPatientRequest.Note), "Ghi chú không được để trống.");
+
+            Console.WriteLine($"ServiceId: {NewPatientRequest.ServiceId}");
+            Console.WriteLine($"Note: {NewPatientRequest.Note}");
 
             if (!ModelState.IsValid)
             {

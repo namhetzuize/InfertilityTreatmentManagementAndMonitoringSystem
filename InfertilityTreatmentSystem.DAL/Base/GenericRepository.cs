@@ -267,5 +267,6 @@ public class GenericRepository<T> where T : class
         _context.RemoveRange(entities);
         return await _context.SaveChangesAsync();
     }
+
     #endregion
 }

@@ -1,38 +1,136 @@
 ﻿@page
 @model InfertilityTreatmentSystem.Pages.TreatmentServicePage.IndexModel
+@using System.Security.Claims
 
 @{
-    ViewData["Title"] = "Treatment Services";
+    ViewData["Title"] = "Dịch vụ điều trị";
+    var role = User.FindFirstValue(ClaimTypes.Role);
 }
 
-<h1>Treatment Services</h1>
+<style>
+    .btn-custom {
+        transition: all 0.3s ease;
+        border-radius: 8px;
+    }
 
-<a class="btn btn-primary" asp-page="./Create">Create New Treatment Service</a>
-
-<table class="table">
-    <thead>
-        <tr>
-            <th>Service Name</th>
-            <th>Description</th>
-            <th>Price</th>
-            <th>Created By</th> <!-- User Name -->
-            <th>Actions</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var service in Model.TreatmentServices)
-        {
-            <tr>
-                <td>@service.ServiceName</td>
-                <td>@service.Description</td>
-                <td>@service.Price</td>
-                <td>@service.User?.UserName</td> <!-- Display user name -->
-                <td>
-                    <a href="@Url.Page("./Details", new { serviceId = service.ServiceId })" class="btn btn-info">Details</a>
-                    <a href="@Url.Page("./Edit", new { serviceId = service.ServiceId })" class="btn btn-warning">Edit</a>
-                    <a href="@Url.Page("./Delete", new { serviceId = service.ServiceId })" class="btn btn-danger">Delete</a>
-                </td>
-            </tr>
+        .btn-custom:hover {
+            transform: scale(1.05);
+            opacity: 0.9;
         }
-    </tbody>
-</table>
+
+    .table thead th {
+        background-color: #007BFF;
+        color: white;
+        text-align: center;
+    }
+
+    .table tbody td {
+        vertical-align: middle;
+        text-align: center;
+    }
+
+    .table tbody tr:hover {
+        background-color: #f8f9fa;
+        transition: background-color 0.3s;
+    }
+
+    .page-header {
+        font-size: 2rem;
+        font-weight: 700;
+        color: #343a40;
+        margin-bottom: 1.5rem;
+        border-left: 5px solid #007BFF;
+        padding-left: 12px;
+        animation: fadeIn 1s ease-in-out;
+    }
+
+    @@keyframes fadeIn {
+        from
+
+    {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+    }
+</style>
+
+<div class="container py-4">
+    <h1 class="page-header">💊 Dịch vụ điều trị</h1>
+
+    @if (role == "Admin" || role == "Doctor")
+    {
+        <a class="btn btn-success btn-custom mb-4"
+           asp-page="./Create">
+            ➕ Thêm dịch vụ
+        </a>
+    }
+
+    <div class="table-responsive shadow rounded">
+        <table class="table table-bordered table-hover">
+            <thead>
+                <tr>
+                    <th>💊 Tên dịch vụ</th>
+                    <th>📝 Mô tả</th>
+                    <th>💵 Giá</th>
+                    <th>👤 Người tạo</th>
+                    @if (role == "Admin" || role == "Doctor")
+                    {
+                        <th>⚙️ Thao tác</th>
+                    }
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model.TreatmentServices != null && Model.TreatmentServices.Any())
+                {
+                    foreach (var service in Model.TreatmentServices)
+                    {
+                        <tr>
+                            <td>@service.ServiceName</td>
+                            <td>@service.Description</td>
+                            <td>@string.Format("{0:N0} ₫", service.Price)</td>
+                            <td>@(service.User?.UserName ?? "N/A")</td>
+                            @if (role == "Admin" || role == "Doctor")
+                            {
+                                <td>
+                                    <div class="d-flex flex-wrap justify-content-center gap-2">
+                                        <a class="btn btn-info btn-sm btn-custom"
+                                           asp-page="./Details"
+                                           asp-route-serviceId="@service.ServiceId">
+                                            Chi tiết
+                                        </a>
+
+                                        <a class="btn btn-warning btn-sm btn-custom"
+                                           asp-page="./Edit"
+                                           asp-route-serviceId="@service.ServiceId">
+                                            Chỉnh sửa
+                                        </a>
+
+                                        <a class="btn btn-danger btn-sm btn-custom"
+                                           asp-page="./Delete"
+                                           asp-route-serviceId="@service.ServiceId">
+                                            Xoá
+                                        </a>
+                                    </div>
+                                </td>
+                            }
+                        </tr>
+                    }
+                }
+                else
+                {
+                    <tr>
+                        <td colspan="@(role == "Admin" || role == "Doctor" ? 5 : 4)" class="text-muted text-center py-4">
+                            Không có dịch vụ nào để hiển thị.
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

@@ -51,8 +51,7 @@ namespace InfertilityTreatmentSystem.Pages
             var blogs = await _blogService.GetAllBlogsAsync();
             TotalBlogs = blogs.Count;
 
-            var reqs = await _patientRequestService.GetAllPatientRequestsAsync();
-            TotalRequests = reqs.Count;
+           
 
             var svcs = await _treatmentServiceService.GetAllTreatmentServicesAsync();
             TotalServices = svcs.Count;

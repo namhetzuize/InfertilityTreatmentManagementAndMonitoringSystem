@@ -45,5 +45,13 @@ namespace InfertilityTreatmentSystem.DAL.Repository
                 PageIndex = pageIndex
             };
         }
+        public async Task<TreatmentService?> GetByIdWithRelationsAsync(Guid serviceId)
+        {
+            return await _context.TreatmentServices
+                .Include(s => s.Appointments)
+                .Include(s => s.PatientRequests)
+                .FirstOrDefaultAsync(s => s.ServiceId == serviceId);
+        }
+
     }
 }

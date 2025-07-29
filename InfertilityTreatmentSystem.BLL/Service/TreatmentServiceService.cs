@@ -88,5 +88,10 @@ namespace InfertilityTreatmentSystem.BLL.Service
         {
             return await _unitOfWork.TreatmentServiceRepository.GetPagedTreatmentServicesAsync(searchTerm, pageIndex, pageSize);
         }
+        public async Task<TreatmentService?> GetByIdWithRelationsAsync(Guid serviceId)
+        {
+            return await _unitOfWork.TreatmentServiceRepository.GetByIdWithRelationsAsync(serviceId);
+        }
+
     }
 }

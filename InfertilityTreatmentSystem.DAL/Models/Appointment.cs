@@ -2,6 +2,7 @@
 #nullable disable
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 namespace InfertilityTreatmentSystem.DAL.Models;
 
@@ -20,7 +21,7 @@ public partial class Appointment
     public string Status { get; set; }
 
     public string RejectReason { get; set; }
-
+    [MaxLength(500)]
     public string Note { get; set; }
 
     public virtual User Customer { get; set; }
