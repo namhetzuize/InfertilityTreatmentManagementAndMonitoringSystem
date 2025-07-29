@@ -1,28 +1,35 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using InfertilityTreatmentSystem.BLL.Service;
+using InfertilityTreatmentSystem.DAL.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using Microsoft.EntityFrameworkCore;
-using InfertilityTreatmentSystem.DAL.Models;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace InfertilityTreatmentSystem.Pages.UserPage
 {
+    [Authorize(Roles = "Admin")]
     public class IndexModel : PageModel
     {
-        private readonly InfertilityTreatmentSystem.DAL.Models.InfertilityTreatmentDBContext _context;
+        private readonly UserService _userService;
 
-        public IndexModel(InfertilityTreatmentSystem.DAL.Models.InfertilityTreatmentDBContext context)
+        public IndexModel(UserService userService)
         {
-            _context = context;
+            _userService = userService;
         }
 
-        public IList<User> User { get;set; } = default!;
+        /// <summary>All users to display in the table</summary>
+        public List<User> Users { get; set; } = new();
 
-        public async Task OnGetAsync()
+        public async Task<IActionResult> OnGetAsync()
         {
-            User = await _context.Users.ToListAsync();
+            if (!User.IsInRole("Admin"))
+            {
+                return RedirectToPage("/Error");
+            }
+            // pull from your service, not directly from DbContext
+            Users = await _userService.GetAllUsersAsync();
+            return Page();
         }
     }
 }

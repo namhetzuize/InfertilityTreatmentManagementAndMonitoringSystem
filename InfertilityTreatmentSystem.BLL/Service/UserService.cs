@@ -71,18 +71,40 @@ namespace InfertilityTreatmentSystem.BLL.Service
         }
 
         // Delete user by UserId
+        // InfertilityTreatmentSystem.BLL.Service/UserService.cs
+
         public async Task DeleteUserByIdAsync(Guid userId)
         {
-            var user = await _unitOfWork.UserRepository.GetByIdAsync(userId);
-            if (user == null)
+            // 1) Remove Blogs
+            var allBlogs = await _unitOfWork.BlogRepository.GetAllAsync();
+            foreach (var blog in allBlogs.Where(b => b.UserId == userId))
             {
-                throw new Exception("User not found.");
+                _unitOfWork.BlogRepository.PrepareRemove(blog);
             }
 
+            // 2) Remove Appointments where user is customer or doctor
+            var allAppointments = await _unitOfWork.AppointmentRepository.GetAllAsync();
+            foreach (var appt in allAppointments
+                .Where(a => a.CustomerId == userId || a.DoctorId == userId))
+            {
+                _unitOfWork.AppointmentRepository.PrepareRemove(appt);
+            }
+
+            // 3) (If you have other child entities, e.g., PatientRequests, MedicalRecords, Schedules, 
+            //    repeat the same pattern: fetch, PrepareRemove)
+
+            // 4) Finally remove the User
+            var user = await _unitOfWork.UserRepository.GetByIdAsync(userId);
+            if (user == null) throw new Exception("User not found.");
             _unitOfWork.UserRepository.PrepareRemove(user);
+
+            // 5) Flush once (this will delete *all* prepared entities in one transaction)
             await _unitOfWork.UserRepository.SaveAsync();
         }
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> 40b33bbf41feaa2ca5050cd5fe29bac736328c65
     }
 }
