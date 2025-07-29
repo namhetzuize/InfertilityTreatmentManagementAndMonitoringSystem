@@ -7,89 +7,512 @@
 }
 
 <div class="container py-5">
-    <!-- Welcome -->
-    <div class="text-center mb-5">
-        <h2 class="fw-bold text-primary display-5 animate__animated animate__fadeInDown">
-            👨‍⚕️ Welcome, Dr. @fullName
+    <!-- Welcome Header - Full Width -->
+    <div class="text-center mb-5 floating">
+        <h2 class="fw-bold text-primary display-5 animate__animated animate__fadeInDown typewriter glow">
+            👨‍⚕️ Chào mừng, Dr. @fullName
         </h2>
-        <p class="text-muted fs-5">Manage your appointments below.</p>
+        <p class="text-muted fs-5 animate__animated animate__fadeInUp animate-delay-2">Quản lí lịch điều trị với bệnh nhân của bạn nào.</p>
     </div>
 
-    <!-- Appointments Table -->
-    @if (Model.AllAppointments != null && Model.AllAppointments.Any())
-    {
-        <form method="post">
-            <div class="table-responsive shadow-sm rounded-4 overflow-hidden animate__animated animate__fadeInUp">
-                <table class="table table-hover align-middle mb-5">
-                    <thead class="table-primary">
-                        <tr>
-                            <th>Patient</th>
-                            <th>Service</th>
-                            <th>Date</th>
-                            <th>Status</th>
-                            <th>Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach (var appointment in Model.AllAppointments)
-                        {
-                            <tr>
-                                <td>@appointment.Customer?.FullName</td>
-                                <td>@appointment.Service?.ServiceName</td>
-                                <td>@appointment.AppointmentDate.ToString("yyyy-MM-dd HH:mm")</td>
-                                <td>
-                                    @if (appointment.Status != "Success")
-                                    {
-                                        <button type="submit" name="appointmentId" value="@appointment.AppointmentId" class="btn btn-sm btn-outline-success">
-                                            ✅ Mark as Success
-                                        </button>
-                                    }
-                                    else
-                                    {
-                                        <span class="badge bg-success">✔ Success</span>
-                                    }
-                                </td>
-                                <td>
-                                    <a asp-page="/AppointmentPage/Details" asp-route-id="@appointment.AppointmentId"
-                                       class="btn btn-outline-info btn-sm">
-                                        🔍 Details
-                                    </a>
-                                </td>
-                            </tr>
-                        }
-                    </tbody>
-                </table>
-            </div>
-        </form>
-    }
-    else
-    {
-        <div class="alert alert-info text-center">No appointments found.</div>
-    }
+    <!-- Two Column Layout -->
+    <div class="row g-4">
+        <!-- Left Column - Appointments -->
+        <div class="col-lg-8 col-md-12">
+            <div class="h-100 fade-in-up animate-delay-1">
+                <h4 class="fw-bold text-dark mb-4 animate__animated animate__slideInLeft">
+                    📅 Lịch hẹn của bạn <span class="rotate-on-hover">⚡</span>
+                </h4>
 
-    <!-- Medical Profile Card -->
-    <div class="row mb-4 animate__animated animate__zoomIn">
-        <div class="col-12">
-            <div class="card bg-light border-0 shadow-lg rounded-4 text-center p-5 h-100">
-                <h3 class="fw-bold text-dark mb-3">🗂️ Hồ sơ bệnh án</h3>
-                <p class="text-muted mb-4">Xem và quản lý hồ sơ bệnh nhân, lịch khám, và yêu cầu.</p>
-                <a href="/MedicalProfile" class="btn btn-primary btn-lg px-5">
-                    Truy cập hồ sơ
-                </a>
+                @if (Model.AllAppointments != null && Model.AllAppointments.Any())
+                {
+                    <form method="post">
+                        <div class="table-responsive shadow-sm rounded-4 overflow-hidden animate__animated animate__fadeInUp">
+                            <table class="table table-hover align-middle mb-0">
+                                <thead class="table-primary">
+                                    <tr>
+                                        <th>Bệnh nhân</th>
+                                        <th>Dịch vụ</th>
+                                        <th>Ngày dự kiến</th>
+                                        <th>Trạng thái</th>
+                                        <th>Hành động</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var appointment in Model.AllAppointments)
+                                    {
+                                        <tr>
+                                            <td>@appointment.Customer?.FullName</td>
+                                            <td>@appointment.Service?.ServiceName</td>
+                                            <td>@appointment.AppointmentDate.ToString("yyyy-MM-dd HH:mm")</td>
+                                            <td>
+                                                @if (appointment.Status != "Success")
+                                                {
+                                                    <button type="submit" name="appointmentId" value="@appointment.AppointmentId" class="btn btn-sm btn-outline-success ripple btn-pulse">
+                                                        ✅ Mark as Success
+                                                    </button>
+                                                }
+                                                else
+                                                {
+                                                    <span class="badge bg-success badge-bounce">✔ Success</span>
+                                                }
+                                            </td>
+                                            <td>
+                                                <a asp-page="/AppointmentPage/Details" asp-route-id="@appointment.AppointmentId"
+                                                   class="btn btn-outline-info btn-sm ripple">
+                                                    <span class="rotate-on-hover">🔍</span> Details
+                                                </a>
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    </form>
+                }
+                else
+                {
+                    <div class="alert alert-info text-center">No appointments found.</div>
+                }
             </div>
         </div>
-    </div>
 
-    <!-- Create Blog Button -->
-    <div class="text-end">
-        <a asp-page="/BlogPage/Index"
-           asp-route-doctorId="@Model.DoctorId"
-           class="btn btn-outline-primary btn-lg shadow-sm">
-            ✍️ Quản lý blog
-        </a>
+        <!-- Right Column - Actions & Profile -->
+        <div class="col-lg-4 col-md-12">
+            <div class="d-flex flex-column h-100 gap-4 fade-in-up animate-delay-2">
+                <!-- Medical Profile Card -->
+                <div class="card bg-light border-0 shadow-lg rounded-4 text-center p-4 card-hover animate__animated animate__zoomIn animate-delay-3">
+                    <div class="card-body">
+                        <h4 class="fw-bold text-dark mb-3">
+                            <span class="rotate-on-hover">🗂️</span> Hồ sơ bệnh án
+                        </h4>
+                        <p class="text-muted mb-4">Xem và quản lý hồ sơ bệnh nhân, lịch khám, và yêu cầu.</p>
+                        <a href="/MedicalProfile" class="btn btn-primary btn-lg px-4 w-100 ripple">
+                            Truy cập hồ sơ
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Blog Management Card -->
+                <div class="card bg-gradient-primary border-0 shadow-lg rounded-4 text-center p-4 card-hover animate__animated animate__zoomIn animate-delay-4">
+                    <div class="card-body text-white">
+                        <h4 class="fw-bold mb-3">
+                            <span class="rotate-on-hover">✍️</span> Quản lý Blog
+                        </h4>
+                        <p class="mb-4 opacity-75">Tạo và quản lý các bài viết blog chuyên môn của bạn.</p>
+                        <a asp-page="/BlogPage/Index"
+                           asp-route-doctorId="@Model.DoctorId"
+                           class="btn btn-light btn-lg px-4 w-100 ripple">
+                            Quản lý blog
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Quick Stats Card (Optional) -->
+                <div class="card bg-gradient-success border-0 shadow-lg rounded-4 text-center p-4 card-hover animate__animated animate__zoomIn animate-delay-5">
+                    <div class="card-body text-white">
+                        <h5 class="fw-bold mb-2">
+                            <span class="rotate-on-hover">📊</span> Thống kê nhanh
+                        </h5>
+                        <div class="row text-center">
+                            <div class="col-6">
+                                <div class="border-end border-light">
+                                    <div class="counter" data-target="@(Model.AllAppointments?.Count() ?? 0)">0</div>
+                                    <small class="opacity-75">Tổng lịch hẹn</small>
+                                </div>
+                            </div>
+                            <div class="col-6">
+                                <div class="counter" data-target="@(Model.AllAppointments?.Count(a => a.Status == "Success") ?? 0)">0</div>
+                                <small class="opacity-75">Hoàn thành</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
 
 @section Scripts {
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
+    <style>
+        /* Gradient Backgrounds */
+        .bg-gradient-primary {
+            background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
+            background-size: 200% 200%;
+            animation: gradientShift 3s ease infinite;
+        }
+
+        .bg-gradient-success {
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+            background-size: 200% 200%;
+            animation: gradientShift 4s ease infinite;
+        }
+
+        @@keyframes gradientShift {
+            0%
+
+        {
+            background-position: 0% 50%;
+        }
+
+        50% {
+            background-position: 100% 50%;
+        }
+
+        100% {
+            background-position: 0% 50%;
+        }
+
+        }
+
+        /* Card Hover Effects */
+        .card-hover {
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            position: relative;
+            overflow: hidden;
+        }
+
+            .card-hover::before {
+                content: '';
+                position: absolute;
+                top: 0;
+                left: -100%;
+                width: 100%;
+                height: 100%;
+                background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+                transition: left 0.5s;
+            }
+
+            .card-hover:hover {
+                transform: translateY(-10px) scale(1.02);
+                box-shadow: 0 20px 40px rgba(0,0,0,0.2) !important;
+            }
+
+                .card-hover:hover::before {
+                    left: 100%;
+                }
+
+        /* Button Pulse Effect */
+        .btn-pulse {
+            animation: pulse 2s infinite;
+        }
+
+        @@keyframes pulse {
+            0%
+
+        {
+            box-shadow: 0 0 0 0 rgba(0, 123, 255, 0.7);
+        }
+
+        70% {
+            box-shadow: 0 0 0 10px rgba(0, 123, 255, 0);
+        }
+
+        100% {
+            box-shadow: 0 0 0 0 rgba(0, 123, 255, 0);
+        }
+
+        }
+
+        /* Table Row Animations */
+        .table tbody tr {
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+            .table tbody tr:hover {
+                background: linear-gradient(45deg, rgba(0,123,255,0.1), rgba(40,167,69,0.1));
+                transform: translateX(5px);
+                box-shadow: 5px 0 15px rgba(0,0,0,0.1);
+            }
+
+        /* Floating Animation */
+        .floating {
+            animation: floating 3s ease-in-out infinite;
+        }
+
+        @@keyframes floating {
+            0%, 100%
+
+        {
+            transform: translateY(0px);
+        }
+
+        50% {
+            transform: translateY(-10px);
+        }
+
+        }
+
+        /* Rotating Icons */
+        .rotate-on-hover {
+            transition: transform 0.3s ease;
+        }
+
+            .rotate-on-hover:hover {
+                transform: rotate(360deg);
+            }
+
+        /* Loading Skeleton Effect */
+        .skeleton {
+            background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+            background-size: 200% 100%;
+            animation: loading 1.5s infinite;
+        }
+
+        @@keyframes loading {
+            0%
+
+        {
+            background-position: 200% 0;
+        }
+
+        100% {
+            background-position: -200% 0;
+        }
+
+        }
+
+        /* Badge Bounce */
+        .badge-bounce {
+            animation: bounce 1s infinite;
+        }
+
+        @@keyframes bounce {
+            0%, 20%, 50%, 80%, 100%
+
+        {
+            transform: translateY(0);
+        }
+
+        40% {
+            transform: translateY(-5px);
+        }
+
+        60% {
+            transform: translateY(-3px);
+        }
+
+        }
+
+        /* Glowing Effect */
+        .glow {
+            animation: glow 2s ease-in-out infinite alternate;
+        }
+
+        @@keyframes glow {
+            from
+
+        {
+            box-shadow: 0 0 10px rgba(0,123,255,0.5);
+        }
+
+        to {
+            box-shadow: 0 0 20px rgba(0,123,255,0.8), 0 0 30px rgba(0,123,255,0.6);
+        }
+
+        }
+
+        /* Typewriter Effect */
+        .typewriter {
+            overflow: hidden;
+            border-right: .15em solid orange;
+            white-space: nowrap;
+            margin: 0 auto;
+            letter-spacing: .15em;
+            animation: typing 3.5s steps(40, end), blink-caret .75s step-end infinite;
+        }
+
+        @@keyframes typing {
+            from
+
+        {
+            width: 0;
+        }
+
+        to {
+            width: 100%;
+        }
+
+        }
+
+        @@keyframes blink-caret {
+            from, to
+
+        {
+            border-color: transparent;
+        }
+
+        50% {
+            border-color: orange;
+        }
+
+        }
+
+        /* Stats Counter Animation */
+        .counter {
+            font-size: 2rem;
+            font-weight: bold;
+        }
+
+        /* Ripple Effect */
+        .ripple {
+            position: relative;
+            overflow: hidden;
+        }
+
+            .ripple::after {
+                content: '';
+                position: absolute;
+                top: 50%;
+                left: 50%;
+                width: 0;
+                height: 0;
+                border-radius: 50%;
+                background: rgba(255,255,255,0.5);
+                transform: translate(-50%, -50%);
+                transition: width 0.6s, height 0.6s;
+            }
+
+            .ripple:hover::after {
+                width: 300px;
+                height: 300px;
+            }
+
+        /* Page Load Animation */
+        @@keyframes fadeInUp {
+            from
+
+        {
+            opacity: 0;
+            transform: translate3d(0, 100%, 0);
+        }
+
+        to {
+            opacity: 1;
+            transform: translate3d(0, 0, 0);
+        }
+
+        }
+
+        .fade-in-up {
+            animation: fadeInUp 0.8s ease-out;
+        }
+
+        /* Stagger Animation Delays */
+        .animate-delay-1 {
+            animation-delay: 0.1s;
+        }
+
+        .animate-delay-2 {
+            animation-delay: 0.2s;
+        }
+
+        .animate-delay-3 {
+            animation-delay: 0.3s;
+        }
+
+        .animate-delay-4 {
+            animation-delay: 0.4s;
+        }
+
+        .animate-delay-5 {
+            animation-delay: 0.5s;
+        }
+    </style>
+
+    <script>
+        // Counter Animation
+        function animateCounter(element, target) {
+            let current = 0;
+            const increment = target / 100;
+            const timer = setInterval(() => {
+                current += increment;
+                element.textContent = Math.ceil(current);
+                if (current >= target) {
+                    element.textContent = target;
+                    clearInterval(timer);
+                }
+            }, 20);
+        }
+
+        // Initialize animations on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            // Animate counters
+            const counters = document.querySelectorAll('.counter');
+            counters.forEach(counter => {
+                const target = parseInt(counter.getAttribute('data-target'));
+                animateCounter(counter, target);
+            });
+
+            // Add stagger effect to table rows
+            const tableRows = document.querySelectorAll('tbody tr');
+            tableRows.forEach((row, index) => {
+                row.style.animationDelay = `${index * 0.1}s`;
+                row.classList.add('animate__animated', 'animate__fadeInLeft');
+            });
+
+            // Add scroll animations
+            const observerOptions = {
+                threshold: 0.1,
+                rootMargin: '0px 0px -50px 0px'
+            };
+
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('animate__animated', 'animate__fadeInUp');
+                    }
+                });
+            }, observerOptions);
+
+            // Observe all cards
+            document.querySelectorAll('.card').forEach(card => {
+                observer.observe(card);
+            });
+        });
+
+        // Add ripple effect to buttons
+        document.addEventListener('click', function(e) {
+            if (e.target.classList.contains('ripple')) {
+                const ripple = e.target;
+                const rect = ripple.getBoundingClientRect();
+                const size = Math.max(rect.width, rect.height);
+                const x = e.clientX - rect.left - size / 2;
+                const y = e.clientY - rect.top - size / 2;
+
+                const rippleElement = document.createElement('span');
+                rippleElement.style.cssText = `
+                    position: absolute;
+                    border-radius: 50%;
+                    background: rgba(255,255,255,0.6);
+                    transform: scale(0);
+                    animation: ripple-animation 0.6s linear;
+                    left: ${x}px;
+                    top: ${y}px;
+                    width: ${size}px;
+                    height: ${size}px;
+                `;
+
+                ripple.appendChild(rippleElement);
+
+                setTimeout(() => {
+                    rippleElement.remove();
+                }, 600);
+            }
+        });
+    </script>
+
+    <style>
+        @@keyframes ripple-animation {
+            to
+
+        {
+            transform: scale(4);
+            opacity: 0;
+        }
+
+        }
+    </style>
 }
