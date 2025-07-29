@@ -2,8 +2,7 @@
 using InfertilityTreatmentSystem.DAL.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using System;
-using System.Threading.Tasks;
+using System.Security.Claims;
 
 namespace InfertilityTreatmentSystem.Pages.UserPage
 {
@@ -16,19 +15,26 @@ namespace InfertilityTreatmentSystem.Pages.UserPage
             _userService = userService;
         }
 
-        // Route-bound userId
+        // This comes from the route
         [BindProperty(SupportsGet = true)]
         public Guid UserId { get; set; }
 
-        // The edited user
+        // This is your DAL user, bound from the form
         [BindProperty]
-        public User User { get; set; }
+        public User User { get; set; } = new();
 
         public async Task<IActionResult> OnGetAsync(Guid userId)
         {
-            // load into User
             var u = await _userService.GetUserByIdAsync(userId);
             if (u == null) return NotFound();
+
+            // use HttpContext.User to get the current principal’s claims
+            var myId = HttpContext.User.FindFirstValue("UserId");
+            var myRole = HttpContext.User.FindFirstValue(ClaimTypes.Role);
+
+            // only Admin or the user themselves may view
+            if (myRole != "Admin" && myId != userId.ToString())
+                return Forbid();
 
             User = u;
             return Page();
@@ -39,19 +45,32 @@ namespace InfertilityTreatmentSystem.Pages.UserPage
             if (!ModelState.IsValid)
                 return Page();
 
-            try
+            var existing = await _userService.GetUserByIdAsync(UserId);
+            if (existing == null) return NotFound();
+
+            var myId = HttpContext.User.FindFirstValue("UserId");
+            var myRole = HttpContext.User.FindFirstValue(ClaimTypes.Role);
+
+            // only Admin or the user themselves may submit
+            if (myRole != "Admin" && myId != UserId.ToString())
+                return Forbid();
+
+            // always‐editable
+            existing.FullName = User.FullName;
+            existing.UserName = User.UserName;
+            existing.Password = User.Password;
+            existing.PhoneNumber = User.PhoneNumber;
+            existing.Age = User.Age;
+
+            // Admins get to flip Role & IsActive
+            if (myRole == "Admin")
             {
-                // call the UpdateUserByIdAsync helper
-                await _userService.UpdateUserByIdAsync(UserId, User);
-                // redirect back to the Details page of that user
-                return RedirectToPage("./Details", new { userId = UserId });
+                existing.Role = User.Role;
+                existing.IsActive = User.IsActive;
             }
-            catch (Exception ex)
-            {
-                // optionally log ex
-                ModelState.AddModelError(string.Empty, ex.Message);
-                return Page();
-            }
+
+            await _userService.UpdateUserAsync(existing);
+            return RedirectToPage("./Details", new { userId = UserId });
         }
     }
 }

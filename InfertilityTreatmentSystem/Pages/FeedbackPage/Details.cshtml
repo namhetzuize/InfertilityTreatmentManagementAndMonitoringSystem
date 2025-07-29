@@ -5,18 +5,81 @@
     ViewData["Title"] = "Feedback Details";
 }
 
-<h1>Feedback Details</h1>
+<style>
+    /* Card tweaks */
+    .detail-card {
+        border-radius: 0.5rem;
+        overflow: hidden;
+    }
+        /* Definition list styling */
+        .detail-card dl.row > dt {
+            font-weight: 600;
+        }
 
-<div>
-    <h3>Feedback Information</h3>
-    <p><strong>Customer:</strong> @Model.Feedback.Customer?.UserName</p>
-    <p><strong>Rating:</strong> @Model.Feedback.Rating</p>
-    <p><strong>Comment:</strong> @Model.Feedback.Comment</p>
-    <p><strong>Created Date:</strong> @Model.Feedback.CreatedDate?.ToString("MM/dd/yyyy")</p>
-</div>
+        .detail-card dl.row > dd {
+            margin-bottom: 1rem;
+        }
+    /* Button hover states */
+    .btn-warning:hover,
+    .btn-warning:focus {
+        background-color: #e0a800;
+        border-color: #d39e00;
+        color: #fff;
+    }
 
-<div>
-    <a href="@Url.Page("./Edit", new { feedbackId = Model.Feedback.FeedbackId })" class="btn btn-warning">Edit</a>
-    <a href="@Url.Page("./Delete", new { feedbackId = Model.Feedback.FeedbackId })" class="btn btn-danger">Delete</a>
-    <a href="@Url.Page("./Index")" class="btn btn-secondary">Back to List</a>
+    .btn-danger:hover,
+    .btn-danger:focus {
+        background-color: #bd2130;
+        border-color: #b21f2d;
+        color: #fff;
+    }
+
+    .btn-secondary:hover,
+    .btn-secondary:focus {
+        background-color: #5a6268;
+        border-color: #545b62;
+        color: #fff;
+    }
+</style>
+
+<div class="container my-5">
+    <div class="card shadow detail-card">
+        <div class="card-header bg-primary text-white">
+            <h2 class="mb-0">Feedback Details</h2>
+        </div>
+        <div class="card-body">
+            <h5 class="card-title">Feedback Information</h5>
+            <dl class="row">
+                <dt class="col-sm-3">Customer:</dt>
+                <dd class="col-sm-9">@Model.Feedback.Customer?.UserName</dd>
+
+                <dt class="col-sm-3">Rating:</dt>
+                <dd class="col-sm-9">@Model.Feedback.Rating</dd>
+
+                <dt class="col-sm-3">Comment:</dt>
+                <dd class="col-sm-9">@Model.Feedback.Comment</dd>
+
+                <dt class="col-sm-3">Created Date:</dt>
+                <dd class="col-sm-9">
+                    @Model.Feedback.CreatedDate?.ToString("dd/MM/yyyy")
+                </dd>
+            </dl>
+
+            <div class="mt-4">
+                <a asp-page="./Edit"
+                   asp-route-feedbackId="@Model.Feedback.FeedbackId"
+                   class="btn btn-warning me-2">
+                    Edit
+                </a>
+                <a asp-page="./Delete"
+                   asp-route-feedbackId="@Model.Feedback.FeedbackId"
+                   class="btn btn-danger me-2">
+                    Delete
+                </a>
+                <a asp-page="./Index" class="btn btn-secondary">
+                    Back to List
+                </a>
+            </div>
+        </div>
+    </div>
 </div>

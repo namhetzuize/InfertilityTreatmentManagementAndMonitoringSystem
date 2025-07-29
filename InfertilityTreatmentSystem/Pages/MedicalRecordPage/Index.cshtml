@@ -1,44 +1,99 @@
 ﻿@page
 @model InfertilityTreatmentSystem.Pages.MedicalRecordPage.IndexModel
-
 @{
     ViewData["Title"] = "Medical Records";
 }
 
-<h1>Medical Records</h1>
+<style>
+    /* Prevent header from wrapping */
+    .card-header.d-flex {
+        flex-wrap: nowrap;
+    }
 
-<a class="btn btn-primary" href="@Url.Page("./Create")">Create New Medical Record</a>
+    /* Hover highlight */
+    .table-hover tbody tr:hover {
+        background-color: rgba(0, 123, 255, 0.1);
+    }
 
-<table class="table">
-    <thead>
-        <tr>
-            <th>Appointment Id</th>
-            <th>Customer</th>
-            <th>Doctor</th>
-            <th>Prescription</th>
-            <th>Test Results</th>
-            <th>Note</th>
-            <th>Created Date</th>
-            <th>Actions</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var record in Model.MedicalRecords)
-        {
-            <tr>
-                <td>@record.AppointmentId</td>
-                <td>@record.Customer?.UserName</td>
-                <td>@record.Doctor?.UserName</td>
-                <td>@record.Prescription</td>
-                <td>@record.TestResults</td>
-                <td>@record.Note</td>
-                <td>@record.CreatedDate.ToString("MM/dd/yyyy")</td>
-                <td>
-                    <a href="@Url.Page("./Details", new { recordId = record.RecordId })" class="btn btn-info">Details</a>
-                    <a href="@Url.Page("./Edit", new { recordId = record.RecordId })" class="btn btn-warning">Edit</a>
-                    <a href="@Url.Page("./Delete", new { recordId = record.RecordId })" class="btn btn-danger">Delete</a>
-                </td>
-            </tr>
-        }
-    </tbody>
-</table>
+    /* Button hover states */
+    .btn-outline-info:hover,
+    .btn-outline-info:focus {
+        background-color: #17a2b8;
+        color: #fff;
+        border-color: #17a2b8;
+    }
+
+    .btn-outline-warning:hover,
+    .btn-outline-warning:focus {
+        background-color: #ffc107;
+        color: #fff;
+        border-color: #ffc107;
+    }
+
+    .btn-outline-danger:hover,
+    .btn-outline-danger:focus {
+        background-color: #dc3545;
+        color: #fff;
+        border-color: #dc3545;
+    }
+
+    /* Truncate long IDs with ellipsis */
+    .ellipsis {
+        max-width: 140px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+</style>
+
+<div class="container my-5">
+    <div class="card shadow-sm">
+        <div class="card-header d-flex flex-nowrap justify-content-between align-items-center bg-primary text-white">
+            <h2 class="mb-0">Medical Records</h2>
+            <a asp-page="./Create" class="btn btn-light btn-sm">+ New Record</a>
+        </div>
+
+        <div class="card-body p-0">
+            <table class="table table-hover table-striped mb-0">
+                <thead class="table-secondary">
+                    <tr>
+                        <th>Appointment ID</th>
+                        <th>Customer</th>
+                        <th>Doctor</th>
+                        <th>Prescription</th>
+                        <th>Test Results</th>
+                        <th>Note</th>
+                        <th>Created Date</th>
+                        <th class="text-end">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var rec in Model.MedicalRecords)
+                    {
+                        <tr>
+                            <td>
+                                <div class="ellipsis" title="@rec.AppointmentId">
+                                    @rec.AppointmentId
+                                </div>
+                            </td>
+                            <td>@rec.Customer?.UserName</td>
+                            <td>@rec.Doctor?.UserName</td>
+                            <td>@rec.Prescription</td>
+                            <td>@rec.TestResults</td>
+                            <td>@rec.Note</td>
+                            <td>@rec.CreatedDate.ToString("dd/MM/yyyy")</td>
+                            <td class="text-end">
+                                <a asp-page="./Details" asp-route-recordId="@rec.RecordId" asp-route-appointmentId="@rec.AppointmentId"
+                                   class="btn btn-sm btn-outline-info me-1">Details</a>
+                                <a asp-page="./Edit" asp-route-recordId="@rec.RecordId" asp-route-appointmentId="@rec.AppointmentId"
+                                   class="btn btn-sm btn-outline-warning me-1">Edit</a>
+                                <a asp-page="./Delete" asp-route-recordId="@rec.RecordId"
+                                   class="btn btn-sm btn-outline-danger">Delete</a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

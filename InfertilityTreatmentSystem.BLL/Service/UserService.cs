@@ -54,17 +54,26 @@ namespace InfertilityTreatmentSystem.BLL.Service
         public async Task UpdateUserByIdAsync(Guid userId, User updatedUser)
         {
             var user = await _unitOfWork.UserRepository.GetByIdAsync(userId);
-            if (user == null)
-            {
-                throw new Exception("User not found.");
-            }
+            if (user == null) throw new Exception("User not found.");
 
-            // Update the user properties
+            // always update these
             user.UserName = updatedUser.UserName;
             user.Password = updatedUser.Password;
             user.FullName = updatedUser.FullName;
             user.Age = updatedUser.Age;
             user.PhoneNumber = updatedUser.PhoneNumber;
+
+            // only overwrite Role if the binder actually sent a value  
+            if (!string.IsNullOrWhiteSpace(updatedUser.Role))
+            {
+                user.Role = updatedUser.Role;
+            }
+
+            // same for IsActive (if you expose it)
+            // if (updatedUser.IsActive == true || updatedUser.IsActive == false)
+            // {
+            //     user.IsActive = updatedUser.IsActive;
+            // }
 
             _unitOfWork.UserRepository.PrepareUpdate(user);
             await _unitOfWork.UserRepository.SaveAsync();

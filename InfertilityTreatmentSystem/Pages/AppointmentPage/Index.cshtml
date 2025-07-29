@@ -114,6 +114,12 @@
                                 </a>
                             }
 
+                            <a class="btn btn-primary btn-sm btn-custom"
+                               asp-page="./Details"
+                               asp-route-id="@appointment.AppointmentId">
+                                🔍 Details
+                            </a>
+
                             @if (role == "Admin" || role == "Customer")
                             {
                                 <a class="btn btn-danger btn-sm btn-custom"

@@ -1,20 +1,272 @@
 ﻿@page
 @model InfertilityTreatmentSystem.Pages.FeedbackPage.CreateModel
-
 @{
-    ViewData["Title"] = "Create Feedback";
+    ViewData["Title"] = "Tạo phản hồi";
 }
 
-<h1>Create Feedback</h1>
+@if (TempData["SuccessMessage"] != null)
+{
+    <div class="alert alert-success alert-dismissible fade show mt-3" role="alert">
+        @TempData["SuccessMessage"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+}
 
-<form method="post">
-    <div class="mb-3">
-        <label for="Rating" class="form-label">Rating</label>
-        <input type="number" class="form-control" id="Rating" name="Rating" required />
+
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card shadow-lg border-0 rounded-4">
+                <div class="card-header bg-primary text-white text-center py-4">
+                    <h2 class="mb-0 fw-bold">💬 Gửi phản hồi của bạn</h2>
+                    <p class="mb-0 opacity-75">Chia sẻ trải nghiệm của bạn về dịch vụ</p>
+                </div>
+
+                <div class="card-body p-5">
+                    <form method="post" id="feedbackForm">
+
+                        <!-- Validation Summary -->
+                        <div asp-validation-summary="All" class="text-danger mb-3"></div>
+
+                        <!-- Rating Section -->
+                        <div class="mb-4">
+                            <label class="form-label fw-semibold mb-3">
+                                <span class="text-danger">*</span> Đánh giá của bạn
+                            </label>
+
+                            <!-- Star Rating -->
+                            <div class="star-rating mb-3">
+                                <div class="stars" id="starRating">
+                                    <span class="star" data-rating="1">⭐</span>
+                                    <span class="star" data-rating="2">⭐</span>
+                                    <span class="star" data-rating="3">⭐</span>
+                                    <span class="star" data-rating="4">⭐</span>
+                                    <span class="star" data-rating="5">⭐</span>
+                                </div>
+                                <div class="rating-text mt-2">
+                                    <small class="text-muted" id="ratingText">Nhấp vào sao để đánh giá</small>
+                                </div>
+                            </div>
+
+                            <!-- Hidden input for rating -->
+                            <input type="hidden" id="Rating" name="NewFeedback.Rating" required />
+                            <span asp-validation-for="NewFeedback.Rating" class="text-danger"></span>
+                            <div class="invalid-feedback" id="ratingError">
+                                Vui lòng chọn số sao đánh giá
+                            </div>
+                        </div>
+
+                        <!-- Comment Section -->
+                        <div class="mb-4">
+                            <label for="Comment" class="form-label fw-semibold">
+                                <span class="text-danger">*</span> Nhận xét chi tiết
+                            </label>
+                            <textarea class="form-control form-control-lg"
+                                      id="Comment"
+                                      name="NewFeedback.Comment"
+                                      rows="5"
+                                      placeholder="Chia sẻ trải nghiệm của bạn về dịch vụ, chất lượng phục vụ, đội ngũ y tế..."
+                                      required
+                                      maxlength="1000"></textarea>
+                            <div class="form-text">
+                                <span id="charCount">0</span>/1000 ký tự
+                            </div>
+                            <span asp-validation-for="NewFeedback.Comment" class="text-danger"></span>
+                        </div>
+
+                        <!-- Buttons -->
+                        <div class="d-flex gap-3 justify-content-end">
+                            <a href="/" class="btn btn-outline-secondary btn-lg px-4 rounded-pill">
+                                🏠 Quay lại trang chủ
+                            </a>
+                            <button type="submit" class="btn btn-success btn-lg px-5 rounded-pill fw-semibold">
+                                📤 Gửi phản hồi
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Info Card -->
+            <div class="card mt-4 border-0 bg-light">
+                <div class="card-body text-center py-4">
+                    <h6 class="text-muted mb-2">🔒 Thông tin của bạn được bảo mật</h6>
+                    <small class="text-muted">
+                        Phản hồi của bạn giúp chúng tôi cải thiện chất lượng dịch vụ tốt hơn
+                    </small>
+                </div>
+            </div>
+        </div>
     </div>
-    <div class="mb-3">
-        <label for="Comment" class="form-label">Comment</label>
-        <textarea class="form-control" id="Comment" name="Comment" rows="3" required></textarea>
-    </div>
-    <button type="submit" class="btn btn-primary">Create</button>
-</form>
+</div>
+
+<style>
+    .star-rating {
+        text-align: center;
+    }
+
+    .stars {
+        font-size: 2.5rem;
+        cursor: pointer;
+        user-select: none;
+    }
+
+    .star {
+        display: inline-block;
+        margin: 0 3px;
+        transition: all 0.2s ease;
+        filter: grayscale(100%);
+        opacity: 0.4;
+    }
+
+        .star:hover,
+        .star.active {
+            filter: grayscale(0%);
+            opacity: 1;
+            transform: scale(1.1);
+        }
+
+        .star.hover {
+            filter: grayscale(0%);
+            opacity: 0.8;
+            transform: scale(1.05);
+        }
+
+    .card {
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+        .card:hover {
+            transform: translateY(-2px);
+        }
+
+    .form-control:focus {
+        border-color: #0d6efd;
+        box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.15);
+    }
+
+    .btn {
+        transition: all 0.2s ease;
+    }
+
+        .btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+
+    .rating-text {
+        min-height: 20px;
+    }
+
+    .invalid-feedback {
+        display: none;
+    }
+
+    .is-invalid ~ .invalid-feedback {
+        display: block;
+    }
+</style>
+
+<script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const stars = document.querySelectorAll('.star');
+            const ratingInput = document.getElementById('Rating');
+            const ratingText = document.getElementById('ratingText');
+            const commentTextarea = document.getElementById('Comment');
+            const charCount = document.getElementById('charCount');
+            const form = document.getElementById('feedbackForm');
+
+            const ratingTexts = {
+                1: '⭐ Rất không hài lòng',
+                2: '⭐⭐ Không hài lòng',
+                3: '⭐⭐⭐ Bình thường',
+                4: '⭐⭐⭐⭐ Hài lòng',
+                5: '⭐⭐⭐⭐⭐ Rất hài lòng'
+            };
+
+            let selectedRating = 0;
+
+            // Star rating functionality
+            stars.forEach(star => {
+                star.addEventListener('mouseover', function() {
+                    const rating = parseInt(this.dataset.rating);
+                    highlightStars(rating, 'hover');
+                    ratingText.textContent = ratingTexts[rating];
+                });
+
+                star.addEventListener('mouseout', function() {
+                    highlightStars(selectedRating, 'active');
+                    ratingText.textContent = selectedRating > 0 ? ratingTexts[selectedRating] : 'Nhấp vào sao để đánh giá';
+                });
+
+                star.addEventListener('click', function() {
+                    selectedRating = parseInt(this.dataset.rating);
+                    ratingInput.value = selectedRating;
+                    highlightStars(selectedRating, 'active');
+                    ratingText.textContent = ratingTexts[selectedRating];
+
+                    // Remove error styling
+                    document.getElementById('ratingError').style.display = 'none';
+                });
+            });
+
+            function highlightStars(rating, className) {
+                stars.forEach((star, index) => {
+                    star.classList.remove('active', 'hover');
+                    if (index < rating) {
+                        star.classList.add(className);
+                    }
+                });
+            }
+
+            // Character counter
+            commentTextarea.addEventListener('input', function() {
+                const length = this.value.length;
+                charCount.textContent = length;
+
+                if (length > 950) {
+                    charCount.style.color = '#dc3545';
+                } else if (length > 800) {
+                    charCount.style.color = '#ffc107';
+                } else {
+                    charCount.style.color = '#6c757d';
+                }
+            });
+
+            // Form validation
+            form.addEventListener('submit', function(e) {
+                let isValid = true;
+
+                // Validate rating
+                if (!selectedRating) {
+    document.getElementById('ratingError').style.display = 'block';
+                    isValid = false;
+                }
+
+                // Validate comment
+                const comment = commentTextarea.value.trim();
+                if (comment.length < 10) {
+                    commentTextarea.classList.add('is-invalid');
+                    isValid = false;
+                } else {
+                    commentTextarea.classList.remove('is-invalid');
+                }
+
+                if (!isValid) {
+                    e.preventDefault();
+                    // Scroll to first error
+                    document.querySelector('.is-invalid, #ratingError[style*="block"]').scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'center'
+                    });
+                }
+            });
+
+            // Remove validation errors on input
+            commentTextarea.addEventListener('input', function() {
+                if (this.value.trim().length >= 10) {
+                    this.classList.remove('is-invalid');
+                }
+            });
+        });
+</script>

@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using System;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Http;
+using Microsoft.EntityFrameworkCore;
 
 namespace InfertilityTreatmentSystem.Pages.FeedbackPage
 {
@@ -24,35 +25,57 @@ namespace InfertilityTreatmentSystem.Pages.FeedbackPage
 
         public void OnGet()
         {
-            // Optionally pre-populate any values or check session
         }
 
         public async Task<IActionResult> OnPostAsync()
         {
-            if (ModelState.IsValid)
+            // Validate rating range
+            if (NewFeedback.Rating < 1 || NewFeedback.Rating > 5)
             {
-                // Get current user id from session
-                var userIdClaim = HttpContext.Session.GetString("UserId");
-
-                if (userIdClaim != null)
-                {
-                    // Set the CustomerId (UserId) from session and set CreatedDate
-                    NewFeedback.CustomerId = Guid.Parse(userIdClaim);
-                    NewFeedback.CreatedDate = DateTime.UtcNow;
-
-                    // Create new feedback
-                    await _feedbackService.CreateFeedbackAsync(NewFeedback);
-
-                    // Redirect to Index after successful creation
-                    return RedirectToPage("./Index");
-                }
-
-                // If the user is not authenticated or the UserId is not found in session
-                ModelState.AddModelError("", "User is not authenticated.");
+                ModelState.AddModelError("NewFeedback.Rating", "Rating phải từ 1-5");
                 return Page();
             }
 
-            return Page();
+            // Validate comment length
+            if (string.IsNullOrWhiteSpace(NewFeedback.Comment) || NewFeedback.Comment.Length < 10)
+            {
+                ModelState.AddModelError("NewFeedback.Comment", "Comment tối thiểu 10 ký tự");
+                return Page();
+            }
+
+            // Get user ID
+            var userId = User.FindFirst("UserId")?.Value ?? User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (string.IsNullOrEmpty(userId))
+            {
+                ModelState.AddModelError("", "Không tìm thấy thông tin user");
+                return Page();
+            }
+
+            // Set metadata
+            NewFeedback.CustomerId = Guid.Parse(userId);
+            NewFeedback.CreatedDate = DateTime.Now;
+
+            try
+            {
+                // Save using service
+                var success = await _feedbackService.CreateFeedbackAsync(NewFeedback);
+
+                if (success)
+                {
+                    TempData["SuccessMessage"] = "Gửi phản hồi thành công!";
+                    return Redirect("~/");
+                }
+                else
+                {
+                    ModelState.AddModelError("", "Không thể lưu feedback");
+                    return Page();
+                }
+            }
+            catch (Exception ex)
+            {
+                ModelState.AddModelError("", $"Lỗi: {ex.Message}");
+                return Page();
+            }
         }
     }
 }

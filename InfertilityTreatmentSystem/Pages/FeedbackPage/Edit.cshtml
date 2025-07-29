@@ -5,16 +5,56 @@
     ViewData["Title"] = "Edit Feedback";
 }
 
-<h1>Edit Feedback</h1>
+<style>
+    /* Card shadow intensifies on hover */
+    .card:hover {
+        box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
+    }
 
-<form method="post">
-    <div class="mb-3">
-        <label for="Rating" class="form-label">Rating</label>
-        <input type="number" class="form-control" id="Rating" name="Rating" value="@Model.Feedback.Rating" required />
+    /* Strong button hover states */
+    .btn-success:hover,
+    .btn-success:focus {
+        background-color: #218838;
+        border-color: #1e7e34;
+        color: #fff;
+    }
+
+    .btn-secondary:hover,
+    .btn-secondary:focus {
+        background-color: #5a6268;
+        border-color: #545b62;
+        color: #fff;
+    }
+</style>
+
+<div class="container my-5">
+    <div class="card shadow-sm">
+        <div class="card-header bg-primary text-white">
+            <h2 class="mb-0">Edit Feedback</h2>
+        </div>
+        <div class="card-body">
+            <form method="post" novalidate>
+                <div class="mb-4">
+                    <label asp-for="Feedback.Rating" class="form-label">Rating</label>
+                    <input asp-for="Feedback.Rating" class="form-control" type="number" min="1" max="5" />
+                    <span asp-validation-for="Feedback.Rating" class="text-danger"></span>
+                </div>
+
+                <div class="mb-4">
+                    <label asp-for="Feedback.Comment" class="form-label">Comment</label>
+                    <textarea asp-for="Feedback.Comment" class="form-control" rows="4"></textarea>
+                    <span asp-validation-for="Feedback.Comment" class="text-danger"></span>
+                </div>
+
+                <div class="d-flex justify-content-end">
+                    <a asp-page="./Index" class="btn btn-secondary me-2">
+                        ← Back to List
+                    </a>
+                    <button type="submit" class="btn btn-success">
+                        Save Changes
+                    </button>
+                </div>
+            </form>
+        </div>
     </div>
-    <div class="mb-3">
-        <label for="Comment" class="form-label">Comment</label>
-        <textarea class="form-control" id="Comment" name="Comment" rows="3" required>@Model.Feedback.Comment</textarea>
-    </div>
-    <button type="submit" class="btn btn-primary">Save Changes</button>
-</form>
+</div>

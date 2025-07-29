@@ -1,38 +1,381 @@
 ﻿@page
 @model InfertilityTreatmentSystem.Pages.FeedbackPage.IndexModel
-
 @{
-    ViewData["Title"] = "Feedbacks";
+    ViewData["Title"] = "Quản lý phản hồi";
+    var culture = new System.Globalization.CultureInfo("vi-VN");
 }
 
-<h1>Feedbacks</h1>
+<div class="container-fluid py-4">
+    <!-- Header Section -->
+    <div class="row align-items-center mb-4">
+        <div class="col-md-8">
+            <h1 class="display-6 fw-bold text-primary mb-2">💬 Quản lý phản hồi</h1>
+            <p class="text-muted">Theo dõi và quản lý phản hồi từ khách hàng</p>
+        </div>
+    </div>
 
-<a class="btn btn-primary" asp-page="./Create">Create New Feedback</a>
+    <!-- Stats Cards -->
+    <div class="row mb-4">
+        <div class="col-md-3 mb-3">
+            <div class="card bg-primary text-white border-0 h-100">
+                <div class="card-body text-center">
+                    <h3 class="fw-bold">@Model.Feedbacks.Count()</h3>
+                    <p class="mb-0">📊 Tổng phản hồi</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 mb-3">
+            <div class="card bg-success text-white border-0 h-100">
+                <div class="card-body text-center">
+                    <h3 class="fw-bold">@Model.Feedbacks.Count(f => f.Rating >= 4)</h3>
+                    <p class="mb-0">😊 Phản hồi tích cực</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 mb-3">
+            <div class="card bg-warning text-white border-0 h-100">
+                <div class="card-body text-center">
+                    <h3 class="fw-bold">
+                        @{
+                            var avgRating = Model.Feedbacks.Any() ? Math.Round(Model.Feedbacks.Average(f => (double)f.Rating), 1) : 0.0;
+                        }
+                        @avgRating.ToString("F1")
+                    </h3>
+                    <p class="mb-0">⭐ Điểm trung bình</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 mb-3">
+            <div class="card bg-info text-white border-0 h-100">
+                <div class="card-body text-center">
+                    <h3 class="fw-bold">@Model.Feedbacks.Count(f => f.CreatedDate >= DateTime.Now.AddDays(-30))</h3>
+                    <p class="mb-0">📅 Tháng này</p>
+                </div>
+            </div>
+        </div>
+    </div>
 
-<table class="table">
-    <thead>
-        <tr>
-            <th>Customer</th>
-            <th>Rating</th>
-            <th>Comment</th>
-            <th>Created Date</th>
-            <th>Actions</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var feedback in Model.Feedbacks)
+    <!-- Search and Filter -->
+    <div class="card mb-4 border-0 shadow-sm">
+        <div class="card-body">
+            <div class="row align-items-center">
+                <div class="col-md-6">
+                    <div class="input-group">
+                        <span class="input-group-text bg-light border-end-0">
+                            <i class="fas fa-search text-muted"></i>
+                        </span>
+                        <input type="text" class="form-control border-start-0" id="searchInput"
+                               placeholder="Tìm kiếm theo tên khách hàng hoặc nội dung...">
+                    </div>
+                </div>
+                <div class="col-md-3 mt-3 mt-md-0">
+                    <select class="form-select" id="ratingFilter">
+                        <option value="">Tất cả đánh giá</option>
+                        <option value="5">⭐⭐⭐⭐⭐ (5 sao)</option>
+                        <option value="4">⭐⭐⭐⭐ (4 sao)</option>
+                        <option value="3">⭐⭐⭐ (3 sao)</option>
+                        <option value="2">⭐⭐ (2 sao)</option>
+                        <option value="1">⭐ (1 sao)</option>
+                    </select>
+                </div>
+                <div class="col-md-3 mt-3 mt-md-0">
+                    <select class="form-select" id="dateFilter">
+                        <option value="">Tất cả thời gian</option>
+                        <option value="today">Hôm nay</option>
+                        <option value="week">Tuần này</option>
+                        <option value="month">Tháng này</option>
+                        <option value="year">Năm này</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Feedbacks List -->
+    <div id="feedbacksList">
+        @if (!Model.Feedbacks.Any())
         {
-            <tr>
-                <td>@(feedback.Customer?.UserName ?? "No Customer")</td>
-                <td>@feedback.Rating</td>
-                <td>@feedback.Comment</td>
-                <td>@feedback.CreatedDate?.ToString("MM/dd/yyyy")</td>
-                <td>
-                    <a href="@Url.Page("./Details", new { feedbackId = feedback.FeedbackId })" class="btn btn-info">Details</a>
-                    <a href="@Url.Page("./Edit", new { feedbackId = feedback.FeedbackId })" class="btn btn-warning">Edit</a>
-                    <a href="@Url.Page("./Delete", new { feedbackId = feedback.FeedbackId })" class="btn btn-danger">Delete</a>
-                </td>
-            </tr>
+            <!-- Empty State -->
+            <div class="text-center py-5">
+                <div class="mb-4">
+                    <i class="fas fa-comments fa-5x text-muted opacity-50"></i>
+                </div>
+                <h4 class="text-muted">Chưa có phản hồi nào</h4>
+                <p class="text-muted">Khách hàng chưa gửi phản hồi nào cho dịch vụ</p>
+                <a class="btn btn-primary rounded-pill px-4" asp-page="./Create">
+                    Tạo phản hồi đầu tiên
+                </a>
+            </div>
         }
-    </tbody>
-</table>
+        else
+        {
+            <div class="row" id="feedbackCards">
+                @foreach (var feedback in Model.Feedbacks.OrderByDescending(f => f.CreatedDate))
+                {
+                    var dateStr = feedback.CreatedDate?.ToString("dddd, 'ngày' dd 'tháng' MM 'năm' yyyy", culture) ?? "";
+                    string timeAgo = "";
+                    if (feedback.CreatedDate.HasValue)
+                    {
+                        var timeSpan = DateTime.Now - feedback.CreatedDate.Value;
+                        if (timeSpan.TotalMinutes < 1)
+                            timeAgo = "Vừa xong";
+                        else if (timeSpan.TotalHours < 1)
+                            timeAgo = $"{(int)timeSpan.TotalMinutes} phút trước";
+                        else if (timeSpan.TotalDays < 1)
+                            timeAgo = $"{(int)timeSpan.TotalHours} giờ trước";
+                        else if (timeSpan.TotalDays < 7)
+                            timeAgo = $"{(int)timeSpan.TotalDays} ngày trước";
+                        else if (timeSpan.TotalDays < 30)
+                            timeAgo = $"{(int)(timeSpan.TotalDays / 7)} tuần trước";
+                        else
+                            timeAgo = feedback.CreatedDate.Value.ToString("dd/MM/yyyy");
+                    }
+
+                    <div class="col-lg-6 col-xl-4 mb-4 feedback-card"
+                         data-customer="@(feedback.Customer?.FullName ?? "")"
+                         data-comment="@feedback.Comment"
+                         data-rating="@feedback.Rating"
+                         data-date="@feedback.CreatedDate?.ToString("yyyy-MM-dd")">
+                        <div class="card h-100 shadow-sm border-0 rounded-4 feedback-item">
+                            <div class="card-header bg-transparent border-0 pb-0">
+                                <div class="d-flex justify-content-between align-items-start">
+                                    <div>
+                                        <h6 class="fw-bold text-primary mb-1">
+                                            👤 @(feedback.Customer?.FullName ?? "Khách hàng ẩn danh")
+                                        </h6>
+                                        <small class="text-muted">📅 @timeAgo</small>
+                                    </div>
+                                    <div class="text-end">
+                                        <div class="rating-stars mb-1">
+                                            @for (int i = 1; i <= 5; i++)
+                                            {
+                                                if (i <= feedback.Rating)
+                                                {
+                                                    <span class="star-filled">⭐</span>
+                                                }
+                                                else
+                                                {
+                                                    <span class="star-empty">☆</span>
+                                                }
+                                            }
+                                        </div>
+                                        <small class="text-muted">@feedback.Rating/5</small>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="card-body pt-2">
+                                <div class="feedback-comment mb-3">
+                                    <p class="text-dark mb-0 lh-base">
+                                        @if (feedback.Comment?.Length > 150)
+                                        {
+                                            <span class="comment-preview">
+                                                @feedback.Comment.Substring(0, 150)...
+                                            </span>
+                                            <span class="comment-full d-none">
+                                                @feedback.Comment
+                                            </span>
+                                            <button class="btn btn-link btn-sm p-0 text-decoration-none show-more">
+                                                Xem thêm
+                                            </button>
+                                        }
+                                        else
+                                        {
+                                            @feedback.Comment
+                                        }
+                                    </p>
+                                </div>
+
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <small class="text-muted">
+                                        🕒 @dateStr
+                                    </small>
+                                    <div class="btn-group" role="group">
+                                        <a href="@Url.Page("./Details", new { feedbackId = feedback.FeedbackId })"
+                                           class="btn btn-outline-info btn-sm rounded-pill me-1"
+                                           title="Xem chi tiết">
+                                            👁️
+                                        </a>
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        }
+    </div>
+
+    <!-- No Results -->
+    <div id="noResults" class="text-center py-5 d-none">
+        <div class="mb-4">
+            <i class="fas fa-search fa-3x text-muted opacity-50"></i>
+        </div>
+        <h5 class="text-muted">Không tìm thấy phản hồi nào</h5>
+        <p class="text-muted">Thử thay đổi từ khóa tìm kiếm hoặc bộ lọc</p>
+    </div>
+</div>
+
+<style>
+    .card {
+        transition: all 0.3s ease;
+    }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1) !important;
+        }
+
+    .rating-stars {
+        font-size: 1.1rem;
+    }
+
+    .star-filled {
+        color: #ffc107;
+        filter: drop-shadow(0 0 2px rgba(255,193,7,0.3));
+    }
+
+    .star-empty {
+        color: #dee2e6;
+    }
+
+    .feedback-comment {
+        font-size: 0.95rem;
+        line-height: 1.5;
+    }
+
+    .btn-group .btn {
+        transition: all 0.2s ease;
+    }
+
+        .btn-group .btn:hover {
+            transform: scale(1.1);
+        }
+
+    .show-more {
+        font-size: 0.85rem;
+        color: #0d6efd !important;
+    }
+
+    .input-group-text {
+        background: #f8f9fa;
+    }
+
+    .form-control:focus, .form-select:focus {
+        border-color: #0d6efd;
+        box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.15);
+    }
+
+    @@keyframes fadeIn {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .feedback-item {
+        animation: fadeIn 0.5s ease;
+    }
+
+    .feedback-card.filtered-out {
+        display: none !important;
+    }
+</style>
+
+<script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Search and Filter functionality
+            const searchInput = document.getElementById('searchInput');
+            const ratingFilter = document.getElementById('ratingFilter');
+            const dateFilter = document.getElementById('dateFilter');
+            const feedbackCards = document.querySelectorAll('.feedback-card');
+            const noResults = document.getElementById('noResults');
+
+            function filterFeedbacks() {
+                const searchTerm = searchInput.value.toLowerCase();
+                const selectedRating = ratingFilter.value;
+                const selectedDate = dateFilter.value;
+                let visibleCount = 0;
+
+                feedbackCards.forEach(card => {
+                    const customer = card.dataset.customer.toLowerCase();
+                    const comment = card.dataset.comment.toLowerCase();
+                    const rating = card.dataset.rating;
+                    const cardDate = new Date(card.dataset.date);
+                    const now = new Date();
+
+                    // Search filter
+                    const matchesSearch = !searchTerm ||
+                        customer.includes(searchTerm) ||
+                        comment.includes(searchTerm);
+
+                    // Rating filter
+                    const matchesRating = !selectedRating || rating === selectedRating;
+
+                    // Date filter
+                    let matchesDate = true;
+                    if (selectedDate) {
+                        switch(selectedDate) {
+                            case 'today':
+                                matchesDate = cardDate.toDateString() === now.toDateString();
+                                break;
+                            case 'week':
+                                const weekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+                                matchesDate = cardDate >= weekAgo;
+                                break;
+                            case 'month':
+                                matchesDate = cardDate.getMonth() === now.getMonth() &&
+                                            cardDate.getFullYear() === now.getFullYear();
+                                break;
+                            case 'year':
+                                matchesDate = cardDate.getFullYear() === now.getFullYear();
+                                break;
+                        }
+                    }
+
+                    if (matchesSearch && matchesRating && matchesDate) {
+                        card.classList.remove('filtered-out');
+                        visibleCount++;
+                    } else {
+                        card.classList.add('filtered-out');
+                    }
+                });
+
+                // Show/hide no results message
+    if (visibleCount === 0 && feedbackCards.length > 0) {
+                    noResults.classList.remove('d-none');
+                } else {
+                    noResults.classList.add('d-none');
+                }
+            }
+
+            // Event listeners
+            searchInput.addEventListener('input', filterFeedbacks);
+            ratingFilter.addEventListener('change', filterFeedbacks);
+            dateFilter.addEventListener('change', filterFeedbacks);
+
+            // Show more/less functionality
+            document.querySelectorAll('.show-more').forEach(button => {
+                button.addEventListener('click', function() {
+                    const preview = this.previousElementSibling.previousElementSibling;
+                    const full = this.previousElementSibling;
+
+                    if (full.classList.contains('d-none')) {
+                        preview.classList.add('d-none');
+                        full.classList.remove('d-none');
+                        this.textContent = 'Ẩn bớt';
+                    } else {
+                        preview.classList.remove('d-none');
+                        full.classList.add('d-none');
+                        this.textContent = 'Xem thêm';
+                    }
+                });
+            });
+        });
+</script>

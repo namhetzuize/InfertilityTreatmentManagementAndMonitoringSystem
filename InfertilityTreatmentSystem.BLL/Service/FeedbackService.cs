@@ -23,10 +23,19 @@ namespace InfertilityTreatmentSystem.BLL.Service
             return await _unitOfWork.FeedbackRepository.GetByIdAsync(id);
         }
 
-        public async Task CreateFeedbackAsync(Feedback feedback)
+        public async Task<bool> CreateFeedbackAsync(Feedback feedback)
         {
-            _unitOfWork.FeedbackRepository.PrepareCreate(feedback);
-            await _unitOfWork.FeedbackRepository.SaveAsync();
+            try
+            {
+                _unitOfWork.FeedbackRepository.PrepareCreate(feedback);
+                await _unitOfWork.FeedbackRepository.SaveAsync();
+                return true;
+            }
+            catch (Exception ex)
+            {
+                // Ghi log nếu cần: _logger.LogError(ex, "Error saving feedback");
+                return false;
+            }
         }
 
         public async Task UpdateFeedbackAsync(Feedback feedback)

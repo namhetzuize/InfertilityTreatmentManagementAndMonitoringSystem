@@ -1,60 +1,102 @@
 ﻿@page "{id:guid}"
 @model InfertilityTreatmentSystem.Pages.AppointmentPage.DetailsModel
 @using System.Security.Claims
+
 @{
     ViewData["Title"] = "Appointment Details";
-    var role = User.FindFirstValue(ClaimTypes.Role); 
+    var role = User.FindFirstValue(ClaimTypes.Role);
 }
 
-<h2>Appointment Details</h2>
+<div class="container my-5">
+    <div class="card shadow-sm">
+        <div class="card-header bg-primary text-white">
+            <h3 class="mb-0"><i class="bi bi-calendar-check"></i> Appointment Details</h3>
+        </div>
+        <div class="card-body">
+            <dl class="row mb-4">
+                <dt class="col-sm-3">👤 Customer</dt>
+                <dd class="col-sm-9">@Model.Appointment.Customer?.FullName</dd>
 
+                <dt class="col-sm-3">👨‍⚕️ Doctor</dt>
+                <dd class="col-sm-9">@Model.Appointment.Doctor?.FullName</dd>
 
-@* <div class="alert alert-info">
-    <strong>DEBUG:</strong> Role = <code>@role</code>
-</div> *@
+                <dt class="col-sm-3">🩺 Service</dt>
+                <dd class="col-sm-9">@Model.Appointment.Service?.ServiceName</dd>
 
-<table class="table">
-    <tr>
-        <th>Customer</th>
-        <td>@Model.Appointment.Customer?.FullName</td>
-    </tr>
-    <tr>
-        <th>Doctor</th>
-        <td>@Model.Appointment.Doctor?.FullName</td>
-    </tr>
-    <tr>
-        <th>Service</th>
-        <td>@Model.Appointment.Service?.ServiceName</td>
-    </tr>
-    <tr>
-        <th>Date</th>
-        <td>@Model.Appointment.AppointmentDate.ToString("dd/MM/yyyy HH:mm")</td>
-    </tr>
-    <tr>
-        <th>Status</th>
-        <td>@Model.Appointment.Status</td>
-    </tr>
-    <tr>
-        <th>Note</th>
-        <td>@Model.Appointment.Note</td>
-    </tr>
-</table>
+                <dt class="col-sm-3">📆 Date</dt>
+                <dd class="col-sm-9">@Model.Appointment.AppointmentDate.ToString("dd/MM/yyyy HH:mm")</dd>
 
-<a asp-page="./Index" class="btn btn-secondary">Back</a>
+                <dt class="col-sm-3">📌 Status</dt>
+                <dd class="col-sm-9">
+                    <span class="badge @(Model.Appointment.Status == "Success" ? "bg-success" :
+                                                        Model.Appointment.Status == "Pending" ? "bg-warning text-dark" :
+                                                        "bg-secondary")">
+                        @Model.Appointment.Status
+                    </span>
+                </dd>
 
-@if (role == "Doctor")
-{
-    <a class="btn btn-success ms-2"
-       asp-page="/SchedulePage/Create"
-       asp-route-AppointmentId="@Model.Appointment.AppointmentId">Create Schedule</a>
-    <a class="btn btn-info ms-2"
-       asp-page="/SchedulePage/Index"
-       asp-route-AppointmentId="@Model.Appointment.AppointmentId">View Schedules</a>
-}
+                <dt class="col-sm-3">📝 Note</dt>
+                <dd class="col-sm-9">@Model.Appointment.Note</dd>
+            </dl>
 
-@if (role == "Customer")
-{
-    <a class="btn btn-info ms-2"
-       asp-page="/SchedulePage/Index"
-       asp-route-AppointmentId="@Model.Appointment.AppointmentId">View Schedules</a>
-}
+            <div class="d-flex flex-wrap gap-2">
+                <a asp-page="./Index" class="btn btn-outline-secondary btn-lg">
+                    ⬅️ Back
+                </a>
+
+                @* Only Doctors and Admins can edit *@
+                @if (role == "Customer" || role == "Admin" || role == "Doctor")
+                {
+                    <a asp-page="./Edit"
+                       asp-route-id="@Model.Appointment.AppointmentId"
+                       class="btn btn-warning btn-lg">
+                        ✏️ Edit
+                    </a>
+                }
+
+                @* Customers and Admins can delete *@
+                @if (role == "Customer" || role == "Admin" || role == "Doctor")
+                {
+                    <form method="post"
+                          asp-page-handler="Delete"
+                          asp-route-appointmentId="@Model.Appointment.AppointmentId"
+                          class="d-inline">
+                        <button type="submit"
+                                class="btn btn-danger btn-lg"
+                                onclick="return confirm('Are you sure you want to delete this appointment?');">
+                            🗑️ Delete
+                        </button>
+                    </form>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    /* lift the card slightly on hover */
+    .card:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 0 20px rgba(0,0,0,0.1);
+        transition: all 0.2s ease-in-out;
+    }
+
+    /* subtle pop for large buttons */
+    .btn-lg {
+        transition: transform 0.15s ease-in-out, opacity 0.15s ease-in-out;
+    }
+
+        .btn-lg:hover {
+            transform: translateY(-2px) scale(1.02);
+            opacity: 0.9;
+        }
+
+    /* description list styling */
+    dt {
+        font-weight: 600;
+    }
+
+    dd {
+        margin-bottom: 1rem;
+    }
+</style>
