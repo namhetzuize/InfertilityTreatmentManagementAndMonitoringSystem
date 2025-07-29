@@ -150,6 +150,7 @@
         }
 
         @@keyframes gradientShift {
+<<<<<<< Updated upstream
             0%
 
         {
@@ -164,6 +165,19 @@
             background-position: 0% 50%;
         }
 
+=======
+            0% {
+                background-position: 0% 50%;
+            }
+
+            50% {
+                background-position: 100% 50%;
+            }
+
+            100% {
+                background-position: 0% 50%;
+            }
+>>>>>>> Stashed changes
         }
 
         /* Card Hover Effects */
@@ -199,6 +213,7 @@
         }
 
         @@keyframes pulse {
+<<<<<<< Updated upstream
             0%
 
         {
@@ -213,6 +228,19 @@
             box-shadow: 0 0 0 0 rgba(0, 123, 255, 0);
         }
 
+=======
+            0% {
+                box-shadow: 0 0 0 0 rgba(0, 123, 255, 0.7);
+            }
+
+            70% {
+                box-shadow: 0 0 0 10px rgba(0, 123, 255, 0);
+            }
+
+            100% {
+                box-shadow: 0 0 0 0 rgba(0, 123, 255, 0);
+            }
+>>>>>>> Stashed changes
         }
 
         /* Table Row Animations */
@@ -233,6 +261,7 @@
         }
 
         @@keyframes floating {
+<<<<<<< Updated upstream
             0%, 100%
 
         {
@@ -243,6 +272,15 @@
             transform: translateY(-10px);
         }
 
+=======
+            0%, 100% {
+                transform: translateY(0px);
+            }
+
+            50% {
+                transform: translateY(-10px);
+            }
+>>>>>>> Stashed changes
         }
 
         /* Rotating Icons */
@@ -262,6 +300,7 @@
         }
 
         @@keyframes loading {
+<<<<<<< Updated upstream
             0%
 
         {
@@ -272,6 +311,15 @@
             background-position: -200% 0;
         }
 
+=======
+            0% {
+                background-position: 200% 0;
+            }
+
+            100% {
+                background-position: -200% 0;
+            }
+>>>>>>> Stashed changes
         }
 
         /* Badge Bounce */
@@ -280,6 +328,7 @@
         }
 
         @@keyframes bounce {
+<<<<<<< Updated upstream
             0%, 20%, 50%, 80%, 100%
 
         {
@@ -294,6 +343,19 @@
             transform: translateY(-3px);
         }
 
+=======
+            0%, 20%, 50%, 80%, 100% {
+                transform: translateY(0);
+            }
+
+            40% {
+                transform: translateY(-5px);
+            }
+
+            60% {
+                transform: translateY(-3px);
+            }
+>>>>>>> Stashed changes
         }
 
         /* Glowing Effect */
@@ -302,6 +364,7 @@
         }
 
         @@keyframes glow {
+<<<<<<< Updated upstream
             from
 
         {
@@ -312,6 +375,15 @@
             box-shadow: 0 0 20px rgba(0,123,255,0.8), 0 0 30px rgba(0,123,255,0.6);
         }
 
+=======
+            from {
+                box-shadow: 0 0 10px rgba(0,123,255,0.5);
+            }
+
+            to {
+                box-shadow: 0 0 20px rgba(0,123,255,0.8), 0 0 30px rgba(0,123,255,0.6);
+            }
+>>>>>>> Stashed changes
         }
 
         /* Typewriter Effect */
@@ -325,6 +397,7 @@
         }
 
         @@keyframes typing {
+<<<<<<< Updated upstream
             from
 
         {
@@ -348,6 +421,25 @@
             border-color: orange;
         }
 
+=======
+            from {
+                width: 0;
+            }
+
+            to {
+                width: 100%;
+            }
+        }
+
+        @@keyframes blink-caret {
+            from, to {
+                border-color: transparent;
+            }
+
+            50% {
+                border-color: orange;
+            }
+>>>>>>> Stashed changes
         }
 
         /* Stats Counter Animation */
@@ -382,6 +474,7 @@
 
         /* Page Load Animation */
         @@keyframes fadeInUp {
+<<<<<<< Updated upstream
             from
 
         {
@@ -394,6 +487,17 @@
             transform: translate3d(0, 0, 0);
         }
 
+=======
+            from {
+                opacity: 0;
+                transform: translate3d(0, 100%, 0);
+            }
+
+            to {
+                opacity: 1;
+                transform: translate3d(0, 0, 0);
+            }
+>>>>>>> Stashed changes
         }
 
         .fade-in-up {
@@ -506,6 +610,7 @@
 
     <style>
         @@keyframes ripple-animation {
+<<<<<<< Updated upstream
             to
 
         {
@@ -513,6 +618,12 @@
             opacity: 0;
         }
 
+=======
+            to {
+                transform: scale(4);
+                opacity: 0;
+            }
+>>>>>>> Stashed changes
         }
     </style>
 }

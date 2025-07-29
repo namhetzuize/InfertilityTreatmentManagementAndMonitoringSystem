@@ -45,7 +45,7 @@
                 </a>
 
                 @* Only Doctors and Admins can edit *@
-                @if (role == "Customer" || role == "Admin" || role == "Doctor")
+                @if ( role == "Admin")
                 {
                     <a asp-page="./Edit"
                        asp-route-id="@Model.Appointment.AppointmentId"

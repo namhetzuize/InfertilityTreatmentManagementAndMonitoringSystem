@@ -28,11 +28,15 @@ namespace InfertilityTreatmentSystem.Pages.TreatmentServicePage
             return Page();
         }
 
-        public async Task<IActionResult> OnPostAsync()
+        public async Task<IActionResult> OnPostAsync(Guid serviceId)
         {
             if (ModelState.IsValid)
             {
-                await _treatmentServiceService.UpdateTreatmentServiceByIdAsync(Service.ServiceId, Service);
+                if(serviceId == null)
+                {
+                    return NotFound();
+                }
+                await _treatmentServiceService.UpdateTreatmentServiceByIdAsync(serviceId, Service);
                 return RedirectToPage("./Index");
             }
 

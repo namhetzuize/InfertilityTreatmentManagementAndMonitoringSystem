@@ -58,6 +58,7 @@ namespace InfertilityTreatmentSystem.BLL.Service
             service.ServiceName = updatedService.ServiceName;
             service.Description = updatedService.Description;
             service.Price = updatedService.Price;
+            service.ServiceImage = updatedService.ServiceImage;
 
             _unitOfWork.TreatmentServiceRepository.PrepareUpdate(service);
             await _unitOfWork.TreatmentServiceRepository.SaveAsync();

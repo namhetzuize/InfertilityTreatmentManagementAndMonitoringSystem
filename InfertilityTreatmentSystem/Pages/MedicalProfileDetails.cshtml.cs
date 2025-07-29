@@ -161,21 +161,6 @@ namespace InfertilityTreatmentSystem.Pages
             Console.WriteLine($"ServiceId: {NewPatientRequest.ServiceId}");
             Console.WriteLine($"Note: {NewPatientRequest.Note}");
 
-            if (!ModelState.IsValid)
-            {
-                // ✅ Load lại các dữ liệu cần thiết để tránh lỗi null khi render View
-                Customer = await _userService.GetUserByIdAsync(customerId);
-                DoctorId = doctorId;
-
-                Schedules = await _scheduleService.GetSchedulesByCustomerAndDoctorAsync(customerId, doctorId);
-                PatientRequests = await _patientRequestService.GetPatientRequestsByCustomerAndDoctorAsync(customerId, doctorId);
-                MedicalRecords = await _medicalRecordService.GetMedicalRecordsByCustomerAndDoctorAsync(customerId, doctorId);
-                Customers = await _userService.GetAllUsersAsync();
-                Doctors = Customers.Where(u => u.Role == "Doctor").ToList();
-
-                return Page();
-            }
-
             NewPatientRequest.RequestId = Guid.NewGuid();
             NewPatientRequest.CustomerId = customerId;
             NewPatientRequest.DoctorId = doctorId;

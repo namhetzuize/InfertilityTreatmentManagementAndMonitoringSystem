@@ -90,6 +90,9 @@
                 <h4>@Model.Blog.Title</h4>
             </div>
             <div class="card-body">
+                <div style="display: flex; justify-content: center; align-content: center">
+                    <img src="@Model.Blog.BlogImage" alt="Blog Image" class="img-fluid rounded-circle" style="max-width: 150px; height: auto;" />
+                </div>
                 <p><strong>📝 Content:</strong> @Model.Blog.Content</p>
                 <p><strong>📅 Created Date:</strong> @Model.Blog.CreatedDate?.ToString("dd/MM/yyyy")</p>
                 <p><strong>👤 Author:</strong> @Model.Author?.FullName</p>
